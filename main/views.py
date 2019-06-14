@@ -67,3 +67,7 @@ def logout(request):
 @login_required(login_url="/")
 def principal_app(request):
     return render(request, 'app/index_app.html')
+
+@login_required(login_url="/")
+def view_compra(request):
+    return render(request, 'app/compra/view_compra.html')

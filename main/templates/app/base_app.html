@@ -32,11 +32,71 @@
     <div class="bg-light border-right" id="sidebar-wrapper">
       <div class="sidebar-heading">Escritorio </div>
       <div class="list-group list-group-flush">
-        <a href="#" class="list-group-item list-group-item-action bg-light">Inicio</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Productos</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Compras</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Ventas</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Proveedores</a>
+        <a href="{% url 'principal_app' %}" class="list-group-item list-group-item-action bg-light">Inicio</a>
+        <!-- Menu with submenu  productos-->
+        <a href="#productos_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-start align-items-center">
+                <span class="menu-collapsed">Productos</span>
+            </div>
+        </a>
+        <!-- Submenu content productos-->
+        <div id='productos_submenu' class="collapse sidebar-submenu">
+            <a href="#" class="list-group-item list-group-item-action">
+                <span class="menu-collapsed">Lista de productos</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+                <span class="menu-collapsed">Nuevo producto</span>
+            </a>
+        </div>
+        <!-- fin productos -->
+        <!-- Menu with submenu  compras-->
+        <a href="#compras_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-start align-items-center">
+                <span class="menu-collapsed">Compras</span>
+            </div>
+        </a>
+        <!-- Submenu content compras-->
+        <div id='compras_submenu' class="collapse sidebar-submenu">
+            <a href="{% url 'view_compra' %}" class="list-group-item list-group-item-action">
+                <span class="menu-collapsed">Lista de compras</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+                <span class="menu-collapsed">Nueva compra</span>
+            </a>
+        </div>
+        <!-- fin compras -->
+        <!-- Menu with submenu  ventas-->
+        <a href="#ventas_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-start align-items-center">
+                <span class="menu-collapsed">Ventas</span>
+            </div>
+        </a>
+        <!-- Submenu content ventas-->
+        <div id='ventas_submenu' class="collapse sidebar-submenu">
+            <a href="{% url 'view_compra' %}" class="list-group-item list-group-item-action">
+                <span class="menu-collapsed">Lista de ventas</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+                <span class="menu-collapsed">Nueva venta</span>
+            </a>
+        </div>
+        <!-- fin ventas -->
+        <!-- Menu with submenu  proveedores-->
+        <a href="#proveedores_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-start align-items-center">
+                <span class="menu-collapsed">Proveedores</span>
+            </div>
+        </a>
+        <!-- Submenu content proveedores-->
+        <div id='proveedores_submenu' class="collapse sidebar-submenu">
+            <a href="{% url 'view_compra' %}" class="list-group-item list-group-item-action">
+                <span class="menu-collapsed">Lista de proveedores</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+                <span class="menu-collapsed">Nuevo proveedor</span>
+            </a>
+        </div>
+        <!-- fin proveedores -->
         <a href="#" class="list-group-item list-group-item-action bg-light">Configuración</a>
       </div>
     </div>
