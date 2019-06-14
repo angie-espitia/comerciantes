@@ -1,0 +1,16 @@
+{% extends 'base_corporativo.html' %}
+{% block title %} Inicio {% endblock %}
+
+{%  block content %}
+
+  <!-- Page Content -->
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1 class="mt-5"><a href="{% url 'login' %}">iniciar sesion</a></h1>
+        <h1 class="mt-5"><a href="{% url 'registrar_comerciante' %}">REgistrar</a></h1>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
