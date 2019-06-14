@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from main.models import *
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'pagina/index.html')
 
 # registro de usuarios
 def registrar_comerciante(request):
@@ -37,7 +37,7 @@ def registrar_comerciante(request):
 
             return redirect('login')
         else:
-            return render(request, 'registrar.html', {'error': validators.getMessage() } )
+            return render(request, 'registrar_tendero.html', {'error': validators.getMessage() } )
         # Agregar el usuario a la base de datos
     return render( request, 'registrar_tendero.html' )
 
@@ -62,8 +62,8 @@ def logout(request):
     auth.logout(request)
     return redirect("/")  
 
-
 # views manejo negocio tenderos
+
 @login_required(login_url="/")
 def principal_app(request):
-    return render(request, 'index_app.html')
+    return render(request, 'app/index_app.html')
