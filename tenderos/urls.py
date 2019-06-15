@@ -15,4 +15,6 @@ urlpatterns = [
     path('registrar', registrar_comerciante, name='registrar_comerciante' ),
 
     path('compra', view_compra, name='view_compra'),
+    path('proveedores', view_proveedor, name='view_proveedor'),
+    path('proveedores/nuevo', agregar_proveedor, name='agregar_proveedor'),
 ]

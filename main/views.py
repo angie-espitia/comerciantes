@@ -6,6 +6,7 @@ from main.validator import *
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from main.models import *
+from main.forms import *
 
 def index(request):
     return render(request, 'pagina/index.html')
@@ -71,3 +72,24 @@ def principal_app(request):
 @login_required(login_url="/")
 def view_compra(request):
     return render(request, 'app/compra/view_compra.html')
+
+@login_required(login_url="/")
+def view_proveedor(request):
+    user = Cliente.objects.get(id=request.user.id)
+    producto = Restaurante.objects.get( restaurante_cliente = user)
+    platillo = Platillo.objects.filter(restaurante_platillo_id = restaurante.id)
+    return render(request, 'app/proveedor/view_proveedor.html')
+
+@login_required(login_url="/")
+def agregar_proveedor(request):
+
+    if request.method == "POST":
+        form = ProveedorForm(request.POST)
+        if form.is_valid():
+            menu = form.save(commit=False)
+            menu.save()
+            return redirect('proveedores')
+    else:
+        form = ProveedorForm()
+
+    return render(request, 'app/proveedor/agregar_proveedor.html', { 'form' : form } )

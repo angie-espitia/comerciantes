@@ -105,3 +105,12 @@ class detalle_venta(models.Model):
 	class Meta:
 		db_table = 'detalle_venta'
 		managed  = False
+
+class detalle_usuario_producto(models.Model):
+	id = models.AutoField( primary_key=True, db_column='id')
+	usuario_id = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, db_column='usuario_id')
+	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING, db_column='producto_id')
+
+	class Meta:
+		db_table = 'detalle_usuario_producto'
+		managed  = False
