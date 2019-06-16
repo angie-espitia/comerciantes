@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from main.views import *
@@ -15,6 +15,6 @@ urlpatterns = [
     path('registrar', registrar_comerciante, name='registrar_comerciante' ),
 
     path('compra', view_compra, name='view_compra'),
-    path('proveedores', view_proveedor, name='view_proveedor'),
-    path('proveedores/nuevo', agregar_proveedor, name='agregar_proveedor'),
+    re_path('proveedores/(?P<pk>\d+)', view_proveedor, name='view_proveedor'),
+    re_path('proveedores/nuevo/(?P<pk>\d+)', agregar_proveedor, name='agregar_proveedor'),
 ]

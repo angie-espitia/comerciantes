@@ -89,10 +89,10 @@
         </a>
         <!-- Submenu content proveedores-->
         <div id='proveedores_submenu' class="collapse sidebar-submenu">
-            <a href="{% url 'view_proveedor' %}" class="list-group-item list-group-item-action">
-                <span class="menu-collapsed">Lista de proveedores</span>
+            <a href="{% url 'view_proveedor' pk=request.user.id %}" class="list-group-item list-group-item-action">
+                <span class="menu-collapsed">Lista de proveedores  {{request.user.id}}</span>
             </a>
-            <a href="{% url 'agregar_proveedor' %}" class="list-group-item list-group-item-action">
+            <a href="{% url 'agregar_proveedor' pk=request.user.id %}" class="list-group-item list-group-item-action">
                 <span class="menu-collapsed">Nuevo proveedor</span>
             </a>
         </div>

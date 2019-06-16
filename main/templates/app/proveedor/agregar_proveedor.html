@@ -13,9 +13,27 @@
                   <h1>Agregar Nuevo Restaurante</h1>
                   <br>
                   <div class="col-md-8">
-                  <form method="POST" class="post-form">{% csrf_token %}
-                      {{ form.as_p }}
-                      
+                  <form class="form-inline" method="POST" class="post-form">{% csrf_token %}
+  
+                    <label>Nombre:</label>
+                    <input type="text" class="form-control" id="nombre_proveedor" name="nombre_proveedor" required>
+                    <div class="valid-feedback">Valid.</div>
+                    <div class="invalid-feedback">Please fill out this field.</div>
+
+                    <label>razon social:</label>
+                    <input type="text" class="form-control" id="razon_social_proveedor" name="razon_social_proveedor" required>
+                    <div class="valid-feedback">Valid.</div>
+                    <div class="invalid-feedback">Please fill out this field.</div>
+
+                    <label>direccion:</label>
+                    <input type="text" class="form-control" id="direccion_proveedor" name="direccion_proveedor">
+
+                    <label>telefono:</label>
+                    <input type="text" class="form-control" id="telefono_proveedor" name="telefono_proveedor">
+
+                    <label>celular:</label>
+                    <input type="text" class="form-control" id="celular_proveedor" name="celular_proveedor">
+  
                       <button type="submit" class="save btn btn-primary">Guardar</button>
                       <br><br>
                   </form>

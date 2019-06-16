@@ -75,21 +75,40 @@ def view_compra(request):
 
 @login_required(login_url="/")
 def view_proveedor(request):
-    user = Cliente.objects.get(id=request.user.id)
-    producto = Restaurante.objects.get( restaurante_cliente = user)
-    platillo = Platillo.objects.filter(restaurante_platillo_id = restaurante.id)
-    return render(request, 'app/proveedor/view_proveedor.html')
+    usuario = User.objects.get(id=request.user.id)
+    return render(request, 'app/proveedor/view_proveedor.html', {'usuario':usuario} )
 
 @login_required(login_url="/")
-def agregar_proveedor(request):
+def agregar_proveedor(request, pk):
 
+    # if request.method == "POST":
+    #     form = ProveedorForm(request.POST)
+    #     if form.is_valid():
+    #         menu = form.save(commit=False)
+    #         menu.save()
+    #         return redirect('proveedores')
+    # else:
+    #     form = ProveedorForm()
+
+    # return render(request, 'app/proveedor/agregar_proveedor.html', { 'form' : form } )
+
+    usuario = User.objects.get(id=pk)
+    usu = Usuario.objects.get(id=usuario)
+    usuarioid = usuario.id
     if request.method == "POST":
-        form = ProveedorForm(request.POST)
-        if form.is_valid():
-            menu = form.save(commit=False)
-            menu.save()
-            return redirect('proveedores')
-    else:
-        form = ProveedorForm()
+        proveedor = Proveedor()
+        proveedor.nombre = request.POST['nombre_proveedor']
+        proveedor.razon_social = request.POST['razon_social_proveedor']
+        proveedor.direccion = request.POST['direccion_proveedor']
+        proveedor.telefono = request.POST['telefono_proveedor']
+        proveedor.celular = request.POST['celular_proveedor']
+        proveedor.save()
 
-    return render(request, 'app/proveedor/agregar_proveedor.html', { 'form' : form } )
+        proveedor2 = Proveedor.objects.latest('id')
+        usuario_proveedor = detalle_usuario_producto()
+        usuario_proveedor.usuario_id = usu
+        usuario_proveedor.proveedor_id = proveedor2
+        usuario_proveedor.save()
+        return redirect('proveedores', pk=pk)
+
+    return render(request, 'app/proveedor/agregar_proveedor.html' )

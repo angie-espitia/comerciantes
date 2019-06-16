@@ -8,13 +8,15 @@ from django.contrib.auth.models import User
 class Usuario(models.Model):
 	id = models.OneToOneField(User, primary_key=True, on_delete=models.DO_NOTHING, db_column='id')
 	telefono = models.IntegerField( null = True, db_column='telefono' )
+	email = models.CharField(max_length = 45, db_column='email')
+	direccion = models.CharField(max_length = 45, db_column='direccion')
 
 	class Meta:
 		db_table = 'Usuario'
 		managed  = False
 
 	def __str__(self):
-		return '{}'.format(self.user.first_name, self.user.last_name)
+		return '{}'.format(self.id)
 
 # Manejo de negocio tenderos
 class Proveedor(models.Model):
@@ -35,8 +37,9 @@ class Proveedor(models.Model):
 class Compra(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
 	fecha = models.DateField(db_column='fecha')
+	sub_total = models.IntegerField( db_column='sub_total')
 	total = models.IntegerField( db_column='total')
-	observacion = models.CharField(max_length = 45, db_column='observacion')
+	IVA = models.IntegerField( db_column='IVA')
 
 	class Meta:
 		db_table = 'Compra'
@@ -48,7 +51,7 @@ class Compra(models.Model):
 class Venta(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
 	fecha = models.DateField(db_column='fecha')
-	sub_total = models.IntegerField( db_column='sub_total')
+	subtotal_neto = models.IntegerField( db_column='subtotal_neto')
 	total = models.IntegerField( db_column='total')
 	IVA = models.IntegerField( db_column='IVA')
 	observacion = models.CharField(max_length = 45, db_column='observacion')
@@ -69,12 +72,12 @@ def get_upload_path(instance, filename):
 
 class Producto(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
+	codigo = models.CharField(max_length = 45, db_column='codigo')
 	nombre = models.CharField(max_length = 45, db_column='nombre')
 	stock = models.CharField(max_length = 45, db_column='stock')
 	valor_costo = models.IntegerField( db_column='valor_costo')
 	valor_venta = models.IntegerField( db_column='valor_venta')
 	imagen = models.ImageField( upload_to=get_upload_path , db_column='imagen') #default="../static/my/img/img4.jpg"
-	observacion = models.TextField( db_column='observacion')
 	descripcion = models.TextField( db_column='descripcion')
 	proveedor_id = models.ForeignKey(Proveedor , on_delete=models.DO_NOTHING, db_column='proveedor_id')
 	
@@ -89,7 +92,10 @@ class detalle_compra(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
 	compra_id = models.ForeignKey(Compra, on_delete=models.DO_NOTHING, db_column='compra_id')
 	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING, db_column='producto_id')
+	proveedor_id = models.ForeignKey(Proveedor , on_delete=models.DO_NOTHING, db_column='proveedor_id')
 	cantidad = models.IntegerField( db_column='cantidad')
+	valor_unitario = models.IntegerField( db_column='valor_unitario')
+	total_producto = models.IntegerField( db_column='total_producto')
 
 	class Meta:
 		db_table = 'detalle_compra'
@@ -110,6 +116,7 @@ class detalle_usuario_producto(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
 	usuario_id = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, db_column='usuario_id')
 	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING, db_column='producto_id')
+	proveedor_id = models.ForeignKey(Proveedor , on_delete=models.DO_NOTHING, db_column='proveedor_id')
 
 	class Meta:
 		db_table = 'detalle_usuario_producto'
