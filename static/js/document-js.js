@@ -1,26 +1,17 @@
-$(document).ready(function(){
-	$('[data-toggle="tooltip"]').tooltip();
-
-    $("#info-teacher").popover({
-        html : true,
-        trigger: "manual",
-        content: function() {
-            var content = $(this).attr("data-popover-content");
-            return $(content).children("#info-teacher-data").html();
-        },
-        animation:false
-    }).on("mouseenter", function () {
-        var _this = this;
-        $(this).popover("show");
-        $(".popover").on("mouseleave", function () {
-            $(_this).popover('hide');
-        });
-    }).on("mouseleave", function () {
-        var _this = this;
-        setTimeout(function () {
-            if (!$(".popover:hover").length) {
-                $(_this).popover("hide");
+$( document ).ready(function() {
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
             }
-        }, 300);
-})
-    });
+        }
+    }
+    return cookieValue;
+}
+});

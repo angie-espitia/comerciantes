@@ -4,9 +4,10 @@ from django.contrib.auth.models import User, Group
 from django.template import RequestContext
 from main.validator import *
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from main.models import *
 from main.forms import *
+import json
 
 def index(request):
     return render(request, 'pagina/index.html')
@@ -85,22 +86,23 @@ def agregar_proveedor(request, pk):
     usuario = User.objects.get(id=pk)
     usu = Usuario.objects.get(id=usuario)
     usuarioid = usuario.id
-    
+    # import pdb; pdb.set_trace()
     if request.method == "POST":
-        proveedor = Proveedor()
-        proveedor.nombre = request.POST.get('nombre_proveedor')
-        proveedor.razon_social = request.POST.get('razon_social_proveedor')
-        proveedor.direccion = request.POST.get('direccion_proveedor')
-        proveedor.telefono = request.POST.get('telefono_proveedor')
-        proveedor.celular = request.POST.get('celular_proveedor')
-        proveedor.save()
+        if request.is_ajax():
+            proveedor = Proveedor()
+            proveedor.nombre = request.POST.get('nombre_proveedor')
+            proveedor.razon_social = request.POST.get('razon_social_proveedor')
+            proveedor.direccion = request.POST.get('direccion_proveedor')
+            proveedor.telefono = request.POST.get('telefono_proveedor')
+            proveedor.celular = request.POST.get('celular_proveedor')
+            proveedor.save()
 
-        proveedor2 = Proveedor.objects.latest('id')
-        usuario_proveedor = detalle_usuario_producto()
-        usuario_proveedor.usuario_id = usu
-        usuario_proveedor.proveedor_id = proveedor2
-        usuario_proveedor.save()
-        return redirect('view_proveedor', pk=pk)
+            proveedor2 = Proveedor.objects.latest('id')
+            usuario_proveedor = detalle_usuario_producto()
+            usuario_proveedor.usuario_id = usu
+            usuario_proveedor.proveedor_id = proveedor2
+            usuario_proveedor.save()
+            return redirect('view_proveedor', pk=pk)
 
     return render(request, 'app/proveedor/agregar_proveedor.html' )
 
