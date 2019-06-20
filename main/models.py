@@ -8,7 +8,6 @@ from django.contrib.auth.models import User
 class Usuario(models.Model):
 	id = models.OneToOneField(User, primary_key=True, on_delete=models.DO_NOTHING, db_column='id')
 	telefono = models.IntegerField( null = True, db_column='telefono' )
-	email = models.CharField(max_length = 45, db_column='email')
 	direccion = models.CharField(max_length = 45, db_column='direccion')
 
 	class Meta:

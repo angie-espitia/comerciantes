@@ -10,28 +10,122 @@
  	<br>
     <thead>
       <tr>
-        <th>Firstname</th>
-        <th>Lastname</th>
-        <th>Email</th>
+        <th>Nombre</th>
+        <th>Razón social</th>
+        <th>teléfono</th>
+        <th>dirección</th>
+        <th>celular</th>
+        <th>Acciones</th>
       </tr>
     </thead>
+    {% for row in usuario_proveedor %}
     <tbody>
       <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
+        <td>{{ row.proveedor_id.nombre }}</td>
+        <td>{{ row.proveedor_id.razon_social }}</td>
+        <td>{{ row.proveedor_id.telefono }}</td>
+        <td>{{ row.proveedor_id.direccion }}</td>
+        <td>{{ row.proveedor_id.celular }}</td>
+        <td>
+          <a class="btn btn-primary" href="#">Editar</a> 
+          <a class="btn btn-danger" href="#">Borrar</a>
+        </td>
       </tr>
+      {% empty %}
       <tr>
-        <td>Mary</td>
-        <td>Moe</td>
-        <td>mary@example.com</td>
-      </tr>
-      <tr>
-        <td>July</td>
-        <td>Dooley</td>
-        <td>july@example.com</td>
+        <td class="text-center bg-warning">No hay proveedores registrados</td>
       </tr>
     </tbody>
+    {% endfor %}
   </table>
 
+  <div id="actualizar" style="display: none" class="col-lg-12 col-md-12">
+        <h2>Actualizar:</h2>
+        <div class="col-lg-5 col-md-5 col-sm-5">
+          <label for="id">id</label>
+            <input class="form-control" type="number" id="id" oninput="datos();">
+          </div>
+        <div class="col-lg-5 col-md-5 col-sm-5">
+          <label for="nombre2">Nombre</label>
+            <input class="form-control" type="text" id="nombre2">
+          </div>
+          <div class="col-lg-5 col-md-5 col-sm-5">
+          <label for="apellido2">Apellido</label>
+            <input class="form-control" type="text" id="apellido2">
+          </div>
+          <div class="col-lg-5 col-md-5 col-sm-5">
+            <label for="cedula2">Cedula</label>
+            <input class="form-control" type="number" id="cedula2">
+          </div>
+          <div class="col-lg-10 col-md-10 col-sm-10 text-right">
+            <br>
+            <button class="btn btn-primary font-17" onclick="Actualizar()">Actualizar</button>
+          </div>
+          <div class="col-lg-12 col-md-12"><hr></div>
+      </div>
+
  {% endblock %}
+
+ {% block javascript %}
+ <script>
+ function datos() {
+
+        var id = $("#id").val();
+        var csrftoken = $('[name="csrfmiddlewaretoken"]').val();
+
+        $.ajax({
+          headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+          method: "POST",
+          url: "/docentes/movmiento/act/",
+          dataType: 'json',
+          data: { "csrfmiddlewaretoken": csrftoken,
+              "id": id }
+        })
+
+        .done(function(response){
+          var res = response;
+          var html = '<br>';
+
+          for(var item in res){
+            
+            for(var i = 0; i < res[item].length; i++){
+            
+              $('#nombre2').val(res[item][i].__values__.nombre);
+              $('#apellido2').val(res[item][i].__values__.apellido);
+              $('#cedula2').val(res[item][i].__values__.cedula);
+            }
+            
+          } 
+          
+        });
+      }
+
+      function Actualizar() {
+
+        var id = $("#id").val();
+        var nombre = $("#nombre2").val();
+        var apellido = $("#apellido2").val();
+        var cedula = $("#cedula2").val();
+        var csrftoken = $('[name="csrfmiddlewaretoken"]').val();
+
+        $.ajax({
+          headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+          method: "POST",
+          url: "/docentes/movmiento/act_guar/",
+          dataType: 'json',
+          data: { "csrfmiddlewaretoken": csrftoken,
+              "id": id,
+              "nombre": nombre,
+              "apellido": apellido,
+              "cedula": cedula }
+        })
+
+        .done(function(response){
+          var res = response;
+          
+          location.reload();      
+          
+        });
+      }
+</script>
+ {% endblock %} 

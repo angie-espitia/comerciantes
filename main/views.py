@@ -74,9 +74,10 @@ def view_compra(request):
     return render(request, 'app/compra/view_compra.html')
 
 @login_required(login_url="/")
-def view_proveedor(request):
-    usuario = User.objects.get(id=request.user.id)
-    return render(request, 'app/proveedor/view_proveedor.html', {'usuario':usuario} )
+def view_proveedor(request, pk):
+    usuario = User.objects.get(id=pk)
+    usuario_proveedor = detalle_usuario_producto.objects.filter(usuario_id=usuario.id)
+    return render(request, 'app/proveedor/view_proveedor.html', {'usuario_proveedor':usuario_proveedor} )
 
 @login_required(login_url="/")
 def agregar_proveedor(request, pk):
@@ -109,6 +110,32 @@ def agregar_proveedor(request, pk):
         usuario_proveedor.usuario_id = usu
         usuario_proveedor.proveedor_id = proveedor2
         usuario_proveedor.save()
-        return redirect('proveedores', pk=pk)
+        return redirect('view_proveedor', pk=pk)
 
     return render(request, 'app/proveedor/agregar_proveedor.html' )
+
+
+# def actualizar_docente(request):
+#     controller = Controller_docente()
+#     idd = request.POST.get('id')
+#     docente = {'id':idd}
+#     for key in docente:
+#         print key, ":", docente[key]
+#     resul = controller.listar_mostrar_docentes(docente)
+#     dic = {'resul':resul }
+
+#     return HttpResponse(toJSON(dic), content_type='application/json')
+
+# def actualizar_guardar_docente(request):
+#     controller = Controller_docente()
+#     idd = request.POST.get('id')
+#     docente1 = request.POST.get('nombre')
+#     docente2 = request.POST.get('apellido')
+#     docente3 = request.POST.get('cedula')
+#     docente = {'id':idd, 'nombre':docente1, 'apellido':docente2, 'cedula':docente3}
+#     for key in docente:
+#         print key, ":", docente[key]
+#     resul = controller.actualizar_docentes(docente)
+#     dic = {'resul':resul }
+
+#     return HttpResponse(toJSON(dic), content_type='application/json')

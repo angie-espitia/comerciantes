@@ -16,23 +16,23 @@
                   <form class="form-inline" method="POST" class="post-form">{% csrf_token %}
   
                     <label>Nombre:</label>
-                    <input type="text" class="form-control" id="nombre_proveedor" name="nombre_proveedor" required>
+                    <input type="text" class="form-control" id="nombre_proveedor" required>
                     <div class="valid-feedback">Valid.</div>
-                    <div class="invalid-feedback">Please fill out this field.</div>
+                    <div id="error1" class="invalid-feedback">Please fill out this field.</div>
 
                     <label>razon social:</label>
-                    <input type="text" class="form-control" id="razon_social_proveedor" name="razon_social_proveedor" required>
+                    <input type="text" class="form-control" id="razon_social_proveedor" required>
                     <div class="valid-feedback">Valid.</div>
-                    <div class="invalid-feedback">Please fill out this field.</div>
+                    <div id="error2" class="invalid-feedback">Please fill out this field.</div>
 
                     <label>direccion:</label>
-                    <input type="text" class="form-control" id="direccion_proveedor" name="direccion_proveedor">
+                    <input type="text" class="form-control" id="direccion_proveedor">
 
                     <label>telefono:</label>
-                    <input type="text" class="form-control" id="telefono_proveedor" name="telefono_proveedor">
+                    <input type="text" class="form-control" id="telefono_proveedor">
 
                     <label>celular:</label>
-                    <input type="text" class="form-control" id="celular_proveedor" name="celular_proveedor">
+                    <input type="text" class="form-control" id="celular_proveedor">
   
                       <button type="submit" class="save btn btn-primary">Guardar</button>
                       <br><br>
@@ -42,3 +42,33 @@
               </div>
 
  {% endblock %}
+
+ {% block javascript %}
+ <script>
+  function Guardar() {
+    var nombre = $("#nombre_proveedor").val();
+    var razon = $("#razon_social_proveedor").val();
+    var direccion = $("#direccion_proveedor").val();
+    var celular = $("#celular_proveedor").val();
+    var csrftoken = $('[name="csrfmiddlewaretoken"]').val();
+
+    
+
+    $.ajax({
+      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+      method: "POST",
+      url: "/docentes/movmiento/save/",
+      dataType: 'json',
+      data: { "csrfmiddlewaretoken": csrftoken ,
+          "nombre": nombre,
+          "apellido": apellido,
+          "cedula": cedula }
+    })
+
+    .done(function(response){
+      location.reload();
+    });
+
+  }
+</script>
+ {% endblock %} 
