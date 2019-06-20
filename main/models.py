@@ -7,8 +7,8 @@ from django.contrib.auth.models import User
 
 class Usuario(models.Model):
 	id = models.OneToOneField(User, primary_key=True, on_delete=models.DO_NOTHING, db_column='id')
-	telefono = models.IntegerField( null = True, db_column='telefono' )
-	direccion = models.CharField(max_length = 45, db_column='direccion')
+	telefono = models.IntegerField( db_column='telefono')
+	direccion = models.CharField(max_length = 45, db_column='direccion', null=True)
 
 	class Meta:
 		db_table = 'Usuario'
@@ -19,12 +19,13 @@ class Usuario(models.Model):
 
 # Manejo de negocio tenderos
 class Proveedor(models.Model):
-	id = models.AutoField( primary_key=True, db_column='id')
+	# id = models.AutoField( primary_key=True, db_column='id')
 	nombre = models.CharField(max_length = 45, db_column='nombre')
 	razon_social = models.CharField(max_length = 45, db_column='razon_social')
-	telefono = models.CharField(max_length = 45, db_column='telefono')
-	direccion = models.CharField(max_length = 45, db_column='direccion')
-	celular = models.CharField(max_length = 45, db_column='celular')
+	telefono = models.CharField(max_length = 45, db_column='telefono', null=True)
+	direccion = models.CharField(max_length = 45, db_column='direccion', null=True)
+	celular = models.CharField(max_length = 45, db_column='celular', null=True)
+	email = models.CharField(max_length = 45, db_column='email', null=True)
 
 	class Meta:
 		db_table = 'Proveedor'
@@ -53,7 +54,7 @@ class Venta(models.Model):
 	subtotal_neto = models.IntegerField( db_column='subtotal_neto')
 	total = models.IntegerField( db_column='total')
 	IVA = models.IntegerField( db_column='IVA')
-	observacion = models.CharField(max_length = 45, db_column='observacion')
+	observacion = models.CharField(max_length = 45, db_column='observacion', null=True)
 
 	class Meta:
 		db_table = 'Venta'
@@ -71,14 +72,13 @@ def get_upload_path(instance, filename):
 
 class Producto(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
-	codigo = models.CharField(max_length = 45, db_column='codigo')
+	codigo = models.CharField(max_length = 45, db_column='codigo', null=True)
 	nombre = models.CharField(max_length = 45, db_column='nombre')
 	stock = models.CharField(max_length = 45, db_column='stock')
 	valor_costo = models.IntegerField( db_column='valor_costo')
 	valor_venta = models.IntegerField( db_column='valor_venta')
-	imagen = models.ImageField( upload_to=get_upload_path , db_column='imagen') #default="../static/my/img/img4.jpg"
-	descripcion = models.TextField( db_column='descripcion')
-	proveedor_id = models.ForeignKey(Proveedor , on_delete=models.DO_NOTHING, db_column='proveedor_id')
+	imagen = models.ImageField( upload_to=get_upload_path , db_column='imagen', null=True) #default="../static/my/img/img4.jpg"
+	descripcion = models.TextField( db_column='descripcion', null=True)
 	
 	class Meta:
 		db_table = 'Producto'
@@ -114,7 +114,7 @@ class detalle_venta(models.Model):
 class detalle_usuario_producto(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
 	usuario_id = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, db_column='usuario_id')
-	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING, db_column='producto_id')
+	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING, db_column='producto_id', null=True)
 	proveedor_id = models.ForeignKey(Proveedor , on_delete=models.DO_NOTHING, db_column='proveedor_id')
 
 	class Meta:

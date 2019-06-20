@@ -82,27 +82,17 @@ def view_proveedor(request, pk):
 @login_required(login_url="/")
 def agregar_proveedor(request, pk):
 
-    # if request.method == "POST":
-    #     form = ProveedorForm(request.POST)
-    #     if form.is_valid():
-    #         menu = form.save(commit=False)
-    #         menu.save()
-    #         return redirect('proveedores')
-    # else:
-    #     form = ProveedorForm()
-
-    # return render(request, 'app/proveedor/agregar_proveedor.html', { 'form' : form } )
-
     usuario = User.objects.get(id=pk)
     usu = Usuario.objects.get(id=usuario)
     usuarioid = usuario.id
+    
     if request.method == "POST":
         proveedor = Proveedor()
-        proveedor.nombre = request.POST['nombre_proveedor']
-        proveedor.razon_social = request.POST['razon_social_proveedor']
-        proveedor.direccion = request.POST['direccion_proveedor']
-        proveedor.telefono = request.POST['telefono_proveedor']
-        proveedor.celular = request.POST['celular_proveedor']
+        proveedor.nombre = request.POST.get('nombre_proveedor')
+        proveedor.razon_social = request.POST.get('razon_social_proveedor')
+        proveedor.direccion = request.POST.get('direccion_proveedor')
+        proveedor.telefono = request.POST.get('telefono_proveedor')
+        proveedor.celular = request.POST.get('celular_proveedor')
         proveedor.save()
 
         proveedor2 = Proveedor.objects.latest('id')
