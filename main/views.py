@@ -4,7 +4,8 @@ from django.contrib.auth.models import User, Group
 from django.template import RequestContext
 from main.validator import *
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.urls import NoReverseMatch, reverse
 from main.models import *
 from main.forms import *
 import json
@@ -95,6 +96,7 @@ def agregar_proveedor(request, pk):
             proveedor.direccion = request.POST.get('direccion_proveedor')
             proveedor.telefono = request.POST.get('telefono_proveedor')
             proveedor.celular = request.POST.get('celular_proveedor')
+            proveedor.email = request.POST.get('email_proveedor')
             proveedor.save()
 
             proveedor2 = Proveedor.objects.latest('id')
@@ -102,7 +104,7 @@ def agregar_proveedor(request, pk):
             usuario_proveedor.usuario_id = usu
             usuario_proveedor.proveedor_id = proveedor2
             usuario_proveedor.save()
-            return redirect('view_proveedor', pk=pk)
+            return HttpResponse('ok')
 
     return render(request, 'app/proveedor/agregar_proveedor.html' )
 

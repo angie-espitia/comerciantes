@@ -5,6 +5,8 @@
 
  <h1 class="mt-4">Nuevo proveedores</h1> 
 
+ <div id="alert-form"></div>
+
  <div class="container backwhite">
     <div class="col-md-12 row">
       <div class="col-md-6 mx-auto">
@@ -57,7 +59,6 @@
  {% block javascript %}
  <script>
   $('#formulario_registro_proveedor').submit(function(event){
-    alert('aca');
     var user = $("#usuario_id").text();
     var nombre = $("#nombre_proveedor").val();
     var razon = $("#razon_social_proveedor").val();
@@ -65,8 +66,7 @@
     var telefono = $("#telefono_proveedor").val();
     var email = $("#email_proveedor").val();
     var celular = $("#celular_proveedor").val();
-    var csrftoken = getCookie('csrftoken');
-alert(csrftoken);
+    var csrftoken = '{{ csrf_token }}';
 
     validacion_nombre = /^([A-Za-zñÑáéíóúÁÉÍÓÚ\s])*$/;
     validacion_numeros = /^([0-9])*$/;
@@ -95,29 +95,27 @@ alert(csrftoken);
       $('#errorcelular').html('<small class="form-text text-muted">Ingrese un número de celular válido sin dejar espacios.</small>');
       return false;
     } else {
-      alert(user)
       $.ajax({
         headers: {'X-CSRF-TOKEN': csrftoken},
         method: 'POST',
         url: '/proveedores/nuevo/'+user+'/',
-        dataType: 'json',
-        data: { "csrfmiddlewaretoken": csrftoken ,
-            "nombre_proveedor": nombre,
-            "razon_social_proveedor": razon,
-            "direccion_proveedor": direccion,
-            "celular_proveedor": celular,
-            "telefono_proveedor": telefono,
-            "email_proveedor":email },
-            success:function(data){
-              alert(data);
-              alert(ok);
-            },
-        error: function(xhr, status, errorThrown) {
-            alert(status);
-            alert(errorThrown);
-            alert(responseText);
+        dataType: 'text',
+        data: { 'csrfmiddlewaretoken': csrftoken ,
+            'nombre_proveedor': nombre,
+            'razon_social_proveedor': razon,
+            'direccion_proveedor': direccion,
+            'celular_proveedor': celular,
+            'telefono_proveedor': telefono,
+            'email_proveedor':email },
+        success:function(data){
+          $('#alert-form').html('<div class="alert alert-success">Se han registrado los datos con <strong>éxito!</strong></div>');
+        },
+        error: function(xhr, e, x, status) {
+            console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
+            $('#alert-form').html('<div class="alert alert-danger, ">Ha ocurrido un error <strong>' + xhr.status + ':' + e + '</strong></div>');
         }
       });
+      return false;
     }
 
   });
