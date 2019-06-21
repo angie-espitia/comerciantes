@@ -9,6 +9,10 @@ from django.urls import NoReverseMatch, reverse
 from main.models import *
 from main.forms import *
 import json
+from django.core import serializers
+
+def toJSON(self):
+    return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
 def index(request):
     return render(request, 'pagina/index.html')
@@ -107,6 +111,27 @@ def agregar_proveedor(request, pk):
             return HttpResponse('ok')
 
     return render(request, 'app/proveedor/agregar_proveedor.html' )
+
+def editar_proveedor(request, pk):
+    #import pdb; pdb.set_trace()
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+    if request.method == "POST" and request.is_ajax():
+            form = ProveedorForm(request.POST)
+            form.save()
+            return JsonResponse({"success":True}, status=200)
+    else:
+        dic = {
+            'id':proveedor.id,
+            'nombre':proveedor.nombre,
+            'razon_social':proveedor.razon_social,
+            'email':proveedor.email,
+            'telefono':proveedor.telefono,
+            'direccion':proveedor.direccion,
+            'celular':proveedor.celular
+        }
+        print(dic)
+        return HttpResponse(toJSON(dic), content_type='application/json')
+
 
 
 # def actualizar_docente(request):

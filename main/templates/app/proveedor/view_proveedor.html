@@ -20,17 +20,18 @@
       </tr>
     </thead>
     {% for row in usuario_proveedor %}
+    td
     <tbody>
       <tr>
-        <td>{{ row.proveedor_id.nombre }}</td>
+        <td>{{ row.proveedor_id.nombre }}<div id="id" hidden="false">{{row.proveedor_id.id}}</div></td>
         <td>{{ row.proveedor_id.razon_social }}</td>
         <td>{{ row.proveedor_id.telefono }}</td>
         <td>{{ row.proveedor_id.direccion }}</td>
         <td>{{ row.proveedor_id.celular }}</td>
         <td>{{ row.proveedor_id.email }}</td>
         <td>
-          <a class="btn btn-primary" href="#">Editar</a> 
-          <a class="btn btn-danger" href="#">Borrar</a>
+          <a class="btn btn-primary" href="{% url 'editar_proveedor' pk=row.proveedor_id.id %}"  data-toggle="modal" data-target="#editarmodal" onclick="datos()">Editar</a> 
+          <a class="btn btn-danger" href="#"  data-toggle="modal" data-target="#eliminarmodal">Borrar</a>
         </td>
       </tr>
       {% empty %}
@@ -41,30 +42,75 @@
     {% endfor %}
   </table>
 
-  <div id="actualizar" style="display: none" class="col-lg-12 col-md-12">
-        <h2>Actualizar:</h2>
-        <div class="col-lg-5 col-md-5 col-sm-5">
-          <label for="id">id</label>
-            <input class="form-control" type="number" id="id" oninput="datos();">
-          </div>
-        <div class="col-lg-5 col-md-5 col-sm-5">
-          <label for="nombre2">Nombre</label>
-            <input class="form-control" type="text" id="nombre2">
-          </div>
-          <div class="col-lg-5 col-md-5 col-sm-5">
-          <label for="apellido2">Apellido</label>
-            <input class="form-control" type="text" id="apellido2">
-          </div>
-          <div class="col-lg-5 col-md-5 col-sm-5">
-            <label for="cedula2">Cedula</label>
-            <input class="form-control" type="number" id="cedula2">
-          </div>
-          <div class="col-lg-10 col-md-10 col-sm-10 text-right">
-            <br>
-            <button class="btn btn-primary font-17" onclick="Actualizar()">Actualizar</button>
-          </div>
-          <div class="col-lg-12 col-md-12"><hr></div>
+  <!-- Modal Editar -->
+  <div class="modal fade" id="editarmodal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+<!-- 
+        {% include "app/proveedor/edit_view.html" %} -->
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Editar Proveedor</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+
+              <form class="form" method="POST" id="formulario_editar_proveedor">
+                {% csrf_token %}
+                
+                
+                <div class="form-group">
+                  <label>Nombre de contácto:</label>
+                  <input type="text" class="form-control" id="nombre_p">
+                  <div id="errornombre"></div>
+                </div>
+
+                <div class="form-group">
+                  <label>razon social:</label>
+                  <input type="text" class="form-control" id="razon_social_p" required>
+                </div>
+
+                <div class="form-group">
+                  <label>direccion:</label>
+                  <input type="text" class="form-control" id="direccion_p">
+                </div>
+
+                <div class="form-group">
+                  <label>email:</label>
+                  <input type="text" class="form-control" id="email_p">
+                  <div id="erroremail"></div>
+                </div>
+
+                <div class="form-group">
+                  <label>telefono:</label>
+                  <input type="text" class="form-control" id="telefono_p">
+                  <div id="errortelefono"></div>
+                </div>
+
+                <div class="form-group">
+                  <label>celular:</label>
+                  <input type="text" class="form-control" id="celular_p">
+                  <div id="errorcelular"></div>
+                </div>
+
+
+                  <button class="save btn btn-primary" type="submit">Guardar</button>
+                  <br><br>
+              </form>
+
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
       </div>
+    </div>
+  </div>
 
  {% endblock %}
 
@@ -72,32 +118,25 @@
  <script>
  function datos() {
 
-        var id = $("#id").val();
-        var csrftoken = $('[name="csrfmiddlewaretoken"]').val();
+        var id = $("#id").text();
+        var csrftoken = '{{ csrf_token }}';
 
         $.ajax({
-          headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-          method: "POST",
-          url: "/docentes/movmiento/act/",
+          headers: {'X-CSRF-TOKEN': csrftoken},
+          method: "GET",
+          url: '/proveedores/editar/'+id+'/',
           dataType: 'json',
           data: { "csrfmiddlewaretoken": csrftoken,
               "id": id }
         })
 
         .done(function(response){
+          console.log(response);
+          console.log(response.email);
           var res = response;
           var html = '<br>';
-
-          for(var item in res){
-            
-            for(var i = 0; i < res[item].length; i++){
-            
-              $('#nombre2').val(res[item][i].__values__.nombre);
-              $('#apellido2').val(res[item][i].__values__.apellido);
-              $('#cedula2').val(res[item][i].__values__.cedula);
-            }
-            
-          } 
+          
+          $('#nombre_p').val(res.nombre);
           
         });
       }
