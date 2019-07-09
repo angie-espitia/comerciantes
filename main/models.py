@@ -65,10 +65,10 @@ class Venta(models.Model):
 
 ## subir imagenes por carpeta de usuario
 def get_upload_path(instance, filename):
-    ext = filename.split('.')
-    file_path = 'photos/{user_id}/{ext}'.format(
-         user_id=instance.User.id, ext=ext) 
-    return file_path
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    detalle_usuario = detalle_usuario_producto.objects.filter(producto_id=instance.id)
+    print(instance.id)
+    return 'user_{0}/{1}'.format(detalle_usuario.usuario_id.id, filename)
 
 class Producto(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
