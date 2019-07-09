@@ -113,12 +113,17 @@ def agregar_proveedor(request, pk):
     return render(request, 'app/proveedor/agregar_proveedor.html' )
 
 def editar_proveedor(request, pk):
-    #import pdb; pdb.set_trace()
     proveedor = get_object_or_404(Proveedor, pk=pk)
     if request.method == "POST" and request.is_ajax():
-            form = ProveedorForm(request.POST)
-            form.save()
-            return JsonResponse({"success":True}, status=200)
+        # import pdb; pdb.set_trace()
+        proveedor.nombre = request.POST.get('nombre_proveedor')
+        proveedor.razon_social = request.POST.get('razon_social_proveedor')
+        proveedor.direccion = request.POST.get('direccion_proveedor')
+        proveedor.telefono = request.POST.get('telefono_proveedor')
+        proveedor.celular = request.POST.get('celular_proveedor')
+        proveedor.email = request.POST.get('email_proveedor')
+        proveedor.save()
+        return HttpResponse('ok')
     else:
         dic = {
             'id':proveedor.id,
@@ -128,6 +133,22 @@ def editar_proveedor(request, pk):
             'telefono':proveedor.telefono,
             'direccion':proveedor.direccion,
             'celular':proveedor.celular
+        }
+        print(dic)
+        return HttpResponse(toJSON(dic), content_type='application/json')
+
+def eliminar_proveedor(request, pk):
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+    usuario_proveedor = get_object_or_404(detalle_usuario_producto, proveedor_id=proveedor.id)
+    if request.method == "POST" and request.is_ajax():
+        usuario_proveedor.delete()
+        proveedor.delete()
+
+        return HttpResponse('ok')
+    else:
+        dic = {
+            'id':proveedor.id,
+            'razon_social':proveedor.razon_social,
         }
         print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
