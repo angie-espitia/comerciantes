@@ -1,15 +1,22 @@
 from django import forms
 
-from .models import Proveedor
+from .models import Producto
 
-class ProveedorForm(forms.ModelForm):
+class ProductoForm(forms.ModelForm):
 
     class Meta:
-        model = Proveedor
-        fields = ('nombre', 'razon_social', 'direccion', 'telefono', 'celular', 'email')
-        labels = { 'nombre': 'Nombre de la persona encargada o a contactar', 
-        			'razon_social': 'Empresa', 
-        			'direccion': 'Direccion', 
-        			'telefono': 'Teléfono', 
-        			'celular': 'Celular', 
+        model = Producto
+        fields = ('__all__' )
+        exclude = ('codigo',)
+        labels = { 'nombre': 'Nombre del Producto', 
+        			'stock': 'stock', 
+        			'valor_costo': 'valor_costo', 
+        			'valor_venta': 'venta', 
+        			'descripcion': 'descripcion', 
         		  }
+        widgets = { 'nombre': forms.TextInput(attrs={'class':'form-control'}),
+        			'stock': forms.TextInput(attrs={'class':'form-control'}),
+        			'valor_costo': forms.TextInput(attrs={'class':'form-control'}),
+        			'valor_venta': forms.TextInput(attrs={'class':'form-control'}),
+        			'descripcion': forms.Textarea(attrs={'class':'form-control'}),
+				}

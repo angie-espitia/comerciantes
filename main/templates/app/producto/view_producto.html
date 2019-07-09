@@ -1,0 +1,140 @@
+{% extends 'app/base_app.html' %}
+{% block title %} Inicio {% endblock %}
+
+{%  block content %}
+
+ <h1 class="mt-4">Lista de proveedores</h1>
+
+ <table class="table table-striped table-bordered">
+
+ 	<br>
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Stock</th>
+        <th>Valor costo</th>
+        <th>Valor venta</th>
+        <th>Imagen</th>
+        <th>Proveedor</th>
+        <th>Descripción</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    {% for row in usuario_producto %}
+    <tbody>
+      <tr>
+        <td>{{ row.producto_id.codigo }}</td>
+        <td>{{ row.producto_id.nombre }}</td>
+        <td>{{ row.producto_id.stock }}</td>
+        <td>{{ row.producto_id.valor_costo }}</td>
+        <td>{{ row.producto_id.valor_venta }}</td>
+        <td>{{ row.producto_id.imagen }}</td>
+        <td>{{ row.proveedor_id.razon_social }}</td>
+        <td>{{ row.producto_id.descripcion }}</td>
+        <td>
+          <a id="{{row.proveedor_id.id}}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a> 
+          <a id="{{row.proveedor_id.id}}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" class="text-center bg-warning">No hay productos registrados</td>
+      </tr>
+    </tbody>
+    {% endfor %}
+  </table>
+
+  <!-- Modal Editar -->
+  <div class="modal fade" id="editarmodal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Editar Proveedor</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+
+              <form class="form" method="POST" id="formulario_editar_proveedor">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                  <input id="id_p" hidden="false">
+                  <label>Nombre de contácto:</label>
+                  <input type="text" class="form-control" id="nombre_p">
+                  <div id="errornombre"></div>
+                </div>
+
+                <div class="form-group">
+                  <label>razon social:</label>
+                  <input type="text" class="form-control" id="razon_social_p" required>
+                </div>
+
+                <div class="form-group">
+                  <label>direccion:</label>
+                  <input type="text" class="form-control" id="direccion_p">
+                </div>
+
+                <div class="form-group">
+                  <label>email:</label>
+                  <input type="text" class="form-control" id="email_p">
+                  <div id="erroremail"></div>
+                </div>
+
+                <div class="form-group">
+                  <label>telefono:</label>
+                  <input type="text" class="form-control" id="telefono_p">
+                  <div id="errortelefono"></div>
+                </div>
+
+                <div class="form-group">
+                  <label>celular:</label>
+                  <input type="text" class="form-control" id="celular_p">
+                  <div id="errorcelular"></div>
+                </div>
+
+
+                  <button class="save btn btn-primary" type="submit" onclick="Actualizar()">Guardar</button>
+                  <br><br>
+              </form>
+
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar -->
+  <div class="modal fade" id="eliminarmodal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Eliminar Proveedor</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+
+              <div id="id_p2" hidden="false"></div>
+              <p id="mensaje2"></p>
+              <button class="save btn btn-danger" type="submit" onclick="Eliminar()">Eliminar</button> <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+
+            </div>
+
+      </div>
+    </div>
+  </div>
+
+ {% endblock %}

@@ -153,30 +153,42 @@ def eliminar_proveedor(request, pk):
         print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
 
+@login_required(login_url="/")
+def view_producto(request, pk):
+    usuario = User.objects.get(id=pk)
+    usuario_producto = detalle_usuario_producto.objects.filter(usuario_id=usuario.id)
+    return render(request, 'app/producto/view_producto.html', {'usuario_producto':usuario_producto} )
 
 @login_required(login_url="/")
 def agregar_producto(request, pk):
 
     usuario = User.objects.get(id=pk)
     usu = Usuario.objects.get(id=usuario)
-    usuarioid = usuario.id
+    usuario_proveedor = detalle_usuario_producto.objects.filter(usuario_id=usuario.id)
+    print(usuario_proveedor)
     # import pdb; pdb.set_trace()
     if request.method == "POST":
-        if request.is_ajax():
-            producto = Producto()
-            producto.nombre = request.POST.get('nombre_producto')
-            producto.stock = request.POST.get('stock_producto')
-            producto.valor_costo = request.POST.get('valos_costo_producto')
-            producto.valor_venta = request.POST.get('valor_venta_producto')
-            producto.descripcion = request.POST.get('descripcion_producto')
-            producto.imagen = request.FILES.get('imagen_producto')
+        form = ProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            producto = form.save(commit=False)
+            # producto.nombre = request.POST.get('nombre_producto')
+            # producto.stock = request.POST.get('stock_producto')
+            # producto.valor_costo = request.POST.get('valos_costo_producto')
+            # producto.valor_venta = request.POST.get('valor_venta_producto')
+            # producto.descripcion = request.POST.get('descripcion_producto')
+            # producto.imagen = request.FILES.get('imagen')
             producto.save()
 
-            producto2 = producto.objects.latest('id')
+            producto2 = Producto.objects.latest('id')
+            proveedor_recibido = request.POST.get('usuario_proveedor')
+            proveedor_p = Proveedor.objects.get(id=proveedor_recibido)
             usuario_producto = detalle_usuario_producto()
             usuario_producto.usuario_id = usu
             usuario_producto.producto_id = producto2
+            usuario_producto.proveedor_id = proveedor_p
             usuario_producto.save()
-            return HttpResponse('ok')
+            return redirect('view_producto', pk=usuario.pk)
+    else:
+        form = ProductoForm()
 
-    return render(request, 'app/producto/agregar_producto.html' )
+    return render(request, 'app/producto/agregar_producto.html', {'form' : form, 'usuario_proveedor': usuario_proveedor } )
