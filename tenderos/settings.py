@@ -65,26 +65,26 @@ WSGI_APPLICATION = 'tenderos.wsgi.application'
 
 # ## db para mysql
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'bd_tenderos',
-#         'USER': 'root',
-#         'PASSWORD': '1234567',
-#         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-#         'PORT': '3306',
-#         'STORAGE_ENGINE': 'INNODB'
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'bd_tenderos',
+        'USER': 'root',
+        'PASSWORD': '1234567',
+        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'PORT': '3306',
+        'STORAGE_ENGINE': 'INNODB'
+    }
+}
 
 # ### db para sqlite 
 
-DATABASES = {  
-   'default': {  
-     'ENGINE': 'django.db.backends.sqlite3',  
-     'NAME': 'db_tenderos',  
-   }  
-} 
+# DATABASES = {  
+#    'default': {  
+#      'ENGINE': 'django.db.backends.sqlite3',  
+#      'NAME': 'db_tenderos',  
+#    }  
+# } 
 
 
 # Password validation

@@ -113,12 +113,18 @@ def agregar_proveedor(request, pk):
     return render(request, 'app/proveedor/agregar_proveedor.html' )
 
 def editar_proveedor(request, pk):
-    #import pdb; pdb.set_trace()
     proveedor = get_object_or_404(Proveedor, pk=pk)
     if request.method == "POST" and request.is_ajax():
-            form = ProveedorForm(request.POST)
-            form.save()
-            return JsonResponse({"success":True}, status=200)
+        # import pdb; pdb.set_trace()
+        proveedor = Proveedor()
+        proveedor.nombre = request.POST.get('nombre_proveedor')
+        proveedor.razon_social = request.POST.get('razon_social_proveedor')
+        proveedor.direccion = request.POST.get('direccion_proveedor')
+        proveedor.telefono = request.POST.get('telefono_proveedor')
+        proveedor.celular = request.POST.get('celular_proveedor')
+        proveedor.email = request.POST.get('email_proveedor')
+        proveedor.save()
+        return HttpResponse('<h1>Page was found</h1>')
     else:
         dic = {
             'id':proveedor.id,
