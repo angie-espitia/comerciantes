@@ -44,7 +44,7 @@
             <a href="#" class="list-group-item list-group-item-action">
                 <span class="menu-collapsed">Lista de productos</span>
             </a>
-            <a href="#" class="list-group-item list-group-item-action">
+            <a href="{% url 'agregar_producto' pk=request.user.id %}" class="list-group-item list-group-item-action">
                 <span class="menu-collapsed">Nuevo producto</span>
             </a>
         </div>

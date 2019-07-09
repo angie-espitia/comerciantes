@@ -19,4 +19,6 @@ urlpatterns = [
     re_path('proveedores/nuevo/(?P<pk>\d+)/', agregar_proveedor, name='agregar_proveedor'),
     re_path('proveedores/editar/(?P<pk>\d+)/', editar_proveedor, name='editar_proveedor'),
     re_path('proveedores/eliminar/(?P<pk>\d+)/', eliminar_proveedor, name='eliminar_proveedor'),
+
+    re_path('productos/nuevo/(?P<pk>\d+)/', agregar_producto, name='agregar_producto'),
 ]

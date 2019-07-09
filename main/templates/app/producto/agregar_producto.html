@@ -1,0 +1,120 @@
+{% extends 'app/base_app.html' %}
+{% block title %} Inicio {% endblock %}
+
+{%  block content %}
+
+ <h1 class="mt-4">Nuevo producto</h1> 
+
+ <div id="alert-form"></div>
+
+ <div class="container backwhite">
+    <div class="col-md-12 row">
+      <div class="col-md-6 mx-auto">
+        <form class="form" method="POST" id="formulario_registro_producto" enctype=”multipart/form-data”>
+          {% csrf_token %}
+          
+          <div class="form-group">
+            <label>Nombre del producto:</label>
+            <input type="text" class="form-control" id="nombre_producto" required>
+            <div id="errornombre"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Cantidad en stock:</label>
+            <input type="text" class="form-control" id="stock_producto" required>
+            <div id="errorcantidad"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Valor costo:</label>
+            <input type="text" class="form-control" id="valor_costo_producto" required>
+            <div id="errorvalor_costo"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Valor venta:</label>
+            <input type="text" class="form-control" id="valor_venta_producto" required>
+            <div id="errorvalor_venta"></div>
+          </div>
+
+          <div class="form-group">
+            <label>imagen:</label>
+            <input type="file" id="imagen_productos" class="filestyle" data-buttonText="Select a File">
+            <div id="errorimagen"></div>
+          </div>
+
+          <div class="form-group">
+            <label>descripción del producto (opcional):</label>
+            <input type="text" class="form-control" id="descripcion_producto">
+          </div>
+
+            <button class="save btn btn-primary" type="submit">Guardar</button>
+            <br><br>
+        </form>
+      </div>    
+    </div>
+  </div>
+
+ {% endblock %}
+
+ {% block javascript %}
+ <script>
+  $('#formulario_registro_producto').submit(function(event){
+    var user = $("#usuario_id").text();
+    var nombre = $("#nombre_producto").val();
+    var stock = $("#stock_producto").val();
+    var valor_costo = $("#valor_costo_producto").val();
+    var valor_venta = $("#valor_venta_producto").val();
+    var descripcion = $("#descripcion_producto").val();
+    var csrftoken = '{{ csrf_token }}';
+
+    // validacion_nombre = /^([A-Za-zñÑáéíóúÁÉÍÓÚ\s])*$/;
+    validacion_numeros = /^([0-9])*$/;
+
+   if (!validacion_numeros.test(valor_venta)){
+      $('#valor_venta_producto').focus();
+      $('#errorvalor_venta').html('<small class="form-text text-muted">Ingrese un valor de venta válido sin dejar espacios.</small>');
+      return false;
+    } else if (!validacion_numeros.test(valor_costo)){
+      $('#errorvalor_venta').html('');
+      $('#valor_costo_producto').focus();
+      $('#errorvalor_costo').html('<small class="form-text text-muted">Ingrese un costo válido sin dejar espacios.</small>');
+      return false;
+    } else {
+      var paqueteDeDatos = new FormData();
+      paqueteDeDatos.append('csrfmiddlewaretoken', csrftoken);
+      paqueteDeDatos.append('imagen_producto', $('#imagen_productos')[0].files[0]);
+      paqueteDeDatos.append('nombre_producto', nombre);
+      paqueteDeDatos.append('stock_producto', stock);
+      paqueteDeDatos.append('descripcion_producto', descripcion);
+      paqueteDeDatos.append('valor_costo_producto', valor_costo);
+      paqueteDeDatos.append('valor_venta_producto', valor_venta);
+      console.log(paqueteDeDatos);
+      $.ajax({
+        headers: {'X-CSRF-TOKEN': csrftoken},
+        method: 'POST',
+        url: '/productos/nuevo/'+user+'/',
+        dataType: 'text',
+        data: paqueteDeDatos,
+        processData: false,
+        // success:function(data){
+          
+        // },
+        // error: function(xhr, e, x, status) {
+          
+
+        // }
+      })
+      .done(function(response) {
+        alert( "èxito" );
+        $('#alert-form').html('<div class="alert alert-success">Se han registrado los datos con <strong>éxito!</strong></div>');
+      })
+      .fail(function(xhr, e, x, status) {
+        alert(xhr.status + " -- " + status + " -- " + e + " -- " + x);
+            console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
+            $('#alert-form').html('<div class="alert alert-danger, ">Ha ocurrido un error <strong>' + xhr.status + ':' + e + '</strong></div>');
+      })
+    }
+  });
+</script>
+ {% endblock %} 

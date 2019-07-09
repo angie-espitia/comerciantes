@@ -152,3 +152,31 @@ def eliminar_proveedor(request, pk):
         }
         print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
+
+
+@login_required(login_url="/")
+def agregar_producto(request, pk):
+
+    usuario = User.objects.get(id=pk)
+    usu = Usuario.objects.get(id=usuario)
+    usuarioid = usuario.id
+    # import pdb; pdb.set_trace()
+    if request.method == "POST":
+        if request.is_ajax():
+            producto = Producto()
+            producto.nombre = request.POST.get('nombre_producto')
+            producto.stock = request.POST.get('stock_producto')
+            producto.valor_costo = request.POST.get('valos_costo_producto')
+            producto.valor_venta = request.POST.get('valor_venta_producto')
+            producto.descripcion = request.POST.get('descripcion_producto')
+            producto.imagen = request.FILES.get('imagen_producto')
+            producto.save()
+
+            producto2 = producto.objects.latest('id')
+            usuario_producto = detalle_usuario_producto()
+            usuario_producto.usuario_id = usu
+            usuario_producto.producto_id = producto2
+            usuario_producto.save()
+            return HttpResponse('ok')
+
+    return render(request, 'app/producto/agregar_producto.html' )
