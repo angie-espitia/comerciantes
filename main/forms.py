@@ -20,3 +20,10 @@ class ProductoForm(forms.ModelForm):
         			'valor_venta': forms.TextInput(attrs={'class':'form-control'}),
         			'descripcion': forms.Textarea(attrs={'class':'form-control'}),
 				}
+
+class ProductoForm_dos(forms.ModelForm):
+
+    class Meta:
+        model = Producto
+        fields = ('__all__' )
+        exclude = ('codigo', )

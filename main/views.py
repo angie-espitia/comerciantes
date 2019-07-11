@@ -157,8 +157,7 @@ def eliminar_proveedor(request, pk):
 def view_producto(request, pk):
     usuario = User.objects.get(id=pk)
     usuario_producto = detalle_usuario_producto.objects.filter(usuario_id=usuario.id)
-    usuario_proveedor = detalle_usuario_producto.objects.filter(usuario_id=usuario.id)
-    return render(request, 'app/producto/view_producto.html', {'usuario_producto':usuario_producto, 'usuario_proveedor': usuario_proveedor } )
+    return render(request, 'app/producto/view_producto.html', {'usuario_producto':usuario_producto} )
 
 @login_required(login_url="/")
 def agregar_producto(request, pk):
@@ -193,27 +192,50 @@ def agregar_producto(request, pk):
     return render(request, 'app/producto/agregar_producto.html', {'form' : form, 'usuario_proveedor': usuario_proveedor } )
 
 @login_required(login_url="/")
-def edit_restaurante(request, pk):
+def editar_producto(request, pk):
     producto_edit = get_object_or_404(Producto, pk=pk)
-    usuario = User.objects.get(id=pk)
+    usuario = User.objects.get(id=pk)    
+    usuario_proveedor = detalle_usuario_producto.objects.filter(usuario_id=usuario.id)
     proveedor_producto = detalle_usuario_producto.objects.filter(producto_id=producto_edit.id)
 
     if request.method == "POST":
-        producto_edit.producto_edit_cliente_id = request.user.id
-        producto_edit.image = request.FILES.get('imagen')
-        producto_edit.save()
-        return HttpResponse('ok')
+        form = ProductoForm_dos(request.POST, request.FILES)
+        if form.is_valid():
+            producto = form.save(commit=False)            
+            producto.save()
+
+            proveedor_recibido = request.POST.get('usuario_proveedor')
+            proveedor_p = Proveedor.objects.get(id=proveedor_recibido)
+            proveedor_producto.proveedor_id = proveedor_p
+            proveedor_producto.save()
+
+            return HttpResponse('ok')
     else:
-        dic = {
-            'id':producto_edit.id,
-            'codigo':producto_edit.codigo,
-            'nombre':producto_edit.nombre,
-            'stock':producto_edit.stock,
-            'valor_costo':producto_edit.valor_costo,
-            'valor_venta':producto_edit.valor_venta,
-            'imagen':producto_edit.imagen,
-            'descripcion':producto_edit.descripcion,
-            'proveedor':proveedor_producto.proveedor_id.razon_social,
-        }
-        print(dic)
-        return HttpResponse(toJSON(dic), content_type='application/json')
+        form = ProductoForm_dos()
+    return render(request, 'app/producto/editar_producto.html', {'form' : form, 'usuario_proveedor': usuario_proveedor } )
+
+# @login_required(login_url="/")
+# def edit_restaurante(request, pk):
+#     producto_edit = get_object_or_404(Producto, pk=pk)
+#     usuario = User.objects.get(id=pk)
+#     proveedor_producto = detalle_usuario_producto.objects.filter(producto_id=producto_edit.id)
+
+#     if request.method == "POST":
+#         producto_edit.producto_edit_cliente_id = request.user.id
+#         producto_edit.image = request.FILES.get('imagen')
+#         producto_edit.save()
+#         return HttpResponse('ok')
+#     else:
+#         dic = {
+#             'id':producto_edit.id,
+#             'codigo':producto_edit.codigo,
+#             'nombre':producto_edit.nombre,
+#             'stock':producto_edit.stock,
+#             'valor_costo':producto_edit.valor_costo,
+#             'valor_venta':producto_edit.valor_venta,
+#             'imagen':producto_edit.imagen,
+#             'descripcion':producto_edit.descripcion,
+#             'proveedor':proveedor_producto.proveedor_id.razon_social,
+#         }
+#         print(dic)
+#         return HttpResponse(toJSON(dic), content_type='application/json')
