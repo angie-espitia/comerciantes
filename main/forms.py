@@ -7,7 +7,7 @@ class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
         fields = ('__all__' )
-        exclude = ('codigo',)
+        exclude = ('codigo', 'imagen')
         labels = { 'nombre': 'Nombre del Producto', 
         			'stock': 'stock', 
         			'valor_costo': 'valor_costo', 

@@ -66,8 +66,7 @@ class Venta(models.Model):
 ## subir imagenes por carpeta de usuario
 def get_upload_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    detalle_usuario = detalle_usuario_producto.objects.filter(producto_id=instance.id)
-    print(instance.id)
+    detalle_usuario = detalle_usuario_producto.objects.get(producto_id=instance.id)
     return 'user_{0}/{1}'.format(detalle_usuario.usuario_id.id, filename)
 
 class Producto(models.Model):

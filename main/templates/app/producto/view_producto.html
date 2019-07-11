@@ -1,4 +1,5 @@
 {% extends 'app/base_app.html' %}
+{% load staticfiles %}
 {% block title %} Inicio {% endblock %}
 
 {%  block content %}
@@ -29,11 +30,15 @@
         <td>{{ row.producto_id.stock }}</td>
         <td>{{ row.producto_id.valor_costo }}</td>
         <td>{{ row.producto_id.valor_venta }}</td>
-        <td>{{ row.producto_id.imagen }}</td>
+        {% if row.producto_id.imagen %}
+        <td> <img src="/media/{{ row.producto_id.imagen }}" class="img-fluid" style="max-width: 150px;">  </td>
+        {% else %}
+        <td> <img src="{% static 'img/nofoto.png' %}" class="img-fluid" style="max-width: 50px;"> </td>
+        {% endif %}
         <td>{{ row.proveedor_id.razon_social }}</td>
         <td>{{ row.producto_id.descripcion }}</td>
         <td>
-          <a id="{{row.proveedor_id.id}}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a> 
+          <a id="{{row.producto_id.id}}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a> 
           <a id="{{row.proveedor_id.id}}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a>
         </td>
       </tr>
@@ -62,45 +67,55 @@
               <form class="form" method="POST" id="formulario_editar_proveedor">
                 {% csrf_token %}
                 
-                <div class="form-group">
-                  <input id="id_p" hidden="false">
-                  <label>Nombre de contácto:</label>
-                  <input type="text" class="form-control" id="nombre_p">
-                  <div id="errornombre"></div>
+          <div class="form-group">
+            <label>Nombre del producto:</label>
+            <input type="text" class="form-control" name="nombre" id="nombre_p" required>
+            <div id="errornombre"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Cantidad en stock:</label>
+            <input type="text" class="form-control" name="stock" id="stock_p" required>
+            <div id="errorcantidad"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Valor costo:</label>
+            <input type="text" class="form-control" name="valor_costo" id="valor_costo_p" required>
+            <div id="errorvalor_costo"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Valor venta:</label>
+            <input type="text" class="form-control" name="valor_venta" id="valor_venta_p" required>
+            <div id="errorvalor_venta"></div>
+          </div>
+
+
+          <div class="form-group">
+            <label>descripción del producto (opcional):</label>
+            <input type="text" class="form-control" name="descripcion" id="descripcion_p">
+          </div>
+
+                 <div class="form-group">
+                  <label>imagen:</label>
+                  <input type="file" name="imagen" class="filestyle" data-buttonText="Select a File">
+                  <div id="errorimagen"></div>
                 </div>
 
                 <div class="form-group">
-                  <label>razon social:</label>
-                  <input type="text" class="form-control" id="razon_social_p" required>
-                </div>
-
-                <div class="form-group">
-                  <label>direccion:</label>
-                  <input type="text" class="form-control" id="direccion_p">
-                </div>
-
-                <div class="form-group">
-                  <label>email:</label>
-                  <input type="text" class="form-control" id="email_p">
-                  <div id="erroremail"></div>
-                </div>
-
-                <div class="form-group">
-                  <label>telefono:</label>
-                  <input type="text" class="form-control" id="telefono_p">
-                  <div id="errortelefono"></div>
-                </div>
-
-                <div class="form-group">
-                  <label>celular:</label>
-                  <input type="text" class="form-control" id="celular_p">
-                  <div id="errorcelular"></div>
+                  <select class="form-control" name='usuario_proveedor' >
+                    <option value="0" >Seleccionar</option>
+                    {% for row in usuario_proveedor %}
+                      <option value="{{ row.id }}"> {{ row.proveedor_id.razon_social }} </option>
+                    {% endfor %}
+                  </select>
                 </div>
 
 
-                  <button class="save btn btn-primary" type="submit" onclick="Actualizar()">Guardar</button>
-                  <br><br>
-              </form>
+                <button class="save btn btn-primary" type="submit">Guardar</button>
+                <br><br>
+            </form>
 
             </div>
 
@@ -138,3 +153,35 @@
   </div>
 
  {% endblock %}
+
+ {% block javascript %}
+ <script>
+    function datos(id) {
+
+        console.log(id);
+        var csrftoken = '{{ csrf_token }}';
+        $.ajax({
+          headers: {'X-CSRF-TOKEN': csrftoken},
+          method: "GET",
+          url: '/proveedores/editar/'+id+'/',
+          dataType: 'json',
+          data: { "csrfmiddlewaretoken": csrftoken,
+              "id": id }
+        })
+
+        .done(function(response){
+          console.log(response);
+          var res = response;
+
+          $('#nombre_p').val(res.nombre);
+          $('#stock_p').val(res.stock);
+          $('#valor_costo_p').val(res.valor_costo);
+          $('#valor_venta_p').val(res.valor_venta);
+          $('#descripcion_p').val(res.descripcion);
+          $('#imagen_p').val(res.imagen);
+          &('#proveedor_p').val(res.proveedor);
+          
+        });
+      }
+</script>
+ {% endblock %} 
