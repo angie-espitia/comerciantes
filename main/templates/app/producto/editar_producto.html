@@ -9,7 +9,7 @@
             <!-- Modal body -->
             <div class="modal-body">
 
-              <form class="form" method="POST" id="formulario_editar_proveedor">
+              <form class="form" method="POST" id="formulario_editar_proveedor" >
                 {% csrf_token %}
                 
                 {{ form.as_p }}
@@ -40,3 +40,4 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
+</div>

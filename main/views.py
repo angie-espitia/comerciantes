@@ -224,41 +224,22 @@ def editar_producto(request, pk):
     
     return render(request, 'app/producto/editar_producto.html', {'form' : form, 'usuario_proveedor2': usuario_proveedor2 } )
 
-class ProductoUpdate(UpdateView):
-    model = Producto
-    second_model = User
-    template_name = 'app/producto/editar_producto.html'
-    form_class = ProductoForm_dos
-    success_url = HttpResponse('ok')
+@login_required(login_url="/")
+def eliminar_producto(request, pk):
+    producto = get_object_or_404(Producto, pk=pk)
+    usuario_producto = get_object_or_404(detalle_usuario_producto, producto_id=producto.id)
+    if request.method == "POST" and request.is_ajax():
+        usuario_producto.delete()
+        producto.delete()
 
-
-    def get_context_data(self, **kwargs):
-        context = super(ProductoUpdate, self).get_context_data(**kwargs)
-        pk = self.kwargs.get('pk', 0)
-        producto = self.model.objects.get(id=pk)
-        usuario = self.second_model.objects.get(id=request.user.id)
-        usuario_proveedor2 = detalle_usuario_producto.objects.filter(usuario_id=usuario.id)
-        proveedor_producto = detalle_usuario_producto.objects.filter(producto_id=producto_edit.id)
-        if 'form' not in context:
-            context['form'] = self.form_class()
-        if 'form2' not in context:
-            context['form2'] = self.second_form_class(instance=usuario)
-        context['id'] = pk
-        return context
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object
-        id_producto = kwargs['pk']
-        producto = self.model.objects.get(id=id_producto)
-        usuario = self.second_model.objects.get(id=producto.usuario_id)
-        form = self.form_class(request.POST, instance=producto)
-        form2 = self.second_form_class(request.POST, instance=usuario)
-        if form.is_valid() and form2.is_valid():
-            form.save()
-            form2.save()
-            return HttpResponseRedirect(self.get_success_url())
-        else:
-            return HttpResponseRedirect(self.get_success_url())
+        return HttpResponse('ok')
+    else:
+        dic = {
+            'id':producto.id,
+            'nombre':producto.nombre,
+        }
+        print(dic)
+        return HttpResponse(toJSON(dic), content_type='application/json')
 
 # @login_required(login_url="/")
 # def edit_restaurante(request, pk):
