@@ -53,44 +53,9 @@
   <!-- Modal Editar -->
   <div class="modal fade" id="editarmodal">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content">
 
-            <!-- Modal Header -->
-            <div class="modal-header">
-              <h4 class="modal-title">Editar Proveedor</h4>
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-
-            <!-- Modal body -->
-            <div class="modal-body">
-
-              <form class="form" method="POST" id="formulario_editar_proveedor">
-                {% csrf_token %}
-                
-                {{ form.as_p }}
-                
-                <div class="form-group">
-                  <select class="form-control" name='usuario_proveedor' >
-                    <option value="0" >Seleccionar</option>
-                    {% for row in usuario_proveedor %}
-                      <option value="{{ row.id }}"> {{ row.proveedor_id.razon_social }} </option>
-                    {% endfor %}
-                  </select>
-                </div>
-
-
-                <button class="save btn btn-primary" type="submit">Guardar</button>
-                <br><br>
-            </form>
-
-            </div>
-
-            <!-- Modal footer -->
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-            </div>
-
-      </div>
+      {% include 'app/producto/editar_producto.html' %}
+      
     </div>
   </div>
 
@@ -120,7 +85,7 @@
 
  {% endblock %}
 
-<!--  {% block javascript %}
+ {% block javascript %}
  <script>
     function datos(id) {
 
@@ -129,25 +94,27 @@
         $.ajax({
           headers: {'X-CSRF-TOKEN': csrftoken},
           method: "GET",
-          url: '/proveedores/editar/'+id+'/',
+          url: '/productos/editar/'+id+'/',
           dataType: 'json',
           data: { "csrfmiddlewaretoken": csrftoken,
               "id": id }
-        })
-
-        .done(function(response){
-          console.log(response);
-          var res = response;
-
-          $('#nombre_p').val(res.nombre);
-          $('#stock_p').val(res.stock);
-          $('#valor_costo_p').val(res.valor_costo);
-          $('#valor_venta_p').val(res.valor_venta);
-          $('#descripcion_p').val(res.descripcion);
-          $('#imagen_p').val(res.imagen);
-          &('#proveedor_p').val(res.proveedor);
-          
+        }).done(function(response){
+          alert('ok');
         });
+
+        // .done(function(response){
+        //   console.log(response);
+        //   var res = response;
+
+        //   $('#nombre_p').val(res.nombre);
+        //   $('#stock_p').val(res.stock);
+        //   $('#valor_costo_p').val(res.valor_costo);
+        //   $('#valor_venta_p').val(res.valor_venta);
+        //   $('#descripcion_p').val(res.descripcion);
+        //   $('#imagen_p').val(res.imagen);
+        //   &('#proveedor_p').val(res.proveedor);
+          
+        // });
       }
 </script>
- {% endblock %}  -->
+ {% endblock %} 

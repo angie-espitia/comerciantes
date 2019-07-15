@@ -23,14 +23,14 @@
                 <div class="form-group">
                   <select class="form-control" name='usuario_proveedor' >
                     <option value="0" >Seleccionar</option>
-                    {% for row in usuario_proveedor %}
+                    {% for row in usuario_proveedor2 %}
                       <option value="{{ row.id }}"> {{ row.proveedor_id.razon_social }} </option>
                     {% endfor %}
                   </select>
                 </div>
 
 
-                <button class="save btn btn-primary" type="submit" onclick="Actualizar()">Guardar</button>
+                <button class="save btn btn-primary" type="submit" >Guardar</button>
                 <br><br>
             </form>
 

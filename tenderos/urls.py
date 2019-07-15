@@ -22,6 +22,7 @@ urlpatterns = [
 
     re_path('productos/(?P<pk>\d+)/', view_producto, name='view_producto'),
     re_path('productos/nuevo/(?P<pk>\d+)/', agregar_producto, name='agregar_producto'),
+    re_path('productos/editar/(?P<pk>\d+)/', editar_producto, name='editar_producto'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

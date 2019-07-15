@@ -27,3 +27,4 @@ class ProductoForm_dos(forms.ModelForm):
         model = Producto
         fields = ('__all__' )
         exclude = ('codigo', )
+        
