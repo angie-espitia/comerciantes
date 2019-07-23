@@ -57,10 +57,10 @@
         </a>
         <!-- Submenu content compras-->
         <div id='compras_submenu' class="collapse sidebar-submenu">
-            <a href="{% url 'view_compra' %}" class="list-group-item list-group-item-action">
+            <a href="{% url 'view_compra' pk=request.user.id %}" class="list-group-item list-group-item-action">
                 <span class="menu-collapsed">Lista de compras</span>
             </a>
-            <a href="#" class="list-group-item list-group-item-action">
+            <a href="{% url 'agregar_compra' pk=request.user.id %}" class="list-group-item list-group-item-action">
                 <span class="menu-collapsed">Nueva compra</span>
             </a>
         </div>
@@ -73,7 +73,7 @@
         </a>
         <!-- Submenu content ventas-->
         <div id='ventas_submenu' class="collapse sidebar-submenu">
-            <a href="{% url 'view_compra' %}" class="list-group-item list-group-item-action">
+            <a href="{% url 'view_compra' pk=request.user.id %}" class="list-group-item list-group-item-action">
                 <span class="menu-collapsed">Lista de ventas</span>
             </a>
             <a href="#" class="list-group-item list-group-item-action">

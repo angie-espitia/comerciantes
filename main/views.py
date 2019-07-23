@@ -77,14 +77,11 @@ def logout(request):
 def principal_app(request):
     return render(request, 'app/index_app.html')
 
-@login_required(login_url="/")
-def view_compra(request):
-    return render(request, 'app/compra/view_compra.html')
 
 @login_required(login_url="/")
 def view_proveedor(request, pk):
     usuario = User.objects.get(id=pk)
-    usuario_proveedor = detalle_usuario_producto.objects.filter(usuario_id=usuario.id)
+    usuario_proveedor = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=True)
     return render(request, 'app/proveedor/view_proveedor.html', {'usuario_proveedor':usuario_proveedor} )
 
 @login_required(login_url="/")
@@ -157,8 +154,10 @@ def eliminar_proveedor(request, pk):
 
 @login_required(login_url="/")
 def view_producto(request, pk):
-    usuario = User.objects.get(id=pk)
-    usuario_producto = detalle_usuario_producto.objects.filter(usuario_id=usuario.id)
+    usuario = User.objects.get(id=pk)  
+    # productos = Producto.objects.all()
+    usuario_producto = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=False)
+    
     return render(request, 'app/producto/view_producto.html', {'usuario_producto':usuario_producto} )
 
 @login_required(login_url="/")
@@ -166,7 +165,7 @@ def agregar_producto(request, pk):
 
     usuario = User.objects.get(id=pk)
     usu = Usuario.objects.get(id=usuario)
-    usuario_proveedor = detalle_usuario_producto.objects.filter(usuario_id=usuario.id)
+    usuario_proveedor = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=True)
     # import pdb; pdb.set_trace()
     if request.method == "POST":
         form = ProductoForm(request.POST, request.FILES)
@@ -241,28 +240,56 @@ def eliminar_producto(request, pk):
         print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
 
-# @login_required(login_url="/")
-# def edit_restaurante(request, pk):
-#     producto_edit = get_object_or_404(Producto, pk=pk)
-#     usuario = User.objects.get(id=pk)
-#     proveedor_producto = detalle_usuario_producto.objects.filter(producto_id=producto_edit.id)
+@login_required(login_url="/")
+def view_compra(request, pk):
+    usuario = User.objects.get(id=pk)
+    return render(request, 'app/compra/view_compra.html')
 
-#     if request.method == "POST":
-#         producto_edit.producto_edit_cliente_id = request.user.id
-#         producto_edit.image = request.FILES.get('imagen')
-#         producto_edit.save()
-#         return HttpResponse('ok')
-#     else:
-#         dic = {
-#             'id':producto_edit.id,
-#             'codigo':producto_edit.codigo,
-#             'nombre':producto_edit.nombre,
-#             'stock':producto_edit.stock,
-#             'valor_costo':producto_edit.valor_costo,
-#             'valor_venta':producto_edit.valor_venta,
-#             'imagen':producto_edit.imagen,
-#             'descripcion':producto_edit.descripcion,
-#             'proveedor':proveedor_producto.proveedor_id.razon_social,
-#         }
-#         print(dic)
-#         return HttpResponse(toJSON(dic), content_type='application/json')
+@login_required(login_url="/")
+def agregar_compra(request, pk):
+
+    usuario = User.objects.get(id=pk)
+    usu = Usuario.objects.get(id=usuario)
+    usuarioid = usuario.id
+    # import pdb; pdb.set_trace()
+    if request.method == "POST":
+        form = CompraForm(request.POST)
+        if form.is_valid():
+            compra = form.save(commit=False)            
+            detalle_compra_form_set = DetalleCompraFormSet(request.POST)
+            compra.save()
+            detalle_compra_form_set.instance = compra
+            detalle_compra_form_set.save()
+            return redirect('view_producto', pk=usuario.pk)
+    else:
+        form = CompraForm()
+        detalle_compra_formset=DetalleCompraFormSet()
+
+    return render(request, 'app/compra/agregar_compra.html', {'form' : form, 'detalle_compra_formset': detalle_compra_formset } )
+
+    # if request.method == "POST":
+    #     if request.is_ajax():
+    #         compra = Compra()
+    #         compra.fecha = request.POST.get('fecha_compra')
+    #         compra.subtotal_neto = request.POST.get('subtotal_neto_compra')
+    #         compra.IVA = request.POST.get('IVA_compra')
+    #         compra.total = request.POST.get('total_compra')
+    #         compra.save()
+
+    #         compra2 = Compra.objects.latest('id')
+    #         proveedor_recibido = request.POST.get('usuario_proveedor')
+    #         proveedor_p = Proveedor.objects.get(id=proveedor_recibido)
+    #         producto_recibido = request.POST.get('usuario_producto')
+    #         producto_p = Producto.objects.get(id=producto_recibido)
+
+    #         detalle_compra = detalle_compra()
+    #         detalle_compra.proveedor_id = proveedor_p
+    #         detalle_compra.producto_id = producto_p
+    #         detalle_compra.compra_id = compra2
+    #         detalle_compra.cantidad = request.POST.get('cantidad_compra')
+    #         detalle_compra.valor_unitario = request.POST.get('valor_unitario_compra')
+    #         detalle_compra.total_producto = request.POST.get('total_producto_compra')
+    #         detalle_compra.save()
+    #         return HttpResponse('ok')
+
+    # return render(request, 'app/compra/agregar_compra.html' )

@@ -31,7 +31,7 @@
         <td>{{ row.producto_id.valor_costo }}</td>
         <td>{{ row.producto_id.valor_venta }}</td>
         {% if row.producto_id.imagen %}
-        <td> <img src="/media/{{ row.producto_id.imagen }}" class="img-fluid" style="max-width: 150px;">  </td>
+        <td> <img src="/media/{{ row.producto_id.imagen }}" class="img-fluid" style="max-width: 150px; max-height: 120px;">  </td>
         {% else %}
         <td> <img src="{% static 'img/nofoto.png' %}" class="img-fluid" style="max-width: 50px;"> </td>
         {% endif %}
