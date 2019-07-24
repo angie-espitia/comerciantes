@@ -23,7 +23,7 @@
       
         <div id="form_set">
         {% for form in detalle_compra_formset %}
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered" onkeyup='calcularMult()'>
         <br>
           <thead>
             <tr>
@@ -49,7 +49,7 @@
       
       
         <div id="empty_form" style="display:none">
-          <table class="table table-striped table-bordered">
+          <table class="table table-striped table-bordered" onkeyup='calcularMult()'>
             <tbody>
               <tr>
                 <td>{{ detalle_compra_formset.empty_form.producto_id }}</td>
@@ -92,13 +92,31 @@
 <script type='text/javascript'>
   var form_num = 0;
   $(document).ready(function() {
-        $("#additemsbutton").on('click',function(event)
-        {
-          ++form_num;
-          $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_num));
-          $("#additems").val(form_num + 1);
-       });
+      $("#additemsbutton").on('click',function(event)
+      {
+        ++form_num;
+        $('#form_set').append(
+          $('#empty_form').html().replace(/__prefix__/g, form_num)
+
+          );
+        $("#additems").val(form_num + 1);
      });
+  });
+
+  function calcularMult(){
+    var idx = $("#additems").val();
+    console.log(idx);
+    for (var i = 0; i <= idx; i++) {
+        $("#id_detalle_compra_set-" + i + "-total_producto").val($("#id_detalle_compra_set-" + i + "-cantidad").val() * $("#id_detalle_compra_set-" + i + "-valor_unitario").val());
+    };
+    
+    var sum = 0;
+    $("input[id^='id_detalle_compra_set--total_producto']").each(function() {
+      sum += Number($(this).val());
+     });           
+      $("#id_sub_total").val(sum);
+  };
+
 </script>
  {% endblock %} 
 
