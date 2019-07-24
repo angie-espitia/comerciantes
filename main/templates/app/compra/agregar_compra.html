@@ -7,107 +7,98 @@
 
  <div id="alert-form"></div>
 
- <div class="container backwhite">
-    <div class="col-md-12 row">
-      <div class="col-md-6 mx-auto">
-        <form class="form" method="POST"  id="formulario_registro_compra" enctype="multipart/form-data">
-          {% csrf_token %}
-          {{ form.as_p }}
-{{ detalle_compra_formset.management_form }}
-{% for form in detalle_compra_formset.forms %}
-    <div class="item">
-      {{ form.as_p }}
-      <p style=""><a class="delete" href="#">Delete</a></p>
-    </div>
-    {% endfor %}
-    <p><a id="add" href="#">Add another item</a></p>
-            <br>
-            <button class="save btn btn-primary" type="submit">Guardar</button>
-            <br><br>
-        </form>
-      </div>    
-    </div>
+ <div class="container">
+    
+    <form class="form" method="POST"  id="formulario_registro_compra" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-4 col-sm-4 col-lg-4">
+          {{ form.fecha.label }}
+          <br>
+          {{ form.fecha }}
+        </div>
+      </div>
+
+      {{ detalle_compra_formset.management_form }}
+      
+        <div id="form_set">
+        {% for form in detalle_compra_formset %}
+        <table class="table table-striped table-bordered">
+        <br>
+          <thead>
+            <tr>
+              <th>{{ form.producto_id.label }}</th>
+              <th>{{ form.proveedor_id.label }}</th>
+              <th>{{ form.cantidad.label }}</th>
+              <th>{{ form.valor_unitario.label }}</th>
+              <th>{{ form.total_producto.label }}</th>
+            </tr>          
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ form.producto_id }}</td>
+              <td>{{ form.proveedor_id }}</td>
+              <td>{{ form.cantidad }}</td>
+              <td>{{ form.valor_unitario }}</td>
+              <td>{{ form.total_producto }}</td>
+            </tr>
+          </tbody>
+        </table>
+        {% endfor %}
+        </div>
+      
+      
+        <div id="empty_form" style="display:none">
+          <table class="table table-striped table-bordered">
+            <tbody>
+              <tr>
+                <td>{{ detalle_compra_formset.empty_form.producto_id }}</td>
+                <td>{{ detalle_compra_formset.empty_form.proveedor_id }}</td>
+                <td>{{ detalle_compra_formset.empty_form.cantidad }}</td>
+                <td>{{ detalle_compra_formset.empty_form.valor_unitario }}</td>
+                <td>{{ detalle_compra_formset.empty_form.total_producto }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <input type="hidden" value="1" name="additems" id="additems">
+        <input type="button" id="additemsbutton" value="Add Project">
+  
+      <div class="row">
+        <div class="col-md-4 col-sm-4 col-lg-4 p-2">
+          {{ form.sub_total.label }}
+          {{ form.sub_total }}
+        </div>
+        <div class="col-md-4 col-sm-4 col-lg-4 p-2">
+          {{ form.IVA.label }}
+          {{ form.IVA }}
+        </div>
+        <div class="col-md-4 col-sm-4 col-lg-4 p-2">
+          {{ form.total.label }}
+          {{ form.total }}
+        </div>
+      </div>
+
+      <br>
+      <button class="save btn btn-primary" type="submit">Guardar</button>
+      <br><br>
+    </form>    
+
   </div>
 
  {% endblock %} 
 
   {% block javascript %}
- <script>
-$(document).ready(function () {
-    // Code adapted from http://djangosnippets.org/snippets/1389/  
-    function updateElementIndex(el, prefix, ndx) {
-        var id_regex = new RegExp('(' + prefix + '-\\d+-)');
-        var replacement = prefix + '-' + ndx + '-';
-        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex,
-        replacement));
-        if (el.id) el.id = el.id.replace(id_regex, replacement);
-        if (el.name) el.name = el.name.replace(id_regex, replacement);
-    }
-
-    function deleteForm(btn, prefix) {
-        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
-        if (formCount > 1) {
-            // Delete the item/form
-            $(btn).parents('.item').remove();
-            var forms = $('.item'); // Get all the forms  
-            // Update the total number of forms (1 less than before)
-            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
-            var i = 0;
-            // Go through the forms and set their indices, names and IDs
-            for (formCount = forms.length; i < formCount; i++) {
-                $(forms.get(i)).children().children().each(function () {
-                    if ($(this).attr('type') == 'text') updateElementIndex(this, prefix, i);
-                });
-            }
-        } // End if
-        else {
-            alert("You have to enter at least one todo item!");
-        }
-        return false;
-    }
-
-    function addForm(btn, prefix) {
-        var formCount = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
-        // You can only submit a maximum of 10 todo items 
-        console.log(formCount);
-        if (formCount < 10) {
-            // Clone a form (without event handlers) from the first form
-            var row = $(".item:first").clone(false).get(0);
-            // Insert it after the last form
-            $(row).removeAttr('id').hide().insertAfter(".item:last").slideDown(300);
-
-            // Remove the bits we don't want in the new row/form
-            // e.g. error messages
-            $(".errorlist", row).remove();
-            $(row).children().removeClass("error");
-
-            // Relabel or rename all the relevant bits
-            $(row).children().children().each(function () {
-                updateElementIndex(this, prefix, formCount);
-                $(this).val("");
-            });
-
-            // Add an event handler for the delete item/form link 
-            $(row).find(".delete").click(function () {
-                return deleteForm(this, prefix);
-            });
-            // Update the total form count
-            $("#id_" + prefix + "-TOTAL_FORMS").val(formCount + 1);
-        } // End if
-        else {
-            alert("Sorry, you can only enter a maximum of ten items.");
-        }
-        return false;
-    }
-    // Register the click event handlers
-    $("#add").click(function () {
-        return addForm(this, "form");
-    });
-
-    $(".delete").click(function () {
-        return deleteForm(this, "form");
-    });
-});
-  </script>
+<script type='text/javascript'>
+  var form_num = 0;
+  $(document).ready(function() {
+        $("#additemsbutton").on('click',function(event)
+        {
+          ++form_num;
+          $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_num));
+          $("#additems").val(form_num + 1);
+       });
+     });
+</script>
  {% endblock %} 
 

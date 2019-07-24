@@ -39,6 +39,8 @@ class CompraForm(forms.ModelForm):
     class Meta:
         model = Compra
         fields = ('__all__' )
+        widgets = { 'fecha': forms.DateInput(attrs={'class':'form-control', 'type':'date', 'input_formats': '%d/%m/%Y'}),
+                }
 
     def __init__(self, *args, **kwargs):
         super(CompraForm, self).__init__(*args, **kwargs)
@@ -72,4 +74,4 @@ class DetalleCompraForm(forms.ModelForm):
             raise forms.ValidationError("Debe ingresar un valor unitario valido")
         return valor_unitario
 
-DetalleCompraFormSet = inlineformset_factory(Compra, detalle_compra, form=DetalleCompraForm, max_num=10)
+DetalleCompraFormSet = inlineformset_factory(Compra, detalle_compra, form=DetalleCompraForm, extra=1)
