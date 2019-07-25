@@ -254,12 +254,14 @@ def agregar_compra(request, pk):
     # import pdb; pdb.set_trace()
     if request.method == "POST":
         form = CompraForm(request.POST)
-        if form.is_valid():
-            compra = form.save(commit=False)            
-            detalle_compra_form_set = DetalleCompraFormSet(request.POST)
+        detalle_compra_form_set = DetalleCompraFormSet(request.POST)
+        if form.is_valid() and detalle_compra_form_set.is_valid():
+            compra = form.save(commit=False)
             compra.save()
-            detalle_compra_form_set.instance = compra
-            detalle_compra_form_set.save()
+            for ff in detalle_compra_form_set:
+                ff.instance = compra
+                print(ff.cleaned_data)
+                ff.save()
             return redirect('view_producto', pk=usuario.pk)
     else:
         form = CompraForm()

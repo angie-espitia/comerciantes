@@ -62,12 +62,12 @@
           </table>
         </div>
         <input type="hidden" value="1" name="additems" id="additems">
-        <input type="button" id="additemsbutton" value="Add Project">
+        <input type="button" id="additemsbutton" value="+" class="btn btn-success btn-lg">
   
       <div class="row">
         <div class="col-md-4 col-sm-4 col-lg-4 p-2">
-          {{ form.sub_total.label }}
-          {{ form.sub_total }}
+          {{ form.subtotal_neto.label }}
+          {{ form.subtotal_neto }}
         </div>
         <div class="col-md-4 col-sm-4 col-lg-4 p-2">
           {{ form.IVA.label }}
@@ -106,15 +106,19 @@
   function calcularMult(){
     var idx = $("#additems").val();
     console.log(idx);
+    var sum = 0;
     for (var i = 0; i <= idx; i++) {
         $("#id_detalle_compra_set-" + i + "-total_producto").val($("#id_detalle_compra_set-" + i + "-cantidad").val() * $("#id_detalle_compra_set-" + i + "-valor_unitario").val());
-    };
-    
-    var sum = 0;
-    $("input[id^='id_detalle_compra_set--total_producto']").each(function() {
-      sum += Number($(this).val());
-     });           
-      $("#id_sub_total").val(sum);
+        $("input[id^='id_detalle_compra_set-"+ i + "-total_producto']").each(function() {
+          sum += Number($(this).val());
+         });
+    };       
+    $("#id_subtotal_neto").val(sum);
+    var bla = parseInt($("#id_subtotal_neto").val() / (1.19));
+    console.log(bla);
+    $("#id_IVA").val($("#id_subtotal_neto").val() - bla );
+    $("#id_total").val(parseInt($("#id_subtotal_neto").val()) + parseInt($("#id_IVA").val()) ).val();
+
   };
 
 </script>

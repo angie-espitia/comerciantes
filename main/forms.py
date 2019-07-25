@@ -62,16 +62,4 @@ class DetalleCompraForm(forms.ModelForm):
                 'class': 'form-control'
             })
 
-    def clean_cantidad(self):
-        cantidad = self.cleaned_data['cantidad']
-        if cantidad == '':
-            raise forms.ValidationError("Debe ingresar una cantidad valida")
-        return cantidad
-
-    def clean_valor_unitario(self):
-        valor_unitario = self.cleaned_data['valor_unitario']
-        if valor_unitario == '':
-            raise forms.ValidationError("Debe ingresar un valor unitario valido")
-        return valor_unitario
-
 DetalleCompraFormSet = inlineformset_factory(Compra, detalle_compra, form=DetalleCompraForm, extra=1)
