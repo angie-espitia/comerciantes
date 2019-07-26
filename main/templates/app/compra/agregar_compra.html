@@ -97,8 +97,8 @@
         ++form_num;
         $('#form_set').append(
           $('#empty_form').html().replace(/__prefix__/g, form_num)
-
           );
+        $('#id_detalle_compra_set-TOTAL_FORMS').val(form_num + 1);
         $("#additems").val(form_num + 1);
      });
   });

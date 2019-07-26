@@ -11,7 +11,11 @@ from main.forms import *
 import json
 from django.core import serializers
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+import datetime
 
+def convertir_fecha(o):
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
 
 def toJSON(self):
     return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
@@ -241,13 +245,36 @@ def eliminar_producto(request, pk):
         return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
-def view_compra(request, pk):
-    usuario = User.objects.get(id=pk)
+def view_compra(request):    
     return render(request, 'app/compra/view_compra.html')
 
 @login_required(login_url="/")
-def agregar_compra(request, pk):
+def list_compra(request, pk):
+    usuario = User.objects.get(id=pk)
+    usuario_producto = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=True)
+    array_p = []
+    for f in usuario_producto:
+        array_p.append(f.proveedor_id)
+    detalle_de_compras = detalle_compra.objects.filter(proveedor_id__in=array_p)
+    dic = {}
+    var = -1
+    for i in detalle_de_compras:
+        if i.compra_id.id == var:
+            var = i.compra_id.id
+        else:
+            dic[i.compra_id.id] = {
+                'id_compra':i.compra_id.id,
+                'fecha':convertir_fecha(i.compra_id.fecha),
+                'proveedor':i.proveedor_id.razon_social,
+                'subtotal_neto':i.compra_id.subtotal_neto,
+                'IVA':i.compra_id.IVA,
+                'total':i.compra_id.total,
+            }
+            var = i.compra_id.id
+    return HttpResponse(toJSON(dic), content_type='application/json')
 
+@login_required(login_url="/")
+def agregar_compra(request, pk):
     usuario = User.objects.get(id=pk)
     usu = Usuario.objects.get(id=usuario)
     usuarioid = usuario.id
@@ -258,11 +285,9 @@ def agregar_compra(request, pk):
         if form.is_valid() and detalle_compra_form_set.is_valid():
             compra = form.save(commit=False)
             compra.save()
-            for ff in detalle_compra_form_set:
-                ff.instance = compra
-                print(ff.cleaned_data)
-                ff.save()
-            return redirect('view_producto', pk=usuario.pk)
+            detalle_compra_form_set.instance = compra
+            detalle_compra_form_set.save()
+            return redirect('view_compra')
     else:
         form = CompraForm()
         detalle_compra_formset=DetalleCompraFormSet()

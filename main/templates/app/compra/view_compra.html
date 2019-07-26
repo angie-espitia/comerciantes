@@ -6,32 +6,61 @@
  <h1 class="mt-4">Lista Compras</h1>
 
  <table class="table table-striped table-bordered">
-
- 	<br>
     <thead>
       <tr>
-        <th>Firstname</th>
-        <th>Lastname</th>
-        <th>Email</th>
+        <th>Fecha de la compra</th>
+        <th>Proveedor</th>
+        <th>Subtotal</th>
+        <th>IVA</th>
+        <th>Total</th>
+        <th>Acciones</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="respuesta_j">
       <tr>
-        <td>John</td>
-        <td>Doe</td>
-        <td>john@example.com</td>
-      </tr>
-      <tr>
-        <td>Mary</td>
-        <td>Moe</td>
-        <td>mary@example.com</td>
-      </tr>
-      <tr>
-        <td>July</td>
-        <td>Dooley</td>
-        <td>july@example.com</td>
+        <td colspan="6" class="text-center bg-warning">No hay productos registrados</td>
       </tr>
     </tbody>
   </table>
 
  {% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+
+  id = $('#usuario_id').text();
+  console.log(id);
+        var csrftoken = '{{ csrf_token }}';
+        $.ajax({
+          headers: {'X-CSRF-TOKEN': csrftoken},
+          method: "GET",
+          url: '/compras/lista/'+id+'/',
+          dataType: 'json',
+          data: { "csrfmiddlewaretoken": csrftoken,
+              "id": id }
+        })
+
+        .done(function(response){
+          // console.log(response);
+          var res = response;
+
+          var html = '';
+          for(var item in res){
+            console.log(res[item]);
+            html +='<tr>';
+            html +='<td>'+res[item].fecha+'</td>';
+            html +='<td>'+res[item].proveedor+'</td>';
+            html +='<td>'+res[item].subtotal_neto+'</td>';
+            html +='<td>'+res[item].IVA+'</td>';
+            html +='<td>'+res[item].total+'</td>';
+            html +='<td><a class="btn btn-success btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="detalles('+res[item].id_compra+')"> Detalles </a>';
+            html +='<a class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2('+res[item].id_compra+')">Borrar</a></td>';
+            html +='</tr>';
+          }
+
+          $("#respuesta_j").html(html)
+          
+        });
+
+</script>
+{% endblock %} 

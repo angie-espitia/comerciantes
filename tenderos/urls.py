@@ -14,7 +14,8 @@ urlpatterns = [
     path('logout', logout, name = 'logout' ),
     path('registrar', registrar_comerciante, name='registrar_comerciante' ),
 
-    re_path('compras/(?P<pk>\d+)/', view_compra, name='view_compra'),
+    path('compras/', view_compra, name='view_compra'),
+    re_path('compras/lista/(?P<pk>\d+)/', list_compra, name='list_compra'),
     re_path('compras/nuevo/(?P<pk>\d+)/', agregar_compra, name='agregar_compra'),
 
     re_path('proveedores/(?P<pk>\d+)/', view_proveedor, name='view_proveedor'),
