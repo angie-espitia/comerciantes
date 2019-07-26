@@ -249,7 +249,7 @@ def view_compra(request):
     return render(request, 'app/compra/view_compra.html')
 
 @login_required(login_url="/")
-def list_compra(request, pk):
+def list_compras(request, pk):
     usuario = User.objects.get(id=pk)
     usuario_producto = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=True)
     array_p = []
@@ -272,6 +272,10 @@ def list_compra(request, pk):
             }
             var = i.compra_id.id
     return HttpResponse(toJSON(dic), content_type='application/json')
+
+@login_required(login_url="/")
+def detalle_compra(request, pk):    
+    return render(request, 'app/compra/detalle_compra.html')
 
 @login_required(login_url="/")
 def agregar_compra(request, pk):

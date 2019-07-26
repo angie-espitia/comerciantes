@@ -17,9 +17,7 @@
       </tr>
     </thead>
     <tbody id="respuesta_j">
-      <tr>
-        <td colspan="6" class="text-center bg-warning">No hay productos registrados</td>
-      </tr>
+      
     </tbody>
   </table>
 
@@ -41,21 +39,26 @@
         })
 
         .done(function(response){
-          // console.log(response);
+          console.log(response);
           var res = response;
-
           var html = '';
-          for(var item in res){
-            console.log(res[item]);
-            html +='<tr>';
-            html +='<td>'+res[item].fecha+'</td>';
-            html +='<td>'+res[item].proveedor+'</td>';
-            html +='<td>'+res[item].subtotal_neto+'</td>';
-            html +='<td>'+res[item].IVA+'</td>';
-            html +='<td>'+res[item].total+'</td>';
-            html +='<td><a class="btn btn-success btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="detalles('+res[item].id_compra+')"> Detalles </a>';
-            html +='<a class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2('+res[item].id_compra+')">Borrar</a></td>';
-            html +='</tr>';
+          // var url = "{% url 'detalles_compras' ";
+          if (JSON.stringify(res)=='{}'){
+            html = '<tr><td colspan="6" class="text-center bg-warning">No hay productos registrados</td></tr>'
+          }
+          else{
+            for(var item in res){
+              console.log(res[item]);
+              html +='<tr>';
+              html +='<td>'+res[item].fecha+'</td>';
+              html +='<td>'+res[item].proveedor+'</td>';
+              html +='<td>'+res[item].subtotal_neto+'</td>';
+              html +='<td>'+res[item].IVA+'</td>';
+              html +='<td>'+res[item].total+'</td>';
+              // html +='<td><a class="btn btn-success btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="detalles('+res[item].id_compra+')"> Detalles </a>';
+              // html +='<a class="btn btn-danger btn-sm" href="'+ url +'pk='+res[item].id_compra+' %}">Borrar</a></td>';
+              html +='</tr>';
+            }
           }
 
           $("#respuesta_j").html(html)

@@ -15,7 +15,8 @@ urlpatterns = [
     path('registrar', registrar_comerciante, name='registrar_comerciante' ),
 
     path('compras/', view_compra, name='view_compra'),
-    re_path('compras/lista/(?P<pk>\d+)/', list_compra, name='list_compra'),
+    re_path('compras/lista/(?P<pk>\d+)/', list_compras, name='list_compra'),
+    re_path('compras/lista/detalle/(?P<pk>\d+)/', detalle_compra, name='detalles_compras'),
     re_path('compras/nuevo/(?P<pk>\d+)/', agregar_compra, name='agregar_compra'),
 
     re_path('proveedores/(?P<pk>\d+)/', view_proveedor, name='view_proveedor'),
