@@ -14,9 +14,11 @@ urlpatterns = [
     path('logout', logout, name = 'logout' ),
     path('registrar', registrar_comerciante, name='registrar_comerciante' ),
 
-    path('compras/', view_compra, name='view_compra'),
-    re_path('compras/lista/(?P<pk>\d+)/', list_compras, name='list_compra'),
-    re_path('compras/lista/detalle/(?P<pk>\d+)/', detalle_compra, name='detalles_compras'),
+    path('compras/', view_de_compra, name='view_compra'),
+    re_path('compras/lista/(?P<pk>\d+)/', list_compras, name='lista_de_compra'),
+    re_path('compras/lista/detalle/(?P<pk>\d+)/', detalle_de_compra, name='detalles_compras'),
+    re_path('compras/lista/detalle/editar_item/(?P<pk>\d+)/', editar_item_detalle_compra, name='editar_item_detalle_compra'),
+    re_path('compras/lista/detalle/eliminar_item/(?P<pk>\d+)/', eliminar_item_detalle_compra, name='eliminar_item_detalle_compra'),
     re_path('compras/nuevo/(?P<pk>\d+)/', agregar_compra, name='agregar_compra'),
 
     re_path('proveedores/(?P<pk>\d+)/', view_proveedor, name='view_proveedor'),

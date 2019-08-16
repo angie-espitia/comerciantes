@@ -10,8 +10,6 @@
       <tr>
         <th>Fecha de la compra</th>
         <th>Proveedor</th>
-        <th>Subtotal</th>
-        <th>IVA</th>
         <th>Total</th>
         <th>Acciones</th>
       </tr>
@@ -42,7 +40,7 @@
           console.log(response);
           var res = response;
           var html = '';
-          // var url = "{% url 'detalles_compras' ";
+          var url = "{% url 'detalles_compras' ";
           if (JSON.stringify(res)=='{}'){
             html = '<tr><td colspan="6" class="text-center bg-warning">No hay productos registrados</td></tr>'
           }
@@ -52,11 +50,9 @@
               html +='<tr>';
               html +='<td>'+res[item].fecha+'</td>';
               html +='<td>'+res[item].proveedor+'</td>';
-              html +='<td>'+res[item].subtotal_neto+'</td>';
-              html +='<td>'+res[item].IVA+'</td>';
               html +='<td>'+res[item].total+'</td>';
-              // html +='<td><a class="btn btn-success btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="detalles('+res[item].id_compra+')"> Detalles </a>';
-              // html +='<a class="btn btn-danger btn-sm" href="'+ url +'pk='+res[item].id_compra+' %}">Borrar</a></td>';
+              html +='<td><a class="btn btn-success btn-sm" href="/compras/lista/detalle/'+res[item].id_compra+'/"> Detalles </a> ';
+              html +=' <a class="btn btn-danger btn-sm" href="'+ url +'pk='+res[item].id_compra+' %}">Borrar </a></td>';
               html +='</tr>';
             }
           }

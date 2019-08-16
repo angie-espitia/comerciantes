@@ -37,9 +37,7 @@ class Proveedor(models.Model):
 class Compra(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
 	fecha = models.DateField(db_column='fecha')
-	subtotal_neto = models.IntegerField( db_column='subtotal_neto')
 	total = models.IntegerField( db_column='total')
-	IVA = models.IntegerField( db_column='IVA')
 
 	class Meta:
 		db_table = 'Compra'
@@ -51,9 +49,7 @@ class Compra(models.Model):
 class Venta(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
 	fecha = models.DateField(db_column='fecha')
-	subtotal_neto = models.IntegerField( db_column='subtotal_neto')
 	total = models.IntegerField( db_column='total')
-	IVA = models.IntegerField( db_column='IVA')
 	observacion = models.CharField(max_length = 45, db_column='observacion', null=True)
 
 	class Meta:

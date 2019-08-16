@@ -245,20 +245,20 @@ def eliminar_producto(request, pk):
         return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
-def view_compra(request):    
+def view_de_compra(request):    
     return render(request, 'app/compra/view_compra.html')
 
 @login_required(login_url="/")
 def list_compras(request, pk):
     usuario = User.objects.get(id=pk)
-    usuario_producto = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=True)
+    compra = Compra.objects.all()
     array_p = []
-    for f in usuario_producto:
-        array_p.append(f.proveedor_id)
-    detalle_de_compras = detalle_compra.objects.filter(proveedor_id__in=array_p)
+    for f in compra:
+        array_p.append(f.id)
+    detalles__compras = detalle_compra.objects.filter(compra_id__in=array_p)
     dic = {}
     var = -1
-    for i in detalle_de_compras:
+    for i in detalles__compras:
         if i.compra_id.id == var:
             var = i.compra_id.id
         else:
@@ -266,16 +266,94 @@ def list_compras(request, pk):
                 'id_compra':i.compra_id.id,
                 'fecha':convertir_fecha(i.compra_id.fecha),
                 'proveedor':i.proveedor_id.razon_social,
-                'subtotal_neto':i.compra_id.subtotal_neto,
-                'IVA':i.compra_id.IVA,
                 'total':i.compra_id.total,
             }
             var = i.compra_id.id
     return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
-def detalle_compra(request, pk):    
-    return render(request, 'app/compra/detalle_compra.html')
+def detalle_de_compra(request, pk):   
+    detalles__compras = detalle_compra.objects.filter(compra_id=pk) 
+    compra = Compra.objects.filter(id=pk)
+    return render(request, 'app/compra/detalle_compra.html', {'detalles__compras' : detalles__compras, 'compra' : compra })
+
+def editar_item_detalle_compra(request, pk):
+    item_detalle_compra = get_object_or_404(detalle_compra, pk=pk)
+    if request.method == "POST" and request.is_ajax():
+        cantidad_actual = int(item_detalle_compra.cantidad)
+        total_actual = int(item_detalle_compra.total_producto)
+
+        item_detalle_compra.cantidad = request.POST.get('cantidad_item')
+        item_detalle_compra.valor_unitario = request.POST.get('valor_unitario_item')
+        item_detalle_compra.total_producto = request.POST.get('total_item')
+        item_detalle_compra.save()
+
+        cantidad_item = int(item_detalle_compra.cantidad)
+        if cantidad_actual != cantidad_item:
+            producto_stock = Producto.objects.get(id=item_detalle_compra.producto_id.id)
+            cantidad_stock = item_detalle_compra.producto_id.stock
+            if cantidad_item > cantidad_actual:
+                sum_stock = cantidad_stock + cantidad_item
+                producto_stock.stock = sum_stock
+                producto_stock.save()
+            elif cantidad_item < cantidad_actual:
+                resta_stock = cantidad_stock - cantidad_item
+                producto_stock.stock = resta_stock
+                producto_stock.save()
+
+        total_item = int(item_detalle_compra.total_producto)
+        if total_actual != total_item:
+            compra_total =  Compra.objects.get(id=item_detalle_compra.compra_id.id)
+            total_compra = compra_total.total
+            if total_actual < total_item:
+                sum_total = total_compra + total_item
+                compra_total.total = sum_total
+                compra_total.save()
+            elif total_actual > total_item:
+                resta_total = total_compra - total_item
+                compra_total.total = resta_total
+                compra_total.save()
+
+        return HttpResponse('ok')
+    else:
+        dic = {
+            'idd':item_detalle_compra.id,
+            'producto':item_detalle_compra.producto_id.nombre,
+            'cantidad':item_detalle_compra.cantidad,
+            'valor_unitario':item_detalle_compra.valor_unitario,
+            'total':item_detalle_compra.total_producto,
+        }
+        print(dic)
+        return HttpResponse(toJSON(dic), content_type='application/json')
+
+@login_required(login_url="/")
+def eliminar_item_detalle_compra(request, pk):
+    item_detalle_compra = get_object_or_404(detalle_compra, pk=pk)
+    if request.method == "POST" and request.is_ajax():
+        producto_stock = Producto.objects.get(id=item_detalle_compra.producto_id.id)
+        cantidad_item = item_detalle_compra.cantidad
+        cantidad_stock = item_detalle_compra.producto_id.stock
+        resta_stock = cantidad_stock - cantidad_item
+        producto_stock.stock = resta_stock
+        producto_stock.save()
+
+        compra_total =  Compra.objects.get(id=item_detalle_compra.compra_id.id)
+        total_item = item_detalle_compra.total_producto
+        total_compra = compra_total.total
+        resta_total = total_compra - total_item
+        compra_total.total = resta_total
+        compra_total.save()
+
+        item_detalle_compra.delete()
+
+        return HttpResponse('ok')
+    else:
+        dic = {
+            'id':item_detalle_compra.id,
+            'nombre':item_detalle_compra.producto_id.nombre,
+        }
+        print(dic)
+        return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
 def agregar_compra(request, pk):
@@ -291,36 +369,19 @@ def agregar_compra(request, pk):
             compra.save()
             detalle_compra_form_set.instance = compra
             detalle_compra_form_set.save()
+
+            compra_stock = detalle_compra.objects.filter(compra_id=compra)
+            for row in compra_stock:
+                producto_stock = Producto.objects.get(id=row.producto_id.id)
+                cantidad_compra = row.cantidad
+                cantidad_stock = producto_stock.stock
+                sum_stock = cantidad_compra + cantidad_stock
+                producto_stock.stock = sum_stock
+                producto_stock.save()
+
             return redirect('view_compra')
     else:
         form = CompraForm()
         detalle_compra_formset=DetalleCompraFormSet()
 
     return render(request, 'app/compra/agregar_compra.html', {'form' : form, 'detalle_compra_formset': detalle_compra_formset } )
-
-    # if request.method == "POST":
-    #     if request.is_ajax():
-    #         compra = Compra()
-    #         compra.fecha = request.POST.get('fecha_compra')
-    #         compra.subtotal_neto = request.POST.get('subtotal_neto_compra')
-    #         compra.IVA = request.POST.get('IVA_compra')
-    #         compra.total = request.POST.get('total_compra')
-    #         compra.save()
-
-    #         compra2 = Compra.objects.latest('id')
-    #         proveedor_recibido = request.POST.get('usuario_proveedor')
-    #         proveedor_p = Proveedor.objects.get(id=proveedor_recibido)
-    #         producto_recibido = request.POST.get('usuario_producto')
-    #         producto_p = Producto.objects.get(id=producto_recibido)
-
-    #         detalle_compra = detalle_compra()
-    #         detalle_compra.proveedor_id = proveedor_p
-    #         detalle_compra.producto_id = producto_p
-    #         detalle_compra.compra_id = compra2
-    #         detalle_compra.cantidad = request.POST.get('cantidad_compra')
-    #         detalle_compra.valor_unitario = request.POST.get('valor_unitario_compra')
-    #         detalle_compra.total_producto = request.POST.get('total_producto_compra')
-    #         detalle_compra.save()
-    #         return HttpResponse('ok')
-
-    # return render(request, 'app/compra/agregar_compra.html' )
