@@ -10,7 +10,6 @@ from main.models import *
 from main.forms import *
 import json
 from django.core import serializers
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 import datetime
 
 def convertir_fecha(o):
@@ -75,7 +74,7 @@ def logout(request):
     auth.logout(request)
     return redirect("/")  
 
-# views manejo negocio tenderos
+# ------------------------------- views manejo negocio tenderos ---------------------------------------------------------
 
 @login_required(login_url="/")
 def principal_app(request):
@@ -163,6 +162,14 @@ def view_producto(request, pk):
     usuario_producto = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=False)
     
     return render(request, 'app/producto/view_producto.html', {'usuario_producto':usuario_producto} )
+
+@login_required(login_url="/")
+def detalle_producto(request, pk):
+    producto_recibido = get_object_or_404(Producto, pk=pk)
+    detalle_producto_usuario = detalle_usuario_producto.objects.filter(producto_id=producto_recibido.id)
+    detalle_compra_producto = detalle_compra.objects.filter(producto_id=producto_recibido.id)
+    
+    return render(request, 'app/producto/editar_producto.html', {'detalle_producto_usuario':detalle_producto_usuario, 'detalle_compra_producto':detalle_compra_producto} )
 
 @login_required(login_url="/")
 def agregar_producto(request, pk):
@@ -385,3 +392,29 @@ def agregar_compra(request, pk):
         detalle_compra_formset=DetalleCompraFormSet()
 
     return render(request, 'app/compra/agregar_compra.html', {'form' : form, 'detalle_compra_formset': detalle_compra_formset } )
+
+@login_required(login_url="/")
+def eliminar_compra(request, pk):
+    compra_recibida = get_object_or_404(Compra, pk=pk)
+    if request.method == "POST" and request.is_ajax():
+        detalle_de_compra = detalle_compra.objects.filter(compra_id=compra_recibida.id)
+        for item in detalle_de_compra:
+            producto_stock = Producto.objects.get(id=item.producto_id.id)
+            cantidad_item = item.cantidad
+            cantidad_stock = item.producto_id.stock
+            resta_stock = cantidad_stock - cantidad_item
+            producto_stock.stock = resta_stock
+            producto_stock.save()
+            item.delete()
+
+        compra_recibida.delete()
+
+        return HttpResponse('ok')
+    else:
+        dic = {
+            'idd':compra_recibida.id,
+            'fecha':convertir_fecha(compra_recibida.fecha),
+            'total':compra_recibida.total,
+        }
+        print(dic)
+        return HttpResponse(toJSON(dic), content_type='application/json')

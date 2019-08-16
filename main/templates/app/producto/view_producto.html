@@ -38,8 +38,8 @@
         <td>{{ row.proveedor_id.razon_social }}</td>
         <td>{{ row.producto_id.descripcion }}</td>
         <td>
-          <a id="{{row.producto_id.id}}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a> 
-          <a id="{{row.producto_id.id}}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a>
+          <a class="btn btn-primary btn-sm" href="{% url 'detalle_producto' pk=row.producto_id.id %}" > Detalles </a> 
+          <!-- <a id="{{row.producto_id.id}}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a> -->
         </td>
       </tr>
       {% empty %}
@@ -49,15 +49,6 @@
     </tbody>
     {% endfor %}
   </table>
-
-  <!-- Modal Editar -->
-  <div class="modal fade" id="editarmodal">
-    <div class="modal-dialog modal-lg">
-
-      {% include 'app/producto/editar_producto.html' %}
-      
-    </div>
-  </div>
 
   <!-- Modal Editar -->
   <div class="modal fade" id="eliminarmodal">
@@ -87,35 +78,6 @@
 
  {% block javascript %}
  <script>
-    function datos(id) {
-
-        console.log(id);
-        var csrftoken = '{{ csrf_token }}';
-        $.ajax({
-          headers: {'X-CSRF-TOKEN': csrftoken},
-          method: "GET",
-          url: '/productos/editar/'+id+'/',
-          dataType: 'json',
-          data: { "csrfmiddlewaretoken": csrftoken,
-              "id": id }
-        }).done(function(response){
-          alert('ok');
-        });
-
-        // .done(function(response){
-        //   console.log(response);
-        //   var res = response;
-
-        //   $('#nombre_p').val(res.nombre);
-        //   $('#stock_p').val(res.stock);
-        //   $('#valor_costo_p').val(res.valor_costo);
-        //   $('#valor_venta_p').val(res.valor_venta);
-        //   $('#descripcion_p').val(res.descripcion);
-        //   $('#imagen_p').val(res.imagen);
-        //   &('#proveedor_p').val(res.proveedor);
-          
-        // });
-      }
 
 function datos2(id) {
     console.log(id);
