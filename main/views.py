@@ -131,30 +131,3 @@ def editar_proveedor(request, pk):
         }
         print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
-
-
-
-# def actualizar_docente(request):
-#     controller = Controller_docente()
-#     idd = request.POST.get('id')
-#     docente = {'id':idd}
-#     for key in docente:
-#         print key, ":", docente[key]
-#     resul = controller.listar_mostrar_docentes(docente)
-#     dic = {'resul':resul }
-
-#     return HttpResponse(toJSON(dic), content_type='application/json')
-
-# def actualizar_guardar_docente(request):
-#     controller = Controller_docente()
-#     idd = request.POST.get('id')
-#     docente1 = request.POST.get('nombre')
-#     docente2 = request.POST.get('apellido')
-#     docente3 = request.POST.get('cedula')
-#     docente = {'id':idd, 'nombre':docente1, 'apellido':docente2, 'cedula':docente3}
-#     for key in docente:
-#         print key, ":", docente[key]
-#     resul = controller.actualizar_docentes(docente)
-#     dic = {'resul':resul }
-
-#     return HttpResponse(toJSON(dic), content_type='application/json')
