@@ -30,7 +30,6 @@ urlpatterns = [
     re_path('productos/(?P<pk>\d+)/', view_producto, name='view_producto'),
     re_path('productos/nuevo/(?P<pk>\d+)/', agregar_producto, name='agregar_producto'),
     re_path('productos/detalle/producto/(?P<pk>\d+)/', detalle_producto, name='detalle_producto'),
-    re_path('productos/editar/(?P<pk>\d+)/', editar_producto, name='editar_producto'),
     re_path('productos/eliminar/(?P<pk>\d+)/', eliminar_producto, name='eliminar_producto'),
 ]
 

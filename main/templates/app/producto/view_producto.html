@@ -17,7 +17,7 @@
         <th>Valor costo</th>
         <th>Valor venta</th>
         <th>Imagen</th>
-        <th>Proveedor</th>
+        <th>Proveedor Inicial</th>
         <th>Descripción</th>
         <th>Acciones</th>
       </tr>
@@ -38,7 +38,7 @@
         <td>{{ row.proveedor_id.razon_social }}</td>
         <td>{{ row.producto_id.descripcion }}</td>
         <td>
-          <a class="btn btn-primary btn-sm" href="{% url 'detalle_producto' pk=row.producto_id.id %}" > Detalles </a> 
+          <a class="btn btn-primary btn-sm" href="{% url 'detalle_producto' pk=row.producto_id.id %}" > Detalles </a>
           <!-- <a id="{{row.producto_id.id}}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a> -->
         </td>
       </tr>
@@ -94,10 +94,10 @@ function datos2(id) {
     .done(function(response){
       console.log(response);
       var res = response;
-      
+
       $('#id_p2').text(res.id);
       $('#mensaje2').text('¿Está seguro que desea eliminar el producto ' + res.nombre + ' ?');
-      
+
     });
 }
 
@@ -119,9 +119,9 @@ function Eliminar() {
       error: function(xhr, e, x, status) {
         console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
         alert('Ha ocurrido un error, porfavor vuelva a intentar');
-      } 
+      }
     })
   }
 
 </script>
- {% endblock %} 
+ {% endblock %}

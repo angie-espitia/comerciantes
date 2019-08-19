@@ -20,8 +20,8 @@ class Usuario(models.Model):
 # Manejo de negocio tenderos
 class Proveedor(models.Model):
 	# id = models.AutoField( primary_key=True, db_column='id')
-	nombre = models.CharField(max_length = 45, db_column='nombre')
 	razon_social = models.CharField(max_length = 45, db_column='razon_social')
+	nombre = models.CharField(max_length = 45, db_column='nombre')
 	telefono = models.CharField(max_length = 45, db_column='telefono', null=True)
 	direccion = models.CharField(max_length = 45, db_column='direccion', null=True)
 	celular = models.CharField(max_length = 45, db_column='celular', null=True)
@@ -32,7 +32,7 @@ class Proveedor(models.Model):
 		managed  = False
 
 	def __str__(self):
-		return '{}'.format(self.nombre)
+		return '{}'.format(self.razon_social)
 
 class Compra(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
@@ -74,7 +74,7 @@ class Producto(models.Model):
 	valor_venta = models.IntegerField( db_column='valor_venta')
 	imagen = models.ImageField( upload_to=get_upload_path , db_column='imagen', null=True) #default="../static/my/img/img4.jpg"
 	descripcion = models.TextField( db_column='descripcion', null=True)
-	
+
 	class Meta:
 		db_table = 'Producto'
 		managed  = False
