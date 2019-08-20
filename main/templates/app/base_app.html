@@ -13,6 +13,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" id="bootstrap-css">
+    <link href="{% static 'bootstrap/css/bootstrap-grid.min.css' %}" rel="stylesheet" id="bootstrap-grid-css">
 
     <!-- Custom styles for this template -->
     <link href="{% static 'css/style-app.css' %}" rel="stylesheet">
@@ -41,10 +42,10 @@
         </a>
         <!-- Submenu content productos-->
         <div id='productos_submenu' class="collapse sidebar-submenu">
-            <a href="#" class="list-group-item list-group-item-action">
+            <a href="{% url 'view_producto' pk=request.user.id %}" class="list-group-item list-group-item-action">
                 <span class="menu-collapsed">Lista de productos</span>
             </a>
-            <a href="#" class="list-group-item list-group-item-action">
+            <a href="{% url 'agregar_producto' pk=request.user.id %}" class="list-group-item list-group-item-action">
                 <span class="menu-collapsed">Nuevo producto</span>
             </a>
         </div>
@@ -60,7 +61,7 @@
             <a href="{% url 'view_compra' %}" class="list-group-item list-group-item-action">
                 <span class="menu-collapsed">Lista de compras</span>
             </a>
-            <a href="#" class="list-group-item list-group-item-action">
+            <a href="{% url 'agregar_compra' pk=request.user.id %}" class="list-group-item list-group-item-action">
                 <span class="menu-collapsed">Nueva compra</span>
             </a>
         </div>

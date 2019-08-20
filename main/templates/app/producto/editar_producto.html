@@ -1,0 +1,77 @@
+{% extends 'app/base_app.html' %}
+{% load staticfiles %}
+{% block title %} Inicio {% endblock %}
+
+{%  block content %}
+
+ <h1 class="mt-4">Detalle del producto</h1>
+
+ <table class="table table-striped table-bordered">
+
+  <br>
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Stock</th>
+        <th>Valor costo</th>
+        <th>Valor venta</th>
+        <th>Imagen</th>
+        <th>Proveedor</th>
+        <th>Descripción</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    {% for row in detalle_producto_usuario %}
+    <tbody>
+      <tr>
+        <td>{{ row.producto_id.codigo }}</td>
+        <td>{{ row.producto_id.nombre }}</td>
+        <td>{{ row.producto_id.stock }}</td>
+        <td>{{ row.producto_id.valor_costo }}</td>
+        <td>{{ row.producto_id.valor_venta }}</td>
+        {% if row.producto_id.imagen %}
+        <td> <img src="/media/{{ row.producto_id.imagen }}" class="img-fluid" style="max-width: 150px; max-height: 120px;">  </td>
+        {% else %}
+        <td> <img src="{% static 'img/nofoto.png' %}" class="img-fluid" style="max-width: 50px;"> </td>
+        {% endif %}
+        <td>{{ row.proveedor_id.razon_social }}</td>
+        <td>{{ row.producto_id.descripcion }}</td>
+        <td>
+          <a class="btn btn-primary btn-sm" > Editar el producto </a> 
+        </td>
+      </tr>
+    </tbody>
+    {% endfor %}
+  </table>
+
+ <h5 class="mt-4">Detalle de las compras realizadas del producto</h5>
+
+ <table class="table table-striped table-bordered">
+
+  <br>
+    <thead>
+      <tr>
+        <th>Fecha de la compra</th>
+        <th>Proveedor</th>
+        <th>Cantidad</th>
+        <th>Valor unitario</th>
+      </tr>
+    </thead>
+    {% for row in detalle_compra_producto %}
+    <tbody>
+      <tr>
+        <td>{{ row.compra_id.fecha }}</td>
+        <td>{{ row.proveedor_id.razon_social }}</td>
+        <td>{{ row.cantidad }}</td>
+        <td>{{ row.valor_unitario }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" class="text-center bg-warning">No hay compras realizadas del producto</td>
+      </tr>
+    </tbody>
+    {% endfor %}
+  </table>
+
+ {% endblock %}

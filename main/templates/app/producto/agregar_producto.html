@@ -1,0 +1,39 @@
+{% extends 'app/base_app.html' %}
+{% block title %} Inicio {% endblock %}
+
+{%  block content %}
+
+ <h1 class="mt-4">Nuevo producto</h1> 
+
+ <div id="alert-form"></div>
+
+ <div class="container backwhite">
+    <div class="col-md-12 row">
+      <div class="col-md-6 mx-auto">
+        <form class="form" method="POST"  id="formulario_registro_producto" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+
+           <div class="form-group">
+            <label>imagen:</label>
+            <input type="file" name="imagen" class="filestyle" data-buttonText="Select a File">
+            <div id="errorimagen"></div>
+          </div>
+
+          <div class="form-group">
+            <select class="form-control" name='usuario_proveedor' required="required">
+              <option value="">Seleccionar</option>
+              {% for row in usuario_proveedor %}
+                <option value="{{ row.proveedor_id.id }}"> {{ row.proveedor_id.razon_social }} </option>
+              {% endfor %}
+            </select>
+          </div>
+
+            <button class="save btn btn-primary" type="submit">Guardar</button>
+            <br><br>
+        </form>
+      </div>    
+    </div>
+  </div>
+
+ {% endblock %} 
