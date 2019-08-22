@@ -1,44 +1,46 @@
-{% extends 'pagina/base_corporativo.html' %}
+{% extends 'pagina/base_login.html' %}
 {% block title %} Registrar {% endblock %}
 
 {%  block content %}
 
+<h3 class="login-heading mb-4">Registrarse!</h3>
 
 <form class="form-signin" method="post">
 	{% csrf_token %}
 
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-
-    <div class="form-group">
-		<label class="sr-only">Usuario</label>
-    	<input type="text" name="username" placeholder="Usuario..." class="form-username form-control" id="form-usuario">
+    <div class="form-label-group">
+    	<input type="text" name="username" placeholder="Usuario" class="form-control" id="form-usuario">
+			<label class="sr-only">Usuario</label>
     </div>
-    <div class="form-group">
-        <label class="sr-only">Correo</label>
-        <input type="text" name="email" placeholder="Correo..." class="form-username form-control" id="form-email">
+    <div class="form-label-group">
+        <input type="text" name="email" placeholder="Correo" class="form-control" id="form-email">
+				<label class="sr-only">Correo</label>
+		</div>
+    <div class="form-label-group">
+        <input type="text" name="nombre" placeholder="Nombres" class="form-control" id="form-nombre">
+				<label class="sr-only">Nombre</label>
+		</div>
+    <div class="form-label-group">
+        <input type="text" name="apellido" placeholder="Apellidos" class="form-control" id="form-apellido">
+				<label class="sr-only">Apellido</label>
+		</div>
+    <div class="form-label-group">
+        <input type="text" name="telefono" placeholder="Telefono" class="form-control" id="form-telefono">
+				<label class="sr-only">Telefono</label>
+		</div>
+    <div class="form-label-group">
+    	<input type="password" name="password1" placeholder="Contraseña" class="form-control" id="form-contraseña">
+			<label class="sr-only">Contraseña</label>
     </div>
-    <div class="form-group">
-        <label class="sr-only">Nombre</label>
-        <input type="text" name="nombre" placeholder="Nombres..." class="form-username form-control" id="form-nombre">
-    </div>
-    <div class="form-group">
-        <label class="sr-only">Apellido</label>
-        <input type="text" name="apellido" placeholder="Apellidos..." class="form-username form-control" id="form-apellido">
-    </div>
-    <div class="form-group">
-        <label class="sr-only">Telefono</label>
-        <input type="text" name="telefono" placeholder="Telefono..." class="form-username form-control" id="form-telefono">
-    </div>
-    <div class="form-group">
-    	<label class="sr-only">Contraseña</label>
-    	<input type="password" name="password1" placeholder="Contraseña..." class="form-password form-control" id="form-contraseña">
-    </div>
-    <div class="form-group">
-    	<label class="sr-only">Confirmar contraseña</label>
-    	<input type="password" name="password2" placeholder="Confirmar contraseña..." class="form-password form-control" id="form-password2">
+    <div class="form-label-group">
+    	<input type="password" name="password2" placeholder="Confirmar contraseña" class="form-control" id="form-password2">
+			<label class="sr-only">Confirmar contraseña</label>
     </div>
 
-    <button type="submit" class="btn">Registrate!</button>
+		<br><br>
+    <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Registrar</button>
+		<div class="text-center">
+			<a class="small" href="{% url 'login' %}">O inicia sesión aquí</a></div>
 
   </form>
 

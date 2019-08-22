@@ -1,0 +1,57 @@
+{% load staticfiles %}
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- <link rel="icon" href="http://getbootstrap.com/docs/3.3/favicon.ico"> -->
+
+    <title> {% block title %} {% endblock %}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" id="bootstrap-css">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/style-login.css' %}" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="{% static 'fontawesome/css/fontawesome.css' %}" rel="stylesheet">
+    <link href="{% static 'fontawesome/css/brands.css' %}" rel="stylesheet">
+    <link href="{% static 'fontawesome/css/solid.css' %}" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="container-fluid">
+      <div class="row no-gutter">
+        <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+        <div class="col-md-8 col-lg-6">
+          <div class="login d-flex align-items-center py-5">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-9 col-lg-8 mx-auto">
+
+                  {% block content %}
+                  {% endblock %}
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    </body>
+</html>
