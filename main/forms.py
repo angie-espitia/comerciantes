@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Producto, Compra, detalle_compra, detalle_usuario_producto
+from .models import Producto, Compra, detalle_compra, detalle_usuario_producto, Proveedor
 from django.forms.models import inlineformset_factory
 
 class ProductoForm(forms.ModelForm):
@@ -77,7 +77,21 @@ class DetalleCompraForm(forms.ModelForm):
         fields = ('__all__' )
 
     def __init__(self, *args, **kwargs):
+        usuario = kwargs.pop('user')     # client is the parameter passed from views.py
+        usuario_proveedor = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=True)
+        usuario_producto = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=False)
+        array_p = []
+        for f in usuario_proveedor:
+            array_p.append(f.proveedor_id.id)
+        p = Proveedor.objects.filter(id__in=array_p)
+        array_e = []
+        for f in usuario_producto:
+            array_e.append(f.producto_id.id)
+        po = Producto.objects.filter(id__in=array_e)
+
         super(DetalleCompraForm, self).__init__(*args, **kwargs)
+        self.fields['producto_id'].queryset= po
+        self.fields['proveedor_id'].queryset= p
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'

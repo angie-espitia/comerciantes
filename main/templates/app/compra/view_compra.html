@@ -1,5 +1,6 @@
 {% extends 'app/base_app.html' %}
-{% block title %} Inicio {% endblock %}
+{% load staticfiles %}
+{% block title %} Compras {% endblock %}
 
 {%  block content %}
 
@@ -15,7 +16,7 @@
       </tr>
     </thead>
     <tbody id="respuesta_j">
-      
+
     </tbody>
   </table>
 
@@ -47,6 +48,7 @@
  {% endblock %}
 
 {% block javascript %}
+<script src="{% static 'js/fecha_v.js' %}"></script>
 <script type="text/javascript">
 
 $(document).ready(function() {
@@ -74,7 +76,7 @@ $(document).ready(function() {
         for(var item in res){
           // console.log(res[item]);
           html +='<tr>';
-          html +='<td>'+res[item].fecha+'</td>';
+          html +='<td>'+val_fecha(res[item].fecha)+'</td>';
           html +='<td>'+res[item].proveedor+'</td>';
           html +='<td>'+res[item].total+'</td>';
           html +='<td><a class="btn btn-success btn-sm" href="/compras/lista/detalle/'+res[item].id_compra+'/"> Detalles </a> ';
@@ -84,7 +86,7 @@ $(document).ready(function() {
       }
 
       $("#respuesta_j").html(html)
-      
+
     })
 });
 
@@ -103,10 +105,10 @@ function datos2(id) {
     .done(function(response){
       // console.log(response);
       var res = response;
-      
+
       $('#id_p2').text(res.idd);
       $('#mensaje2').html('¿ Está seguro que desea eliminar la compra de valor <b>' + res.total + '</b> con fecha del <b>'+ res.fecha +'</b> ?');
-      
+
     })
 }
 
@@ -128,8 +130,8 @@ function Eliminar() {
       error: function(xhr, e, x, status) {
         console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
         alert('Ha ocurrido un error, porfavor vuelva a intentar');
-      } 
+      }
     })
  }
 </script>
-{% endblock %} 
+{% endblock %}

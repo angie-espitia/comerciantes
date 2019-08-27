@@ -244,11 +244,15 @@ def view_de_compra(request):
 @login_required(login_url="/")
 def list_compras(request, pk):
     usuario = User.objects.get(id=pk)
+    usuario_proveedor = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=True)
+    array_proveedor = []
+    for f in usuario_proveedor:
+        array_proveedor.append(f.proveedor_id.id)
     compra = Compra.objects.all()
-    array_p = []
+    array_compra = []
     for f in compra:
-        array_p.append(f.id)
-    detalles__compras = detalle_compra.objects.filter(compra_id__in=array_p)
+        array_compra.append(f.id)
+    detalles__compras = detalle_compra.objects.filter(compra_id__in=array_compra, proveedor_id__in=array_proveedor)
     dic = {}
     var = -1
     for i in detalles__compras:
@@ -351,12 +355,10 @@ def eliminar_item_detalle_compra(request, pk):
 @login_required(login_url="/")
 def agregar_compra(request, pk):
     usuario = User.objects.get(id=pk)
-    usu = Usuario.objects.get(id=usuario)
-    usuarioid = usuario.id
     # import pdb; pdb.set_trace()
     if request.method == "POST":
         form = CompraForm(request.POST)
-        detalle_compra_form_set = DetalleCompraFormSet(request.POST)
+        detalle_compra_form_set = DetalleCompraFormSet(request.POST, form_kwargs={'user': request.user})
         if form.is_valid() and detalle_compra_form_set.is_valid():
             compra = form.save(commit=False)
             compra.save()
@@ -375,7 +377,7 @@ def agregar_compra(request, pk):
             return redirect('view_compra')
     else:
         form = CompraForm()
-        detalle_compra_formset=DetalleCompraFormSet()
+        detalle_compra_formset=DetalleCompraFormSet(form_kwargs={'user': request.user}) # pass parameter to the form
 
     return render(request, 'app/compra/agregar_compra.html', {'form' : form, 'detalle_compra_formset': detalle_compra_formset } )
 
