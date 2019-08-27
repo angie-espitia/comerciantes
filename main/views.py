@@ -37,7 +37,7 @@ def registrar_comerciante(request):
             usuario.username = request.POST['username']
             usuario.password = make_password(request.POST['password1'])
             usuario.is_active = True
-            grupo = Group.objects.get(name="comerciante")  
+            grupo = Group.objects.get(name="comerciante")
             usuario.save()
             usuario.groups.add(grupo)
             usuario.save()
@@ -72,7 +72,7 @@ def login(request):
 @login_required(login_url="/")
 def logout(request):
     auth.logout(request)
-    return redirect("/")  
+    return redirect("/")
 
 # ------------------------------- views manejo negocio tenderos ---------------------------------------------------------
 
@@ -138,8 +138,6 @@ def editar_proveedor(request, pk):
         }
         print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
-<<<<<<< HEAD
-=======
 
 def eliminar_proveedor(request, pk):
     proveedor = get_object_or_404(Proveedor, pk=pk)
@@ -159,19 +157,11 @@ def eliminar_proveedor(request, pk):
 
 @login_required(login_url="/")
 def view_producto(request, pk):
-    usuario = User.objects.get(id=pk)  
+    usuario = User.objects.get(id=pk)
     # productos = Producto.objects.all()
     usuario_producto = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=False)
-    
-    return render(request, 'app/producto/view_producto.html', {'usuario_producto':usuario_producto} )
 
-@login_required(login_url="/")
-def detalle_producto(request, pk):
-    producto_recibido = get_object_or_404(Producto, pk=pk)
-    detalle_producto_usuario = detalle_usuario_producto.objects.filter(producto_id=producto_recibido.id)
-    detalle_compra_producto = detalle_compra.objects.filter(producto_id=producto_recibido.id)
-    
-    return render(request, 'app/producto/editar_producto.html', {'detalle_producto_usuario':detalle_producto_usuario, 'detalle_compra_producto':detalle_compra_producto} )
+    return render(request, 'app/producto/view_producto.html', {'usuario_producto':usuario_producto} )
 
 @login_required(login_url="/")
 def agregar_producto(request, pk):
@@ -183,7 +173,7 @@ def agregar_producto(request, pk):
     if request.method == "POST":
         form = ProductoForm(request.POST, request.FILES)
         if form.is_valid():
-            producto = form.save(commit=False)            
+            producto = form.save(commit=False)
             producto.save()
 
             producto2 = Producto.objects.latest('id')
@@ -195,7 +185,7 @@ def agregar_producto(request, pk):
             usuario_producto.producto_id = producto2
             usuario_producto.proveedor_id = proveedor_p
             usuario_producto.save()
-            
+
             producto2.imagen = request.FILES.get('imagen')
             producto2.save()
 
@@ -206,35 +196,29 @@ def agregar_producto(request, pk):
     return render(request, 'app/producto/agregar_producto.html', {'form' : form, 'usuario_proveedor': usuario_proveedor } )
 
 @login_required(login_url="/")
-def editar_producto(request, pk):
-    # import pdb; pdb.set_trace()
-    producto_edit = get_object_or_404(Producto, pk=pk)
-    usuario = User.objects.get(id=request.user.id)    
-    usuario_proveedor2 = detalle_usuario_producto.objects.filter(usuario_id=usuario.id)
-    proveedor_producto = detalle_usuario_producto.objects.filter(producto_id=producto_edit.id)
-
-    print('-------------------------------------------------')
-    print(producto_edit)
-    print('-------------------------------------------------')
-    print(usuario)
-    print('-------------------------------------------------')
+def detalle_producto(request, pk):
+    producto_recibido = get_object_or_404(Producto, pk=pk)
+    print(producto_recibido.id)
+    detalle_producto_usuario = detalle_usuario_producto.objects.filter(producto_id=producto_recibido.id)
+    for row in detalle_producto_usuario:
+        d_p_u = get_object_or_404(detalle_usuario_producto, pk=row.id)
+        print(d_p_u.id)
+    detalle_compra_producto = detalle_compra.objects.filter(producto_id=producto_recibido.id)
 
     if request.method == "POST":
-        form = ProductoForm_dos(request.POST, request.FILES, instance=producto_edit)
-        if form.is_valid():
-            producto = form.save(commit=False)            
+        form = ProductoForm_dos(request.POST, request.FILES, instance=producto_recibido)
+        form2 = DetalleUsuarioProductoForm(request.POST, instance=d_p_u)
+        if form.is_valid() and form2.is_valid():
+            producto = form.save(commit=False)
             producto.save()
+            producto2 = form2.save(commit=False)
+            producto2.save()
 
-            proveedor_recibido = request.POST.get('usuario_proveedor')
-            proveedor_p = Proveedor.objects.get(id=proveedor_recibido)
-            proveedor_producto.proveedor_id = proveedor_p
-            proveedor_producto.save()
-
-            return HttpResponse('ok')
+            return HttpResponseRedirect(request.path_info) #redirige misma pag
     else:
-        form = ProductoForm_dos(instance=producto_edit)
-    
-    return render(request, 'app/producto/editar_producto.html', {'form' : form, 'usuario_proveedor2': usuario_proveedor2 } )
+        form = ProductoForm_dos(instance=producto_recibido)
+        form2 = DetalleUsuarioProductoForm(instance=d_p_u)
+    return render(request, 'app/producto/editar_producto.html', {'detalle_producto_usuario':detalle_producto_usuario, 'detalle_compra_producto':detalle_compra_producto, 'form' : form, 'form2':form2} )
 
 @login_required(login_url="/")
 def eliminar_producto(request, pk):
@@ -254,7 +238,7 @@ def eliminar_producto(request, pk):
         return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
-def view_de_compra(request):    
+def view_de_compra(request):
     return render(request, 'app/compra/view_compra.html')
 
 @login_required(login_url="/")
@@ -281,8 +265,8 @@ def list_compras(request, pk):
     return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
-def detalle_de_compra(request, pk):   
-    detalles__compras = detalle_compra.objects.filter(compra_id=pk) 
+def detalle_de_compra(request, pk):
+    detalles__compras = detalle_compra.objects.filter(compra_id=pk)
     compra = Compra.objects.filter(id=pk)
     return render(request, 'app/compra/detalle_compra.html', {'detalles__compras' : detalles__compras, 'compra' : compra })
 
@@ -420,4 +404,3 @@ def eliminar_compra(request, pk):
         }
         print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
->>>>>>> ae82b23f1638e3f83eb53a86f4edbe0c3606257a

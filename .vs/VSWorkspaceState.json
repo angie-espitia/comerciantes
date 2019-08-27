@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\main",
+    "\\main\\templates",
+    "\\main\\templates\\app",
+    "\\main\\templates\\app\\compra",
+    "\\main\\templates\\app\\producto",
+    "\\main\\templates\\app\\proveedor",
+    "\\tenderos"
+  ],
+  "SelectedNode": "\\tenderos\\settings.py",
+  "PreviewInSolutionExplorer": false
+}

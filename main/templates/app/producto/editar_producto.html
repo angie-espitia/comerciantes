@@ -17,7 +17,7 @@
         <th>Valor costo</th>
         <th>Valor venta</th>
         <th>Imagen</th>
-        <th>Proveedor</th>
+        <th>Proveedor Inicial</th>
         <th>Descripción</th>
         <th>Acciones</th>
       </tr>
@@ -38,7 +38,7 @@
         <td>{{ row.proveedor_id.razon_social }}</td>
         <td>{{ row.producto_id.descripcion }}</td>
         <td>
-          <a class="btn btn-primary btn-sm" > Editar el producto </a> 
+          <a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarmodal"> Editar el producto </a>
         </td>
       </tr>
     </tbody>
@@ -73,5 +73,45 @@
     </tbody>
     {% endfor %}
   </table>
+
+<!-- Modal Editar -->
+  <div class="modal fade" id="editarmodal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Editar Producto</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+
+              <form class="form" method="POST"  id="formulario_registro_producto" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                {{ form2.as_p }}
+
+                <!-- <div class="form-group">
+                  <select class="form-control" name='usuario_proveedor' required="required">
+                    <option value="">Seleccionar</option>
+                    <!-- <option value="">Seleccionar</option> -->
+                    <!-- {% for row in form2 %} -->
+                      <!-- <option value="{{ row.proveedor_id.id }}"> {{ row.proveedor_id.razon_social }} </option> -->
+                    <!-- {% endfor %} -->
+                  <!-- </select> -->
+                <!-- </div> -->
+
+
+
+                  <button class="save btn btn-primary" type="submit">Guardar</button><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                  <br><br>
+              </form>
+
+            </div>
+      </div>
+    </div>
+  </div>
 
  {% endblock %}
