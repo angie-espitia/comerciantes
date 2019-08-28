@@ -9,10 +9,10 @@
 {% for row in compra %}
 <div class="row">
     <div class="col-md-4 col-sm-4 col-lg-4">
-		<h5>Fecha de la compra <br><b>{{ row.fecha }}</b></h5>
+		<h5>Fecha de la compra <br><b>{{ row.fecha|date:"SHORT_DATE_FORMAT" }}</b></h5>
 	</div>
 	<div class="col-md-4 col-sm-4 col-lg-4">
-		<h5>Total de la compra <br><b>{{ row.total }}</b></h5>
+		<h5>Total de la compra <br><b>${{ row.total }}</b></h5>
 	</div>
 </div>
 {% endfor %}
@@ -41,10 +41,10 @@
         <td>{{ row.producto_id.nombre }}</td>
         <td>{{ row.proveedor_id.razon_social }}</td>
         <td>{{ row.cantidad }}</td>
-        <td>{{ row.valor_unitario }}</td>        
-        <td>{{ row.total_producto }}</td>
+        <td>${{ row.valor_unitario }}</td>
+        <td>${{ row.total_producto }}</td>
         <td>
-          <a id="{{row.id}}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a> 
+          <a id="{{row.id}}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a>
           <a id="{{row.id}}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a>
         </td>
       </tr>
@@ -68,7 +68,7 @@
 
               <form class="form" method="POST" id="formulario_editar_proveedor">
                 {% csrf_token %}
-                
+
                 <div class="form-group">
                   <input id="id_d" hidden="false">
                   <label>Producto:</label>
@@ -149,13 +149,13 @@
     .done(function(response){
       console.log(response);
       var res = response;
-      
+
       $('#id_d').val(res.idd);
       $('#producto_d').text(res.producto);
       $('#cantidad_d').val(res.cantidad);
       $('#valor_unitario_d').val(res.valor_unitario);
       $('#total_d').val(res.total);
-      
+
     })
 }
 
@@ -165,7 +165,7 @@ function calcularMult(){
 	cantidad = $("#cantidad_d").val();
 	valor = $("#valor_unitario_d").val();
 	mul = cantidad * valor;
-	       
+
 	$("#total_d").val(mul);
 
 }
@@ -215,10 +215,10 @@ function datos2(id) {
     .done(function(response){
       console.log(response);
       var res = response;
-      
+
       $('#id_p2').text(res.id);
       $('#mensaje2').text('¿Está seguro que desea eliminar el producto ' + res.nombre + ' ?');
-      
+
     })
 }
 
@@ -240,9 +240,9 @@ function Eliminar() {
       error: function(xhr, e, x, status) {
         console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
         alert('Ha ocurrido un error, porfavor vuelva a intentar');
-      } 
+      }
     })
  }
 
 </script>
- {% endblock %} 
+ {% endblock %}
