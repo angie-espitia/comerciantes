@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Pacifico&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Varela+Round');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap');
 
 body {
   overflow-x: hidden;
-  font-family: 'SF-Pro-Display', Roboto, Sans-Serif;
+  font-family: 'Roboto Condensed', sans-serif;
 }
 
 /* nav */
@@ -15,6 +15,45 @@ body {
   padding: 0.875rem 1.25rem;
   font-size: 1.2rem;
   font-family: 'Pacifico', cursive;
+}
+
+.bgGrayMenu {
+    background-color: #ebebeb!important;
+}
+.borderMenu {
+    border-right: 1px solid #ebebeb!important;
+}
+
+.UserCircle{
+  padding: 30px 15px 15px 15px;
+}
+
+.imgUserCircle{
+  max-width: 115px;
+  border-radius: 50%;
+  border: 3px solid #399d3f;
+}
+
+.nameUser{
+  padding: 0px 15px 15px 15px;
+}
+.nameUserText1{
+  color: #4d4d4d;
+  margin-bottom: 0px;
+}
+.nameUserText2{
+  color: #000000;
+  font-weight: bolder;
+}
+
+.listMenu{
+  border: 1px dashed rgba(0,0,0,.125);
+  background-color: #ebebeb;
+  font-weight: bolder;
+}
+.listMenu:active, .listMenu:hover, .listMenu:focus {
+    color: #399d3f;
+    background-color: #dadada;
 }
 
 #sidebar-wrapper {
