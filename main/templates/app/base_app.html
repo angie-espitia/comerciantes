@@ -74,10 +74,10 @@
         </a>
         <!-- Submenu content ventas-->
         <div id='ventas_submenu' class="collapse sidebar-submenu">
-            <a href="{% url 'view_compra' %}" class="list-group-item list-group-item-action">
+            <a href="{% url 'view_venta' %}" class="list-group-item list-group-item-action">
                 <span class="menu-collapsed">Lista de ventas</span>
             </a>
-            <a href="#" class="list-group-item list-group-item-action">
+            <a href="{% url 'agregar_venta' pk=request.user.id %}" class="list-group-item list-group-item-action">
                 <span class="menu-collapsed">Nueva venta</span>
             </a>
         </div>
@@ -109,6 +109,7 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
         <button class="btn btn-primary" id="menu-toggle">Ocultar Menú</button>
         <div id="usuario_id" hidden="false">{{user.id}}</div>
+        <div id="negocio_id" hidden="false">{{usuario.negocio_id}}</div>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -126,7 +127,7 @@
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#">Configuración</a>
               </div>
-            </li>            
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'logout' %}">Cerrar Sesión</a>
             </li>
@@ -137,15 +138,15 @@
         <div class="container-fluid">
 
             {% block content %}
-            {% endblock %}    
-           
+            {% endblock %}
+
         </div>
 
 
     </div>
     <!-- /#wrapper -->
 
-        
+
     </div>
     <!-- /#page-content-wrapper -->
 
@@ -157,7 +158,7 @@
 
     <script src="{% static 'js/document-js.js' %}"></script>
      {% block javascript %}
-     {% endblock %} 
+     {% endblock %}
 
     <!-- Menu Toggle Script -->
     <script>

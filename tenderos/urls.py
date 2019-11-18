@@ -22,6 +22,14 @@ urlpatterns = [
     re_path('compras/nuevo/(?P<pk>\d+)/', agregar_compra, name='agregar_compra'),
     re_path('compras/eliminar/(?P<pk>\d+)/', eliminar_compra, name='eliminar_compra'),
 
+    path('ventas/', view_de_venta, name='view_venta'),
+    re_path('ventas/lista/(?P<pk>\d+)/', list_ventas, name='lista_de_venta'),
+    re_path('ventas/lista/detalle/(?P<pk>\d+)/', detalle_de_venta, name='detalles_ventas'),
+    re_path('ventas/lista/detalle/editar_item/(?P<pk>\d+)/', editar_item_detalle_venta, name='editar_item_detalle_venta'),
+    re_path('ventas/lista/detalle/eliminar_item/(?P<pk>\d+)/', eliminar_item_detalle_venta, name='eliminar_item_detalle_venta'),
+    re_path('ventas/nuevo/(?P<pk>\d+)/', agregar_venta, name='agregar_venta'),
+    re_path('ventas/eliminar/(?P<pk>\d+)/', eliminar_venta, name='eliminar_venta'),
+
     re_path('proveedores/(?P<pk>\d+)/', view_proveedor, name='view_proveedor'),
     re_path('proveedores/nuevo/(?P<pk>\d+)/', agregar_proveedor, name='agregar_proveedor'),
     re_path('proveedores/editar/(?P<pk>\d+)/', editar_proveedor, name='editar_proveedor'),

@@ -1,0 +1,247 @@
+{% extends 'app/base_app.html' %}
+{% load staticfiles %}
+{% block title %} Inicio {% endblock %}
+
+{%  block content %}
+
+ <h1 class="mt-4">Lista Ventas</h1>
+<br>
+{% for row in venta %}
+<div class="row">
+    <div class="col-md-4 col-sm-4 col-lg-4">
+		<h5>Fecha de la venta <br><b>{{ row.fecha }}</b></h5>
+	</div>
+	<div class="col-md-4 col-sm-4 col-lg-4">
+		<h5>Total de la venta <br><b>{{ row.total }}</b></h5>
+	</div>
+</div>
+{% endfor %}
+
+<table class="table table-striped table-bordered">
+ 	<br>
+    <thead>
+      <tr>
+        <th>imagen</th>
+        <th>producto</th>
+        <th>cantidad</th>
+        <th>valor unitario</th>
+        <th>total producto</th>
+        <th>acciones</th>
+      </tr>
+    </thead>
+ {% for row in detalles__ventas %}
+ <tbody>
+      <tr>
+        {% if row.producto_id.imagen %}
+        <td> <img src="/media/{{ row.producto_id.imagen }}" class="img-fluid" style="max-width: 150px; max-height: 120px;">  </td>
+        {% else %}
+        <td> <img src="{% static 'img/nofoto.png' %}" class="img-fluid" style="max-width: 50px;"> </td>
+        {% endif %}
+        <td>{{ row.producto_id.nombre }}</td>
+        <td>{{ row.cantidad }}</td>
+        <td>{{ row.valor_unitario }}</td>
+        <td>{{ row.total_producto }}</td>
+        <td>
+          <a id="{{row.id}}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a>
+          <a id="{{row.id}}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a>
+        </td>
+      </tr>
+    </tbody>
+    {% endfor %}
+  </table>
+
+<!-- Modal Editar -->
+  <div class="modal fade" id="editarmodal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Editar item</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+
+              <form class="form" method="POST" id="formulario_editar_proveedor">
+                {% csrf_token %}
+
+                <div class="form-group">
+                  <input id="id_d" hidden="false">
+                  <label>Producto:</label>
+                  <h5 id="producto_d"></h5>
+                </div>
+
+                <div class="form-group">
+                  <label>cantidad:</label>
+                  <input type="text" class="form-control" id="cantidad_d" onkeyup='calcularMult()'>
+                </div>
+
+                <!-- <div class="form-group">
+                  <label>valor unitario:</label>
+                  <input type="text" class="form-control" id="valor_unitario_d" onkeyup='calcularMult()'>
+                </div> -->
+
+                <div class="form-group">
+                  <label>total:</label>
+                  <input type="text" class="form-control" id="total_d" >
+                  <!-- disabled="true" -->
+                </div>
+
+                  <button class="save btn btn-primary" type="submit" onclick="Actualizar()">Guardar</button>
+                  <br><br>
+              </form>
+
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Edliminar -->
+  <div class="modal fade" id="eliminarmodal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Eliminar Producto</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+
+              <div id="id_p2" hidden="false"></div>
+              <p id="mensaje2"></p>
+              <button class="save btn btn-danger" type="submit" onclick="Eliminar()">Eliminar</button> <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+
+            </div>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+ function datos(id) {
+
+    console.log(id);
+    var csrftoken = '{{ csrf_token }}';
+    $.ajax({
+      headers: {'X-CSRF-TOKEN': csrftoken},
+      method: "GET",
+      url: '/ventas/lista/detalle/editar_item/'+id+'/',
+      dataType: 'json',
+      data: { "csrfmiddlewaretoken": csrftoken,
+          "id": id }
+    })
+
+    .done(function(response){
+      console.log(response);
+      var res = response;
+
+      $('#id_d').val(res.idd);
+      $('#producto_d').text(res.producto);
+      $('#cantidad_d').val(res.cantidad);
+      // $('#valor_unitario_d').val(res.valor_unitario);
+      $('#total_d').val(res.total);
+
+    })
+}
+
+function calcularMult(){
+	var mul = 0;
+
+	cantidad = $("#cantidad_d").val();
+	// valor = $("#valor_unitario_d").val();
+	mul = cantidad * valor;
+
+	$("#total_d").val(mul);
+
+}
+
+function Actualizar() {
+
+    var id = $("#id_d").val();
+    var cantidad = $("#cantidad_d").val();
+    // var valor = $("#valor_unitario_d").val();
+    var total = $("#total_d").val();
+    var csrftoken = '{{ csrf_token }}';
+
+	$.ajax({
+		headers: {'X-CSRF-TOKEN': csrftoken},
+		method: 'POST',
+		url: '/ventas/lista/detalle/editar_item/'+id+'/',
+		dataType: 'text',
+		data: { 'csrfmiddlewaretoken': csrftoken ,
+		  'cantidad_item': cantidad,
+		  // 'valor_unitario_item': valor,
+		  'total_item': total,
+		},
+		success:function(data){
+			alert(data);
+			alert('Se ha actualizado con éxito');
+
+		},
+		error: function(xhr, e, x, status) {
+			console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
+			alert('Ha ocurrido un error, porfavor vuelva a intentar');
+		}
+	})
+}
+
+function datos2(id) {
+    console.log(id);
+    var csrftoken = '{{ csrf_token }}';
+    $.ajax({
+      headers: {'X-CSRF-TOKEN': csrftoken},
+      method: "GET",
+      url: '/ventas/lista/detalle/eliminar_item/'+id+'/',
+      dataType: 'json',
+      data: { "csrfmiddlewaretoken": csrftoken,
+          "id": id }
+    })
+
+    .done(function(response){
+      console.log(response);
+      var res = response;
+
+      $('#id_p2').text(res.id);
+      $('#mensaje2').text('¿Está seguro que desea eliminar el producto ' + res.nombre + ' ?');
+
+    })
+}
+
+function Eliminar() {
+    var id2 = $("#id_p2").text();
+    console.log(id2);
+    var csrftoken = '{{ csrf_token }}';
+    $.ajax({
+      headers: {'X-CSRF-TOKEN': csrftoken},
+      method: "POST",
+      url: '/ventas/lista/detalle/eliminar_item/'+id2+'/',
+      dataType: 'text',
+      data: { "csrfmiddlewaretoken": csrftoken,
+          "id": id2 },
+      success:function(data){
+          alert('Se eliminó con éxito');
+          location.reload();
+      },
+      error: function(xhr, e, x, status) {
+        console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
+        alert('Ha ocurrido un error, porfavor vuelva a intentar');
+      }
+    })
+ }
+
+</script>
+ {% endblock %}
