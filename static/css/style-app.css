@@ -1,5 +1,20 @@
+@import url('https://fonts.googleapis.com/css?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Varela+Round');
+
 body {
   overflow-x: hidden;
+  font-family: 'SF-Pro-Display', Roboto, Sans-Serif;
+}
+
+/* nav */
+.TitleNegocio{
+  background-image: url(../img/bg1.png);
+	background-size: cover;
+  background-color: #2ea035;
+  color: white;
+  padding: 0.875rem 1.25rem;
+  font-size: 1.2rem;
+  font-family: 'Pacifico', cursive;
 }
 
 #sidebar-wrapper {
@@ -9,11 +24,6 @@ body {
   -moz-transition: margin .25s ease-out;
   -o-transition: margin .25s ease-out;
   transition: margin .25s ease-out;
-}
-
-#sidebar-wrapper .sidebar-heading {
-  padding: 0.875rem 1.25rem;
-  font-size: 1.2rem;
 }
 
 #sidebar-wrapper .list-group {

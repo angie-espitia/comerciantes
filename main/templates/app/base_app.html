@@ -31,7 +31,14 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading">Escritorio </div>
+      <div class="TitleNegocio">Escritorio </div>
+
+      <div class="datoUser">
+        <h4>Bienvenido,</h4>
+        <h2>{{user.first_name}} {{user.last_name}}</h2>
+      </div>
+
+
       <div class="list-group list-group-flush">
         <a href="{% url 'principal_app' %}" class="list-group-item list-group-item-action bg-light">Inicio</a>
         <!-- Menu with submenu  productos-->
