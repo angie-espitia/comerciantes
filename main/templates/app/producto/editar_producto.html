@@ -61,7 +61,7 @@
     {% for row in detalle_compra_producto %}
     <tbody>
       <tr>
-        <td>{{ row.compra_id.fecha }}</td>
+        <td>{{ row.compra_id.fecha|date:"SHORT_DATE_FORMAT" }}</td>
         <td>{{ row.proveedor_id.razon_social }}</td>
         <td>{{ row.cantidad }}</td>
         <td>{{ row.valor_unitario }}</td>
