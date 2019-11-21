@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Producto, Compra, detalle_compra, detalle_usuario_producto, Proveedor
+from .models import Producto, Compra, detalle_compra, detalle_negocio_producto, Proveedor, Venta, detalle_venta
 from django.forms.models import inlineformset_factory
 
 class ProductoForm(forms.ModelForm):
@@ -36,20 +36,28 @@ class ProductoForm_dos(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProductoForm_dos, self).__init__(*args, **kwargs)
-        self.fields['descripcion'].required = False  # solo con los campos que especificaste en la clase Meta
+        self.fields['descripcion'].required = False
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
 
-class DetalleUsuarioProductoForm(forms.ModelForm):
+class DetalleNegocioProductoForm(forms.ModelForm):
 
     class Meta:
-        model = detalle_usuario_producto
+        model = detalle_negocio_producto
         fields = ('proveedor_id', )
 
     def __init__(self, *args, **kwargs):
-        super(DetalleUsuarioProductoForm, self).__init__(*args, **kwargs)
+        negocio = kwargs.pop('user')     # client is the parameter passed from views.py
+        negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=negocio, producto_id__isnull=True)
+        array_p = []
+        for f in negocio_proveedor:
+            array_p.append(f.proveedor_id.id)
+        p = Proveedor.objects.filter(id__in=array_p)
+
+        super(DetalleNegocioProductoForm, self).__init__(*args, **kwargs)
+        self.fields['proveedor_id'].queryset= p
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -77,15 +85,15 @@ class DetalleCompraForm(forms.ModelForm):
         fields = ('__all__' )
 
     def __init__(self, *args, **kwargs):
-        usuario = kwargs.pop('user')     # client is the parameter passed from views.py
-        usuario_proveedor = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=True)
-        usuario_producto = detalle_usuario_producto.objects.filter(usuario_id=usuario.id, producto_id__isnull=False)
+        negocio = kwargs.pop('user')     # client is the parameter passed from views.py
+        usuario_proveedor = detalle_negocio_producto.objects.filter(negocio_id=negocio, producto_id__isnull=True)
+        negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio, producto_id__isnull=False)
         array_p = []
         for f in usuario_proveedor:
             array_p.append(f.proveedor_id.id)
         p = Proveedor.objects.filter(id__in=array_p)
         array_e = []
-        for f in usuario_producto:
+        for f in negocio_producto:
             array_e.append(f.producto_id.id)
         po = Producto.objects.filter(id__in=array_e)
 
@@ -98,3 +106,43 @@ class DetalleCompraForm(forms.ModelForm):
             })
 
 DetalleCompraFormSet = inlineformset_factory(Compra, detalle_compra, form=DetalleCompraForm, extra=1)
+
+
+class VentaForm(forms.ModelForm):
+
+    class Meta:
+        model = Venta
+        fields = ('__all__' )
+        widgets = { 'fecha': forms.DateInput(attrs={'class':'form-control', 'type':'date', 'input_formats': '%d/%m/%Y'}),
+                }
+
+    def __init__(self, *args, **kwargs):
+        super(VentaForm, self).__init__(*args, **kwargs)
+        self.fields['observacion'].required = False
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+class DetalleVentaForm(forms.ModelForm):
+
+    class Meta:
+        model = detalle_venta
+        fields = ('__all__' )
+
+    def __init__(self, *args, **kwargs):
+        negocio = kwargs.pop('user')     # client is the parameter passed from views.py
+        negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio, producto_id__isnull=False)
+        array_e = []
+        for f in negocio_producto:
+            array_e.append(f.producto_id.id)
+        po = Producto.objects.filter(id__in=array_e)
+
+        super(DetalleVentaForm, self).__init__(*args, **kwargs)
+        self.fields['producto_id'].queryset= po
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+DetalleVentaFormSet = inlineformset_factory(Venta, detalle_venta, form=DetalleVentaForm, extra=1)

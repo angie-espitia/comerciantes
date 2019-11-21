@@ -2,13 +2,40 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+import datetime
+
+## subir imagenes por carpeta de usuario
+def get_upload_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+	detalle_negocio = detalle_negocio_producto.objects.filter(negocio_id=instance.id)
+	for row in detalle_negocio:
+		negocio = row.negocio_id
+	return 'negocio_{0}/{1}'.format(negocio, filename)
+
+#Manejo negocio
+class Negocio(models.Model):
+	id = models.AutoField( primary_key=True, db_column='id')
+	nombre = models.CharField(max_length = 45, db_column='nombre')
+	nit = models.CharField(max_length = 45, db_column='nit', null=True)
+	telefono = models.CharField(max_length = 45, db_column='telefono', null=True)
+	email = models.CharField(max_length = 45, db_column='email', null=True)
+
+	class Meta:
+		db_table = 'Negocio'
+		managed  = False
+
+	def __str__(self):
+		return '{}'.format(self.nombre)
 
 # Manejo de usuarios
-
 class Usuario(models.Model):
 	id = models.OneToOneField(User, primary_key=True, on_delete=models.DO_NOTHING, db_column='id')
-	telefono = models.IntegerField( db_column='telefono')
+	documento = models.CharField(max_length = 45, db_column='documento')
+	telefono = models.CharField(max_length = 45, db_column='telefono', null=True)
 	direccion = models.CharField(max_length = 45, db_column='direccion', null=True)
+	foto = models.ImageField( upload_to=get_upload_path, db_column='foto', null=True) #default="../static/my/img/img4.jpg"
+	negocio_id = models.ForeignKey(Negocio, on_delete=models.DO_NOTHING, db_column='negocio_id')
 
 	class Meta:
 		db_table = 'Usuario'
@@ -59,12 +86,6 @@ class Venta(models.Model):
 	def __str__(self):
 		return '{}'.format(self.id)
 
-## subir imagenes por carpeta de usuario
-def get_upload_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    detalle_usuario = detalle_usuario_producto.objects.get(producto_id=instance.id)
-    return 'user_{0}/{1}'.format(detalle_usuario.usuario_id.id, filename)
-
 class Producto(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
 	codigo = models.CharField(max_length = 45, db_column='codigo', null=True)
@@ -106,12 +127,23 @@ class detalle_venta(models.Model):
 		db_table = 'detalle_venta'
 		managed  = False
 
-class detalle_usuario_producto(models.Model):
+class detalle_negocio_producto(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
-	usuario_id = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, db_column='usuario_id')
+	negocio_id = models.ForeignKey(Negocio, on_delete=models.DO_NOTHING, db_column='negocio_id')
 	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING, db_column='producto_id', null=True)
 	proveedor_id = models.ForeignKey(Proveedor , on_delete=models.DO_NOTHING, db_column='proveedor_id')
 
 	class Meta:
-		db_table = 'detalle_usuario_producto'
+		db_table = 'detalle_negocio_producto'
+		managed  = False
+
+class Log(models.Model):
+	id = models.AutoField( primary_key=True, db_column='id')
+	usuario = models.IntegerField( db_column='usuario')
+	negocio = models.IntegerField( db_column='negocio')
+	tiempo= models.DateField( default=datetime.datetime.now, db_column='tiempo')
+	accion= models.TextField( db_column='accion')
+
+	class Meta:
+		db_table = 'Log'
 		managed  = False

@@ -77,14 +77,14 @@ DATABASES = {
     }
 }
 
-# ### db para sqlite 
+# ### db para sqlite
 
-# DATABASES = {  
-#    'default': {  
-#      'ENGINE': 'django.db.backends.sqlite3',  
-#      'NAME': 'db_tenderos',  
-#    }  
-# } 
+# DATABASES = {
+#    'default': {
+#      'ENGINE': 'django.db.backends.sqlite3',
+#      'NAME': 'db_tenderos',
+#    }
+# }
 
 
 # Password validation
@@ -131,6 +131,6 @@ STATICFILES_DIRS = [ BASE_DIR + '/static' ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-MEDIA_URL = '/media/' 
+MEDIA_URL = '/media/'
 
-STATIC_ROLS = {'corporativo': 1, 'comerciante': 2}
+STATIC_ROLS = {'propietario': 1, 'empleado': 2}

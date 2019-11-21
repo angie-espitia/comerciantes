@@ -1,0 +1,51 @@
+{% extends 'app/base_app.html' %}
+{% load user_tags %}
+{% block title %} Registrar empleado{% endblock %}
+
+{%  block content %}
+
+{% if request.user|has_group:"propietario" %}
+<h3 class="text-center mb-4">Registrar un Empleado</h3>
+
+<form class="form-signin" method="post">
+	{% csrf_token %}
+
+    <div class="form-label-group">
+    	<input type="text" name="username" placeholder="Usuario" class="form-control" id="form-usuario">
+			<label class="">Usuario del empleado</label>
+    </div>
+    <div class="form-label-group">
+        <input type="text" name="email" placeholder="Correo" class="form-control" id="form-email">
+				<label class="">Correo del empleado</label>
+		</div>
+    <div class="form-label-group">
+        <input type="text" name="nombre" placeholder="Nombres" class="form-control" id="form-nombre">
+				<label class="">Nombre del empleado</label>
+		</div>
+    <div class="form-label-group">
+        <input type="text" name="apellido" placeholder="Apellidos" class="form-control" id="form-apellido">
+				<label class="">Apellido del empleado</label>
+		</div>
+    <div class="form-label-group">
+        <input type="text" name="documento" placeholder="Documento" class="form-control" id="form-telefono">
+				<label class="">Documento del empleado</label>
+		</div>
+    <div class="form-label-group">
+    	<input type="password" name="password1" placeholder="Contraseña" class="form-control" id="form-contraseña">
+			<label class="">Contraseña para el usuario</label>
+    </div>
+    <div class="form-label-group">
+    	<input type="password" name="password2" placeholder="Confirmar contraseña" class="form-control" id="form-password2">
+			<label class="">Confirmar contraseña</label>
+    </div>
+
+		<br><br>
+    <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Registrar empleado</button>
+{% endif %}
+{% if request.user|has_group:"empleado" %}
+	<p>Lo siento, no tiene permisos para este contenido :(</p>
+{% endif %}
+
+  </form>
+
+{% endblock %}

@@ -3,34 +3,42 @@
 
 {%  block content %}
 
-<h3 class="login-heading mb-4">Registrarse!</h3>
+<h3 class="login-heading mb-4">Registrar un negocio!</h3>
 
 <form class="form-signin" method="post">
 	{% csrf_token %}
 
+	<div class="form-label-group">
+		<input type="text" name="nombre_negocio" placeholder="Negocio" class="form-control" id="form-usuario">
+		<label class="sr-only">Nombre del negocio</label>
+	</div>
+	<div class="form-label-group">
+		<input type="text" name="nit_negocio" placeholder="NIT" class="form-control" id="form-usuario">
+		<label class="sr-only">NIT del negocio (Si tiene)</label>
+	</div>
     <div class="form-label-group">
     	<input type="text" name="username" placeholder="Usuario" class="form-control" id="form-usuario">
-			<label class="sr-only">Usuario</label>
+			<label class="sr-only">Usuario del propietario</label>
     </div>
     <div class="form-label-group">
         <input type="text" name="email" placeholder="Correo" class="form-control" id="form-email">
-				<label class="sr-only">Correo</label>
+				<label class="sr-only">Correo del propietario</label>
 		</div>
     <div class="form-label-group">
         <input type="text" name="nombre" placeholder="Nombres" class="form-control" id="form-nombre">
-				<label class="sr-only">Nombre</label>
+				<label class="sr-only">Nombre del propietario</label>
 		</div>
     <div class="form-label-group">
         <input type="text" name="apellido" placeholder="Apellidos" class="form-control" id="form-apellido">
-				<label class="sr-only">Apellido</label>
+				<label class="sr-only">Apellido del propietario</label>
 		</div>
     <div class="form-label-group">
-        <input type="text" name="telefono" placeholder="Telefono" class="form-control" id="form-telefono">
-				<label class="sr-only">Telefono</label>
+        <input type="text" name="documento" placeholder="Documento" class="form-control" id="form-telefono">
+				<label class="sr-only">Documento del propietario</label>
 		</div>
     <div class="form-label-group">
     	<input type="password" name="password1" placeholder="Contraseña" class="form-control" id="form-contraseña">
-			<label class="sr-only">Contraseña</label>
+			<label class="sr-only">Contraseña para el usuario</label>
     </div>
     <div class="form-label-group">
     	<input type="password" name="password2" placeholder="Confirmar contraseña" class="form-control" id="form-password2">
@@ -38,7 +46,7 @@
     </div>
 
 		<br><br>
-    <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Registrar</button>
+    <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Registrar negocio y usuario principal</button>
 		<div class="text-center">
 			<a class="small" href="{% url 'login' %}">O inicia sesión aquí</a></div>
 

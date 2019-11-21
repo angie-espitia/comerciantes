@@ -19,7 +19,7 @@
         <th>Acciones</th>
       </tr>
     </thead>
-    {% for row in usuario_proveedor %}
+    {% for row in negocio_proveedor %}
     <tbody>
       <tr>
         <td>{{ row.proveedor_id.nombre }}</td>
@@ -29,7 +29,7 @@
         <td>{{ row.proveedor_id.celular }}</td>
         <td>{{ row.proveedor_id.email }}</td>
         <td>
-          <a id="{{row.proveedor_id.id}}" class="btn btn-primary" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a> <!-- 
+          <a id="{{row.proveedor_id.id}}" class="btn btn-primary" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a> <!--
           <a id="{{row.proveedor_id.id}}" class="btn btn-danger" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a> -->
         </td>
       </tr>
@@ -57,7 +57,7 @@
 
               <form class="form" method="POST" id="formulario_editar_proveedor">
                 {% csrf_token %}
-                
+
                 <div class="form-group">
                   <input id="id_p" hidden="false">
                   <label>Nombre de contácto:</label>
@@ -153,7 +153,7 @@
         .done(function(response){
           console.log(response);
           var res = response;
-          
+
           $('#id_p').val(res.id);
           $('#nombre_p').val(res.nombre);
           $('#razon_social_p').val(res.razon_social);
@@ -161,7 +161,7 @@
           $('#email_p').val(res.email);
           $('#telefono_p').val(res.telefono);
           $('#celular_p').val(res.celular);
-          
+
         });
       }
 
@@ -184,7 +184,7 @@ function Actualizar() {
       $('#nombre_p').focus();
       $('#errornombre').html('<small class="form-text text-muted">Ingrese un nombre válido</small>');
       return false;
-    } else if (!validacion_email.test(email)){
+    } else if (email != "" && !validacion_email.test(email)){
       $('#errornombre').html('');
       $('#email_p').focus();
       $('#erroremail').html('<small class="form-text text-muted">Ingrese una dirección de correo válida.</small>');
@@ -222,8 +222,8 @@ function Actualizar() {
           error: function(xhr, e, x, status) {
             console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
             alert('Ha ocurrido un error, porfavor vuelva a intentar');
-          }     
-        
+          }
+
       });
     }
 }
@@ -243,10 +243,10 @@ function datos2(id) {
     .done(function(response){
       console.log(response);
       var res = response;
-      
+
       $('#id_p2').text(res.id);
       $('#mensaje2').text('¿Está seguro que desea eliminar al proveedor ' + res.razon_social + ' ?');
-      
+
     });
 }
 
@@ -268,14 +268,14 @@ function Eliminar() {
       error: function(xhr, e, x, status) {
         console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
         alert('Ha ocurrido un error, porfavor vuelva a intentar');
-      } 
+      }
     })
     // .done(function(response){
     //   var res = response;
     //   console.log(res);
-    //   alert('Se eliminó con éxito');   
-      
+    //   alert('Se eliminó con éxito');
+
     // });
 }
 </script>
- {% endblock %} 
+ {% endblock %}

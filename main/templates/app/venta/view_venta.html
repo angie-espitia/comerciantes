@@ -1,63 +1,31 @@
 {% extends 'app/base_app.html' %}
-{% load staticfiles %}
 {% block title %} Inicio {% endblock %}
 
 {%  block content %}
 
- <h1 class="mt-4">Lista de productos</h1>
+ <h1 class="mt-4">Lista Ventas</h1>
 
  <table class="table table-striped table-bordered">
-
- 	<br>
     <thead>
       <tr>
-        <th>Código</th>
-        <th>Nombre</th>
-        <th>Stock</th>
-        <th>Valor costo</th>
-        <th>Valor venta</th>
-        <th>Imagen</th>
-        <th>Proveedor Inicial</th>
-        <th>Descripción</th>
+        <th>Fecha de ventas realizadas</th>
+        <th>Total</th>
         <th>Acciones</th>
       </tr>
     </thead>
-    {% for row in negocio_producto %}
-    <tbody>
-      <tr>
-        <td>{{ row.producto_id.codigo }}</td>
-        <td>{{ row.producto_id.nombre }}</td>
-        <td>{{ row.producto_id.stock }}</td>
-        <td>{{ row.producto_id.valor_costo }}</td>
-        <td>{{ row.producto_id.valor_venta }}</td>
-        {% if row.producto_id.imagen %}
-        <td> <img src="/media/{{ row.producto_id.imagen }}" class="img-fluid" style="max-width: 150px; max-height: 120px;">  </td>
-        {% else %}
-        <td> <img src="{% static 'img/nofoto.png' %}" class="img-fluid" style="max-width: 50px;"> </td>
-        {% endif %}
-        <td>{{ row.proveedor_id.razon_social }}</td>
-        <td>{{ row.producto_id.descripcion }}</td>
-        <td>
-          <a class="btn btn-primary btn-sm" href="{% url 'detalle_producto' pk=row.producto_id.id %}" > Detalles </a>
-          <!-- <a id="{{row.producto_id.id}}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a> -->
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="6" class="text-center bg-warning">No hay productos registrados</td>
-      </tr>
+    <tbody id="respuesta_j">
+
     </tbody>
-    {% endfor %}
   </table>
 
-  <!-- Modal Editar -->
+<!-- Modal Edliminar -->
   <div class="modal fade" id="eliminarmodal">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
 
             <!-- Modal Header -->
             <div class="modal-header">
-              <h4 class="modal-title">Eliminar Producto</h4>
+              <h4 class="modal-title">Eliminar venta</h4>
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
@@ -74,10 +42,49 @@
     </div>
   </div>
 
+
  {% endblock %}
 
- {% block javascript %}
- <script>
+{% block javascript %}
+<script type="text/javascript">
+
+$(document).ready(function() {
+    id = $('#usuario_id').text();
+    // console.log(id);
+    var csrftoken = '{{ csrf_token }}';
+    $.ajax({
+      headers: {'X-CSRF-TOKEN': csrftoken},
+      method: "GET",
+      url: '/ventas/lista/'+id+'/',
+      dataType: 'json',
+      data: { "csrfmiddlewaretoken": csrftoken,
+          "id": id }
+    })
+
+    .done(function(response){
+      // console.log(response);
+      var res = response;
+      var html = '';
+      var url = "{% url 'detalles_ventas' ";
+      if (JSON.stringify(res)=='{}'){
+        html = '<tr><td colspan="6" class="text-center bg-warning">No hay ventas registrados</td></tr>'
+      }
+      else{
+        for(var item in res){
+          // console.log(res[item]);
+          html +='<tr>';
+          html +='<td>'+res[item].fecha+'</td>';
+          html +='<td>'+res[item].total+'</td>';
+          html +='<td><a class="btn btn-success btn-sm" href="/ventas/lista/detalle/'+res[item].id_venta+'/"> Detalles </a> ';
+          html +=' <a class="btn btn-danger btn-sm"  data-toggle="modal" data-target="#eliminarmodal" onclick="datos2('+res[item].id_venta+')">Borrar </a></td>';
+          html +='</tr>';
+        }
+      }
+
+      $("#respuesta_j").html(html)
+
+    })
+});
 
 function datos2(id) {
     console.log(id);
@@ -85,20 +92,20 @@ function datos2(id) {
     $.ajax({
       headers: {'X-CSRF-TOKEN': csrftoken},
       method: "GET",
-      url: '/productos/eliminar/'+id+'/',
+      url: '/ventas/eliminar/'+id+'/',
       dataType: 'json',
       data: { "csrfmiddlewaretoken": csrftoken,
           "id": id }
     })
 
     .done(function(response){
-      console.log(response);
+      // console.log(response);
       var res = response;
 
-      $('#id_p2').text(res.id);
-      $('#mensaje2').text('¿Está seguro que desea eliminar el producto ' + res.nombre + ' ?');
+      $('#id_p2').text(res.idd);
+      $('#mensaje2').html('¿ Está seguro que desea eliminar la venta de valor <b>' + res.total + '</b> con fecha del <b>'+ res.fecha +'</b> ?');
 
-    });
+    })
 }
 
 function Eliminar() {
@@ -108,7 +115,7 @@ function Eliminar() {
     $.ajax({
       headers: {'X-CSRF-TOKEN': csrftoken},
       method: "POST",
-      url: '/productos/eliminar/'+id2+'/',
+      url: '/ventas/eliminar/'+id2+'/',
       dataType: 'text',
       data: { "csrfmiddlewaretoken": csrftoken,
           "id": id2 },
@@ -121,7 +128,6 @@ function Eliminar() {
         alert('Ha ocurrido un error, porfavor vuelva a intentar');
       }
     })
-  }
-
+ }
 </script>
- {% endblock %}
+{% endblock %}
