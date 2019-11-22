@@ -55,10 +55,10 @@
         </a>
         <!-- Submenu content productos-->
         <div id='productos_submenu' class="collapse sidebar-submenu">
-            <a href="{% url 'view_producto' pk=request.user.id %}" class="list-group-item list-group-item-action">
+            <a href="{% url 'view_producto' pk=request.user.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de productos</span>
             </a>
-            <a href="{% url 'agregar_producto' pk=request.user.id %}" class="list-group-item list-group-item-action">
+            <a href="{% url 'agregar_producto' pk=request.user.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nuevo producto</span>
             </a>
         </div>
@@ -71,10 +71,10 @@
         </a>
         <!-- Submenu content compras-->
         <div id='compras_submenu' class="collapse sidebar-submenu">
-            <a href="{% url 'view_compra' %}" class="list-group-item list-group-item-action">
+            <a href="{% url 'view_compra' %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de compras</span>
             </a>
-            <a href="{% url 'agregar_compra' pk=request.user.id %}" class="list-group-item list-group-item-action">
+            <a href="{% url 'agregar_compra' pk=request.user.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nueva compra</span>
             </a>
         </div>
@@ -87,10 +87,10 @@
         </a>
         <!-- Submenu content ventas-->
         <div id='ventas_submenu' class="collapse sidebar-submenu">
-            <a href="{% url 'view_venta' %}" class="list-group-item list-group-item-action">
+            <a href="{% url 'view_venta' %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de ventas</span>
             </a>
-            <a href="{% url 'agregar_venta' pk=request.user.id %}" class="list-group-item list-group-item-action">
+            <a href="{% url 'agregar_venta' pk=request.user.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nueva venta</span>
             </a>
         </div>
@@ -103,10 +103,10 @@
         </a>
         <!-- Submenu content proveedores-->
         <div id='proveedores_submenu' class="collapse sidebar-submenu">
-            <a href="{% url 'view_proveedor' pk=request.user.id %}" class="list-group-item list-group-item-action">
+            <a href="{% url 'view_proveedor' pk=request.user.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de proveedores</span>
             </a>
-            <a href="{% url 'agregar_proveedor' pk=request.user.id %}" class="list-group-item list-group-item-action">
+            <a href="{% url 'agregar_proveedor' pk=request.user.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nuevo proveedor</span>
             </a>
         </div>
@@ -119,13 +119,26 @@
                 </div>
             </a>
             <div id='administracion_submenu' class="collapse sidebar-submenu">
-                <a href="{% url 'registrar_empleado' pk=request.user.id %}" class="list-group-item list-group-item-action">
+                <a href="{% url 'registrar_empleado' pk=request.user.id %}" class="list-group-item-action listSubMenu">
                     <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Nuevo empleado</span>
+                </a>
+                <a href="{% url 'perfil_usuario' pk=request.user.id %}" class="list-group-item-action listSubMenu">
+                    <span class="menu-collapsed"><i class="fas fa-list-ul"></i>Perfil de usuario</span>
                 </a>
             </div>
         {% endif %}
         {% if request.user|has_group:"empleado" %}
-            <a href="#" class="list-group-item list-group-item-action listMenu"><i class="fas fa-tools"></i> Configuración</a>
+          <a href="#configuracion_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenu">
+              <div class="d-flex w-100 justify-content-start align-items-center">
+                  <span class="menu-collapsed"><i class="fas fa-tools"></i> Configuración</span>
+              </div>
+          </a>
+          <div id='configuracion_submenu' class="collapse sidebar-submenu">
+              <a href="{% url 'perfil_usuario' pk=request.user.id %}" class="list-group-item-action listSubMenu">
+                  <span class="menu-collapsed"><i class="fas fa-list-ul"></i>Perfil de usuario</span>
+              </a>
+          </div>
+
         {% endif %}
         <!-- fin config admin -->
       </div>
@@ -133,10 +146,10 @@
     <!-- /#sidebar-wrapper -->
 
     <!-- Page Content -->
-    <div id="page-content-wrapper">
+    <div class="boxIni" id="page-content-wrapper">
 
-      <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <button class="btn btn-primary" id="menu-toggle">Ocultar Menú</button>
+      <nav class="navbar navbar-expand-lg TitleBox">
+        <button class="btn btn-light" id="menu-toggle">Ocultar Menú</button>
         <div id="usuario_id" hidden="false">{{user.id}}</div>
         <div id="negocio_id" hidden="false">{{usuario.negocio_id}}</div>
 
@@ -146,7 +159,7 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-            <li class="nav-item dropdown">
+            <!-- <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {{user.first_name}}
               </a>
@@ -156,15 +169,15 @@
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#">Configuración</a>
               </div>
-            </li>
+            </li> -->
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}">Cerrar Sesión</a>
+              <a class="nav-link" href="{% url 'logout' %}">Cerrar Sesión <i class="fas fa-sign-out-alt"></i></a>
             </li>
           </ul>
         </div>
       </nav>
 
-        <div class="container-fluid">
+        <div class="container">
 
             {% block content %}
             {% endblock %}

@@ -88,7 +88,7 @@ def registrar_empleado(request, pk):
             myusuario.negocio_id = negocio_actual
             myusuario.save()
 
-            return redirect('login')
+            return HttpResponseRedirect(request.path_info) #redirige misma pag
         else:
             return render(request, 'registrar_empleado.html', {'error': validators.getMessage() } )
         # Agregar el usuario a la base de datos
@@ -122,6 +122,38 @@ def logout(request):
 def principal_app(request):
     return render(request, 'app/index_app.html')
 
+@login_required(login_url="/")
+def perfil_usuario(request, pk):
+    usuario = User.objects.get(id=pk)
+    miusuario = Usuario.objects.get(id=usuario)
+    error = False
+    if request.method == 'POST':
+        # import pdb; pdb.set_trace()
+        usuario.email = request.POST.get('email')
+        usuario.first_name = request.POST.get('first_name')
+        usuario.last_name = request.POST.get('last_name')
+        usuario.save()
+
+        miusuario.cedula = request.POST.get('documento')
+        miusuario.telefono = request.POST.get('telefono')
+        miusuario.direccion = request.POST.get('direccion')
+        miusuario.save()
+
+        return HttpResponseRedirect(request.path_info) #redirige misma pag
+
+    return render(request, 'app/administracion/perfil_usuario.html', {'usu': miusuario } )
+
+@login_required(login_url="/")
+def modificar_contra(request, pk):
+    error = False
+    usuario_contra = User.objects.get(id=pk)
+    if request.method == 'POST':
+        usuario_contra.password = make_password(request.POST['password1'])
+        usuario_contra.save()
+        # log(request, "CONTRASEÑA_MODIFICADA")
+        return HttpResponseRedirect(request.path_info) #redirige misma pag
+
+# proveedor
 
 @login_required(login_url="/")
 def view_proveedor(request, pk):
@@ -154,6 +186,7 @@ def agregar_proveedor(request, pk):
 
     return render(request, 'app/proveedor/agregar_proveedor.html' )
 
+@login_required(login_url="/")
 def editar_proveedor(request, pk):
     proveedor = get_object_or_404(Proveedor, pk=pk)
     if request.method == "POST" and request.is_ajax():
@@ -179,6 +212,7 @@ def editar_proveedor(request, pk):
         print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
 
+@login_required(login_url="/")
 def eliminar_proveedor(request, pk):
     proveedor = get_object_or_404(Proveedor, pk=pk)
     negocio_proveedor = get_object_or_404(detalle_negocio_producto, proveedor_id=proveedor.id)
@@ -315,6 +349,7 @@ def detalle_de_compra(request, pk):
     compra = Compra.objects.filter(id=pk)
     return render(request, 'app/compra/detalle_compra.html', {'detalles__compras' : detalles__compras, 'compra' : compra })
 
+@login_required(login_url="/")
 def editar_item_detalle_compra(request, pk):
     item_detalle_compra = get_object_or_404(detalle_compra, pk=pk)
     if request.method == "POST" and request.is_ajax():
@@ -482,6 +517,7 @@ def detalle_de_venta(request, pk):
     venta = Venta.objects.filter(id=pk)
     return render(request, 'app/venta/detalle_venta.html', {'detalles__ventas' : detalles__ventas, 'venta' : venta })
 
+@login_required(login_url="/")
 def editar_item_detalle_venta(request, pk):
     item_detalle_venta = get_object_or_404(detalle_venta, pk=pk)
     if request.method == "POST" and request.is_ajax():

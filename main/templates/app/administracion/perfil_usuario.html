@@ -1,0 +1,78 @@
+{% extends 'app/base_app.html' %}
+{% load user_tags %}
+{% block title %} Registrar empleado{% endblock %}
+
+{%  block content %}
+
+<ul class="breadcrumb breadcrumbStyle">
+	{% if request.user|has_group:"propietario" %}
+  	<li class="breadcrumb-item"><i class="fas fa-tools"></i> Administración</li>
+	{% endif %}
+	{% if request.user|has_group:"empleado" %}
+		<li class="breadcrumb-item"><i class="fas fa-tools"></i> Configuración</li>
+	{% endif %}
+  <li class="breadcrumb-item active">Perfil</li>
+</ul>
+
+<br>
+<h1 class="mt-4 text-center titleIniBox">Perfil</h1>
+
+<br>
+<div id="alert-form"></div>
+<div class="col-md-12">
+  <div class="col-md-10 mx-auto">
+		<form class="form" method="POST" id="formulario_perfil">
+		  {% csrf_token %}
+				<div class="row">
+					<div class="col">
+						<label for="usuario">Usuario</label>
+						<input type="text" class="form-control" name="usuario" id="usuario" value="{{ usu.id.username }}" disabled>
+					</div>
+					<div class="col">
+						<label for="correo">Correo</label>
+						<input type="correo" class="form-control" name="email" id="email" value="{{ usu.id.email }}">
+					</div>
+				</div>
+
+				<div class="col-md-12 col-lg-12 col-sm-12"><br></div>
+
+				<div class="row">
+					<div class="col">
+						<label for="nombres">Nombre</label>
+						<input type="text" class="form-control" name="first_name" id="nombres" value="{{ usu.id.first_name }}">
+					</div>
+					<div class="col">
+						<label for="apellidos">Apellidos</label>
+						<input type="text" class="form-control" name="last_name" id="apellidos" value="{{ usu.id.last_name }}">
+					</div>
+				</div>
+
+				<div class="col-md-12 col-lg-12 col-sm-12"><br></div>
+
+				<div class="row">
+					<div class="col">
+						<label for="telefono">Telefono</label>
+						<input type="text" class="form-control" name="telefono" id="telefono" value="{{ usu.telefono }}">
+					</div>
+					<div class="col">
+						<label for="direccion">Documento</label>
+						<input type="text" class="form-control" name="documento" id="documento" value="{{ usu.documento }}">
+					</div>
+					<div class="col">
+		        <label for="direccion">Dirección</label>
+		        <input type="text" class="form-control" name="direccion" id="direccion" value="{{ usu.direccion }}">
+		      </div>
+		    </div>
+
+				<div class="col-md-12 col-lg-12 col-sm-12"><br></div>
+
+				<div class="col-md-12 col-lg-12 col-sm-12 text-center">
+	 			 <button class="save btn btn-green btn-lg" type="submit">Actualizar Datos</button>
+	 			 <br><br>
+	 		 </div>
+
+		</form>
+	</div>
+</div>
+
+{% endblock %}

@@ -3,50 +3,53 @@
 
 {%  block content %}
 
- <h1 class="mt-4">Nueva venta</h1>
+<ul class="breadcrumb breadcrumbStyle">
+  <li class="breadcrumb-item"><i class="fas fa-wallet"></i> Ventas</li>
+  <li class="breadcrumb-item active">Nueva venta</li>
+</ul>
 
- <div id="alert-form"></div>
+<h1 class="mt-4 text-center titleIniBox"><i class="fas fa-pencil-alt"></i>Nueva venta</h1>
+<br>
 
- <div class="container">
+<div id="alert-form"></div>
 
+<div class="col-md-12 mx-auto">
     <form class="form" method="POST"  id="formulario_registro_venta" enctype="multipart/form-data">
       {% csrf_token %}
-      <div class="row">
-        <div class="col-md-4 col-sm-4 col-lg-4">
-          {{ form.fecha.label }}
-          <br>
-          {{ form.fecha }}
-        </div>
+      <div class="col-md-3 col-sm-3 col-lg-3 text-center">
+        <h5><b> Fecha de la venta: </b></h5>
+        {{ form.fecha }}
       </div>
 
       {{ detalle_venta_formset.management_form }}
 
-        <div id="form_set">
+      <div id="form_set">
         {% for form2 in detalle_venta_formset %}
-        <table class="table table-striped table-bordered" onkeyup='calcularMult()'>
-        <br>
-          <thead>
-            <tr>
-              <th>{{ form2.producto_id.label }}</th>
-              <th>{{ form2.cantidad.label }}</th>
-              <th>{{ form2.total_producto.label }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{ form2.producto_id }}</td>
-              <td>{{ form2.cantidad }}</td>
-              <td>{{ form2.total_producto }}</td>
-            </tr>
-          </tbody>
-        </table>
-        {% endfor %}
-        </div>
-
-
-        <div id="empty_form" style="display:none">
+        <div class="table-responsive tableResStyle">
           <table class="table table-striped table-bordered" onkeyup='calcularMult()'>
-            <tbody>
+            <thead class="theadStyle">
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Total Producto</th>
+              </tr>
+            </thead>
+            <tbody class="text-center formsetBody">
+              <tr>
+                <td>{{ form2.producto_id }}</td>
+                <td>{{ form2.cantidad }}</td>
+                <td>{{ form2.total_producto }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div id="empty_form" style="display:none">
+        <div class="table-responsive tableResStyle">
+          <table class="table table-striped table-bordered" onkeyup='calcularMult()'>
+            <tbody class="text-center formsetBody">
               <tr>
                 <td>{{ detalle_venta_formset.empty_form.producto_id }}</td>
                 <td>{{ detalle_venta_formset.empty_form.cantidad }}</td>
@@ -56,26 +59,34 @@
             </tbody>
           </table>
         </div>
-        <input type="hidden" value="1" name="additems" id="additems">
-        <input type="button" id="additemsbutton" value="+" class="btn btn-success btn-lg">
-
-      <div class="row">
-        <div class="col-md-4 col-sm-4 col-lg-4 p-2">
-          {{ form.total.label }}
-          {{ form.total }}
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4 col-sm-4 col-lg-4 p-2">
-          {{ form.observacion.label }}
-          {{ form.observacion }}
-        </div>
       </div>
 
       <br>
-      <button class="save btn btn-primary" type="submit">Guardar</button>
-      <br><br>
+
+      <input type="hidden" value="1" name="additems" id="additems">
+      <input type="button" id="additemsbutton" value="+" class="btn btn-green btn-lg">
+
+      <div class="col-md-12 col-lg-12 col-sm-12"><br></div>
+
+      <div class="row">
+        <div class="col"> </div>
+        <div class="col-md-3 col-sm-3 col-lg-3 text-center">
+          <h5><b>Total de la venta:</b></h5>
+          {{ form.total }}
+        </div>
+        <div class="col-md-4 col-sm-4 col-lg-4 text-center">
+          <h5><b>Comentarios:</b></h5>
+          {{ form.observacion }}
+        </div>
+        <div class="col"> </div>
+      </div>
+
+      <div class="col-md-12 col-lg-12 col-sm-12"><br></div>
+
+      <div class="col-md-12 col-lg-12 col-sm-12 text-center">
+        <button class="save btn btn-green btn-lg" type="submit">Guardar</button>
+        <br><br>
+      </div>
     </form>
 
   </div>

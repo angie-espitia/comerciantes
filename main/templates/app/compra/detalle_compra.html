@@ -1,104 +1,119 @@
 {% extends 'app/base_app.html' %}
 {% load staticfiles %}
-{% block title %} Inicio {% endblock %}
+{% block title %} Detalle de la compra {% endblock %}
 
 {%  block content %}
 
- <h1 class="mt-4">Lista Compras</h1>
+<ul class="breadcrumb breadcrumbStyle">
+  <li class="breadcrumb-item"><i class="fas fa-shopping-cart"></i> Compras</li>
+  <li class="breadcrumb-item">Lista de compras</li>
+  <li class="breadcrumb-item active">Detalles compra</li>
+</ul>
+
 <br>
+<h1 class="mt-4 text-center titleIniBox"><i class="fas fa-shopping-cart"></i> Detalle de la compra</h1>
+
+<br><br>
 {% for row in compra %}
 <div class="row">
-    <div class="col-md-4 col-sm-4 col-lg-4">
-		<h5>Fecha de la compra <br><b>{{ row.fecha|date:"SHORT_DATE_FORMAT" }}</b></h5>
+    <div class="col-md-4 col-sm-4 col-lg-4 text-center">
+		<h5>Fecha de la compra:</h5>
+    <h4><b>{{ row.fecha|date:"SHORT_DATE_FORMAT" }}</b></h4>
 	</div>
-	<div class="col-md-4 col-sm-4 col-lg-4">
-		<h5>Total de la compra <br><b>${{ row.total }}</b></h5>
+  <div class="col">  </div>
+	<div class="col-md-4 col-sm-4 col-lg-4 text-center">
+		<h5>Total de la compra:</h5>
+    <h4><b>$ {{ row.total }}</b></h4>
 	</div>
 </div>
 {% endfor %}
 
-<table class="table table-striped table-bordered">
- 	<br>
-    <thead>
+<div class="table-responsive tableResStyle">
+ <table class="table table-striped table-bordered table-striped">
+    <thead class="theadStyle">
       <tr>
-        <th>imagen</th>
-        <th>producto</th>
-        <th>proveedor</th>
-        <th>cantidad</th>
-        <th>valor unitario</th>
-        <th>total producto</th>
-        <th>acciones</th>
+        <th>Imagen</th>
+        <th>Producto</th>
+        <th>Proveedor</th>
+        <th>Cantidad</th>
+        <th>Valor unitario</th>
+        <th>Total producto</th>
+        <th>Acciones</th>
       </tr>
     </thead>
- {% for row in detalles__compras %}
- <tbody>
-      <tr>
-        {% if row.producto_id.imagen %}
-        <td> <img src="/media/{{ row.producto_id.imagen }}" class="img-fluid" style="max-width: 150px; max-height: 120px;">  </td>
-        {% else %}
-        <td> <img src="{% static 'img/nofoto.png' %}" class="img-fluid" style="max-width: 50px;"> </td>
-        {% endif %}
-        <td>{{ row.producto_id.nombre }}</td>
-        <td>{{ row.proveedor_id.razon_social }}</td>
-        <td>{{ row.cantidad }}</td>
-        <td>${{ row.valor_unitario }}</td>
-        <td>${{ row.total_producto }}</td>
-        <td>
-          <a id="{{row.id}}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a>
-          <a id="{{row.id}}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a>
-        </td>
-      </tr>
+    <tbody class="text-center">
+       {% for row in detalles__compras %}
+        <tr>
+          {% if row.producto_id.imagen %}
+          <td> <img src="/media/{{ row.producto_id.imagen }}" class="img-fluid" style="max-width: 150px; max-height: 120px;">  </td>
+          {% else %}
+          <td> <img src="{% static 'img/nofoto.png' %}" class="img-fluid" style="max-width: 50px;"> </td>
+          {% endif %}
+          <td>{{ row.producto_id.nombre }}</td>
+          <td>{{ row.proveedor_id.razon_social }}</td>
+          <td>{{ row.cantidad }}</td>
+          <td>$ {{ row.valor_unitario }}</td>
+          <td>$ {{ row.total_producto }}</td>
+          <td>
+            <a id="{{row.id}}" class="btn btn-green btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a>
+            <a id="{{row.id}}" class="btn btn-red btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a>
+          </td>
+        </tr>
+      {% endfor %}
     </tbody>
-    {% endfor %}
   </table>
+</div>
 
 <!-- Modal Editar -->
   <div class="modal fade" id="editarmodal">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content">
+      <div class="modal-content modalContentStyle">
 
             <!-- Modal Header -->
-            <div class="modal-header">
-              <h4 class="modal-title">Editar item</h4>
+            <div class="modal-header modalHeaderStyle">
+              <h4 class="modal-title">Editar Ítem</h4>
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
             <!-- Modal body -->
             <div class="modal-body">
+              <div class="container">
+                <form class="form" method="POST" id="formulario_editar_compra">
+                  {% csrf_token %}
 
-              <form class="form" method="POST" id="formulario_editar_proveedor">
-                {% csrf_token %}
+                  <div class="form-group">
+                    <input id="id_d" hidden="false">
+                    <label>Producto:</label>
+                    <h5 id="producto_d"></h5>
+                  </div>
 
-                <div class="form-group">
-                  <input id="id_d" hidden="false">
-                  <label>Producto:</label>
-                  <h5 id="producto_d"></h5>
-                </div>
+                  <div class="row">
+                    <div class="col">
+                      <label>Cantidad:</label>
+                      <input type="text" class="form-control" id="cantidad_d" onkeyup='calcularMult()'>
+                    </div>
 
-                <div class="form-group">
-                  <label>cantidad:</label>
-                  <input type="text" class="form-control" id="cantidad_d" onkeyup='calcularMult()'>
-                </div>
+                    <div class="col">
+                      <label>Valor Unitario:</label>
+                      <input type="text" class="form-control" id="valor_unitario_d" onkeyup='calcularMult()'>
+                    </div>
+                  </div>
 
-                <div class="form-group">
-                  <label>valor unitario:</label>
-                  <input type="text" class="form-control" id="valor_unitario_d" onkeyup='calcularMult()'>
-                </div>
+                  <div class="form-group">
+                    <br>
+                    <label>Total:</label>
+                    <input type="text" class="form-control" id="total_d" disabled="true">
+                  </div>
 
-                <div class="form-group">
-                  <label>total:</label>
-                  <input type="text" class="form-control" id="total_d" disabled="true">
-                </div>
-
-                  <button class="save btn btn-primary" type="submit" onclick="Actualizar()">Guardar</button>
+                  <button class="save btn btn-green btn-lg" type="submit" onclick="Actualizar()">Guardar</button>
                   <br><br>
-              </form>
-
+                </form>
+              </div>
             </div>
 
             <!-- Modal footer -->
             <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-red" data-dismiss="modal">Cerrar</button>
             </div>
 
       </div>
@@ -108,22 +123,25 @@
   <!-- Modal Edliminar -->
   <div class="modal fade" id="eliminarmodal">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content">
+      <div class="modal-content modalContentStyle">
 
-            <!-- Modal Header -->
-            <div class="modal-header">
-              <h4 class="modal-title">Eliminar Producto</h4>
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
+          <!-- Modal Header -->
+          <div class="modal-header modalHeaderStyleRed">
+            <h4 class="modal-title">Eliminar Producto</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
 
-            <!-- Modal body -->
-            <div class="modal-body">
-
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="container text-center">
+              <br>
               <div id="id_p2" hidden="false"></div>
-              <p id="mensaje2"></p>
-              <button class="save btn btn-danger" type="submit" onclick="Eliminar()">Eliminar</button> <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-
+              <h5 id="mensaje2"></h5>
+              <br>
+              <button class="save btn btn-red btn-lg" type="submit" onclick="Eliminar()">Eliminar</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
             </div>
+          </div>
 
       </div>
     </div>
@@ -217,7 +235,7 @@ function datos2(id) {
       var res = response;
 
       $('#id_p2').text(res.id);
-      $('#mensaje2').text('¿Está seguro que desea eliminar el producto ' + res.nombre + ' ?');
+      $('#mensaje2').html('¿Está seguro que desea eliminar el producto <b>' + res.nombre + '</b> ?');
 
     })
 }

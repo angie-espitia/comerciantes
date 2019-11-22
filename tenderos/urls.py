@@ -13,6 +13,7 @@ urlpatterns = [
     path('login', login , name='login' ),
     path('logout', logout, name = 'logout' ),
     path('registrar', registrar_comerciante, name='registrar_comerciante' ),
+    re_path('usuario/perfil/(?P<pk>\d+)/', perfil_usuario, name='perfil_usuario'),
 
     path('compras/', view_de_compra, name='view_compra'),
     re_path('compras/lista/(?P<pk>\d+)/', list_compras, name='lista_de_compra'),

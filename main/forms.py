@@ -10,10 +10,10 @@ class ProductoForm(forms.ModelForm):
         fields = ('__all__' )
         exclude = ('codigo', 'imagen')
         labels = { 'nombre': 'Nombre del Producto',
-        			'stock': 'stock',
-        			'valor_costo': 'valor_costo',
-        			'valor_venta': 'venta',
-        			'descripcion': 'descripcion',
+        			'stock': 'Stock',
+        			'valor_costo': 'valor del costo',
+        			'valor_venta': 'Precio de venta',
+        			'descripcion': 'Descripcion',
         		  }
         widgets = { 'nombre': forms.TextInput(attrs={'class':'form-control'}),
         			'stock': forms.TextInput(attrs={'class':'form-control'}),
