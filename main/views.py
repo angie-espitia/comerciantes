@@ -59,6 +59,33 @@ def registrar_comerciante(request):
         # Agregar el usuario a la base de datos
     return render( request, 'registrar_tendero.html' )
 
+def login(request):
+
+    if request.method == 'POST':
+
+        validators = FormLoginValidator(request.POST)
+
+        if validators.is_valid():
+
+            auth.login(request, validators.acceso)  # Crear una sesion
+            return redirect('/principal')
+
+        else:
+            return render(request, 'login.html', {'error': validators.getMessage()} )
+
+    return render(request, 'login.html' )
+
+@login_required(login_url="/")
+def logout(request):
+    auth.logout(request)
+    return redirect("/")
+
+# ------------------------------- views manejo negocio tenderos ---------------------------------------------------------
+
+@login_required(login_url="/")
+def principal_app(request):
+    return render(request, 'app/index_app.html')
+
 # registro de empleados
 @login_required(login_url="/")
 def registrar_empleado(request, pk):
@@ -93,35 +120,7 @@ def registrar_empleado(request, pk):
             return render(request, 'registrar_empleado.html', {'error': validators.getMessage() } )
         # Agregar el usuario a la base de datos
     return render( request, 'app/administracion/registrar_empleado.html' )
-
-
-def login(request):
-
-    if request.method == 'POST':
-
-        validators = FormLoginValidator(request.POST)
-
-        if validators.is_valid():
-
-            auth.login(request, validators.acceso)  # Crear una sesion
-            return redirect('/principal')
-
-        else:
-            return render(request, 'login.html', {'error': validators.getMessage()} )
-
-    return render(request, 'login.html' )
-
-@login_required(login_url="/")
-def logout(request):
-    auth.logout(request)
-    return redirect("/")
-
-# ------------------------------- views manejo negocio tenderos ---------------------------------------------------------
-
-@login_required(login_url="/")
-def principal_app(request):
-    return render(request, 'app/index_app.html')
-
+    
 @login_required(login_url="/")
 def perfil_usuario(request, pk):
     usuario = User.objects.get(id=pk)

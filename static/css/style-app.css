@@ -120,7 +120,7 @@ body {
   vertical-align: initial;
 }
 .tableResStyle{
-  box-shadow: 0px 2px 5px 0px #d0d0d0;
+  /* box-shadow: 0px 2px 5px 0px #d0d0d0; */
   margin-top: 20px;
   font-weight: bold;
 }
@@ -170,6 +170,122 @@ form label{
   box-shadow: 0px 0px #00008b00;
   border-bottom: 1px solid #399d3f59;
 }
+
+
+:after, :before {
+    box-sizing: border-box;
+}
+.dataTables_wrapper .dataTables_filter {
+    float: left;
+    text-align: right;
+}
+.btn-app {
+    color: white;
+    box-shadow: none;
+    border-radius: 3px;
+    position: relative;
+    padding: 10px 15px;
+    margin: 0;
+    min-width: 60px;
+    max-width: 80px;
+    text-align: center;
+    border: 1px solid #ddd;
+    background-color: #f4f4f4;
+    font-size: 12px;
+    transition: all .2s;
+}
+.btn-app > .fa, .btn-app > .fas, .btn-app > .glyphicon, .btn-app > .ion {
+    font-size: 30px;
+    display: block;
+}
+.btn-app:hover {
+    border-color: #aaa;
+    transform: scale(1.1);
+}
+.copia {
+  background: rgba(32,124,229,1);
+  background: -moz-linear-gradient(left, rgba(32,124,229,1) 0%, rgba(66,149,227,1) 100%);
+  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(32,124,229,1)), color-stop(100%, rgba(66,149,227,1)));
+  background: -webkit-linear-gradient(left, rgba(32,124,229,1) 0%, rgba(66,149,227,1) 100%);
+  background: -o-linear-gradient(left, rgba(32,124,229,1) 0%, rgba(66,149,227,1) 100%);
+  background: -ms-linear-gradient(left, rgba(32,124,229,1) 0%, rgba(66,149,227,1) 100%);
+  background: linear-gradient(to right, rgba(32,124,229,1) 0%, rgba(66,149,227,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#207ce5', endColorstr='#4295e3', GradientType=1 );
+}
+.pdf {
+  punto
+background: rgba(227,32,32,1);
+background: -moz-linear-gradient(left, rgba(227,32,32,1) 0%, rgba(227,68,68,1) 100%);
+background: -webkit-gradient(left top, right top, color-stop(0%, rgba(227,32,32,1)), color-stop(100%, rgba(227,68,68,1)));
+background: -webkit-linear-gradient(left, rgba(227,32,32,1) 0%, rgba(227,68,68,1) 100%);
+background: -o-linear-gradient(left, rgba(227,32,32,1) 0%, rgba(227,68,68,1) 100%);
+background: -ms-linear-gradient(left, rgba(227,32,32,1) 0%, rgba(227,68,68,1) 100%);
+background: linear-gradient(to right, rgba(227,32,32,1) 0%, rgba(227,68,68,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e32020', endColorstr='#e34444', GradientType=1 );
+}
+.excel {
+  punto
+background: rgba(72,148,67,1);
+background: -moz-linear-gradient(left, rgba(72,148,67,1) 0%, rgba(84,161,79,1) 100%);
+background: -webkit-gradient(left top, right top, color-stop(0%, rgba(72,148,67,1)), color-stop(100%, rgba(84,161,79,1)));
+background: -webkit-linear-gradient(left, rgba(72,148,67,1) 0%, rgba(84,161,79,1) 100%);
+background: -o-linear-gradient(left, rgba(72,148,67,1) 0%, rgba(84,161,79,1) 100%);
+background: -ms-linear-gradient(left, rgba(72,148,67,1) 0%, rgba(84,161,79,1) 100%);
+background: linear-gradient(to right, rgba(72,148,67,1) 0%, rgba(84,161,79,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#489443', endColorstr='#54a14f', GradientType=1 );
+}
+.csv {
+  background: rgba(235,94,42,1);
+background: -moz-linear-gradient(left, rgba(235,94,42,1) 0%, rgba(232,107,58,1) 100%);
+background: -webkit-gradient(left top, right top, color-stop(0%, rgba(235,94,42,1)), color-stop(100%, rgba(232,107,58,1)));
+background: -webkit-linear-gradient(left, rgba(235,94,42,1) 0%, rgba(232,107,58,1) 100%);
+background: -o-linear-gradient(left, rgba(235,94,42,1) 0%, rgba(232,107,58,1) 100%);
+background: -ms-linear-gradient(left, rgba(235,94,42,1) 0%, rgba(232,107,58,1) 100%);
+background: linear-gradient(to right, rgba(235,94,42,1) 0%, rgba(232,107,58,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eb5e2a', endColorstr='#e86b3a', GradientType=1 );
+}
+.imprimir {
+  background: rgba(129,85,186,1);
+background: -moz-linear-gradient(left, rgba(129,85,186,1) 0%, rgba(135,102,177,1) 100%);
+background: -webkit-gradient(left top, right top, color-stop(0%, rgba(129,85,186,1)), color-stop(100%, rgba(135,102,177,1)));
+background: -webkit-linear-gradient(left, rgba(129,85,186,1) 0%, rgba(135,102,177,1) 100%);
+background: -o-linear-gradient(left, rgba(129,85,186,1) 0%, rgba(135,102,177,1) 100%);
+background: -ms-linear-gradient(left, rgba(129,85,186,1) 0%, rgba(135,102,177,1) 100%);
+background: linear-gradient(to right, rgba(129,85,186,1) 0%, rgba(135,102,177,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8155ba', endColorstr='#8766b1', GradientType=1 );
+}
+/*
+Esto es opcional pero sirve para que todos los botones de exportacion se distribuyan de manera equitativa usando flexbox
+*/
+.flexcontent {
+    padding-left: 15px;
+    padding-top: 15px;
+    justify-content: space-around;
+}
+.selectTable{
+  height:40px;
+  float:right;
+}
+div.dataTables_wrapper div.dataTables_filter {
+    text-align: left;
+    margin-top: 15px;
+}
+.btn-secondary {
+    color: #fff;
+    background-color: #51a04c;
+    border-color: #6c757d00;
+}
+.btn-secondary:hover {
+    color: #fff;
+    background-color: #33963b;
+    border-color: #6c757d00;
+}
+.inline{
+  display:inline-block;
+  padding:0;
+}
+
+
 /* varius */
 .container {
   width: 100%;

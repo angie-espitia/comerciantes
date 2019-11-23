@@ -18,6 +18,8 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static 'css/style-app.css' %}" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.bootstrap4.min.css" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="{% static 'fontawesome/css/fontawesome.css' %}" rel="stylesheet">
@@ -32,7 +34,7 @@
 
     <!-- Sidebar -->
     <div class="bgGrayMenu" id="sidebar-wrapper">
-      <div class="TitleNegocio">Escritorio </div>
+      <div class="TitleNegocio">{{user|get_name_negocio}}</div>
 
       <div class="datoUser">
         <div class="UserCircle d-flex justify-content-center">
