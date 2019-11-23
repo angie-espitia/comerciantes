@@ -179,6 +179,14 @@ form label{
     float: left;
     text-align: right;
 }
+.dataTables_wrapper .dataTables_paginate .paginate_button{
+  padding: 0.5px 1px!important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:active, .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: #38383800!important;
+  border: 0px!important;
+  box-shadow: 0 0 2px #17171763!important;
+}
 .btn-app {
     color: white;
     box-shadow: none;
@@ -213,7 +221,6 @@ form label{
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#207ce5', endColorstr='#4295e3', GradientType=1 );
 }
 .pdf {
-  punto
 background: rgba(227,32,32,1);
 background: -moz-linear-gradient(left, rgba(227,32,32,1) 0%, rgba(227,68,68,1) 100%);
 background: -webkit-gradient(left top, right top, color-stop(0%, rgba(227,32,32,1)), color-stop(100%, rgba(227,68,68,1)));
@@ -224,7 +231,6 @@ background: linear-gradient(to right, rgba(227,32,32,1) 0%, rgba(227,68,68,1) 10
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e32020', endColorstr='#e34444', GradientType=1 );
 }
 .excel {
-  punto
 background: rgba(72,148,67,1);
 background: -moz-linear-gradient(left, rgba(72,148,67,1) 0%, rgba(84,161,79,1) 100%);
 background: -webkit-gradient(left top, right top, color-stop(0%, rgba(72,148,67,1)), color-stop(100%, rgba(84,161,79,1)));
@@ -283,6 +289,9 @@ div.dataTables_wrapper div.dataTables_filter {
 .inline{
   display:inline-block;
   padding:0;
+}
+.dataTables_wrapper .dataTables_filter input {
+    margin-left: 0px!important;
 }
 
 
