@@ -13,10 +13,8 @@
 
 <br>
 
-<div class="table-responsive tableResStyle">
- <table class="table table-striped table-bordered" id="ejemplo">
-    
-  </table>
+<div class="table-responsive tableResStyle" id="tableee">
+
 </div>
 
 <!-- Modal Edliminar -->
@@ -86,33 +84,43 @@ var res = response;
 var html = '';
 var url = "{% url 'detalles_compras' ";
 if (JSON.stringify(res)=='{}'){
-  html = '<tr><td colspan="6" class="text-center bg-warning">No hay productos registrados</td></tr>'
+  html += '<table class="table table-striped table-bordered" id="ejemplo">';
+  html += '<thead class="theadStyle">';
+  html += '<tr><th>Fecha de la compra</th>';
+  html += '<th>Proveedor</th>';
+  html += '<th>Total</th>';
+  html += '<th>Acciones</th></tr>';
+  html += '</thead>';
+  html += '<tbody class="text-center">';
+  html = '<tr><td colspan="4" class="text-center bg-warning">No hay compras registradas</td></tr>';
+  html += '</tbody>';
+  html += '</table>';
 }
 else{
-  html += '<thead class="theadStyle">'
-  html += '<tr><th>Fecha de la compra</th>'
-  html += '<th>Proveedor</th>'
-  html += '<th>Total</th>'
-  html += '<th>Acciones</th></tr>'
-  html += '</thead>'
-  html += '<tbody class="text-center">'
+  html += '<table class="table table-striped table-bordered" id="ejemplo">';
+  html += '<thead class="theadStyle">';
+  html += '<tr><th>Fecha de la compra</th>';
+  html += '<th>Proveedor</th>';
+  html += '<th>Total</th>';
+  html += '<th>Acciones</th></tr>';
+  html += '</thead>';
+  html += '<tbody class="text-center">';
   for(var item in res){
     // console.log(res[item]);
-    html +='<tr role="row" class="odd">';
-    html +='<td class="sorting_1">'+val_fecha(res[item].fecha)+'</td>';
+    html +='<tr>';
+    html +='<td>'+val_fecha(res[item].fecha)+'</td>';
     html +='<td>'+res[item].proveedor+'</td>';
     html +='<td><b> $ '+res[item].total+'</b></td>';
     html +='<td><a class="btn btn-green btn-sm" href="/compras/lista/detalle/'+res[item].id_compra+'/"> Detalles </a> ';
     html +=' <a class="btn btn-red btn-sm"  data-toggle="modal" data-target="#eliminarmodal" onclick="datos2('+res[item].id_compra+')">Borrar </a></td>';
     html +='</tr>';
   }
-      </tbody>
+    html += '</tbody>';
+    html += '</table>';
 }
 
-$("#respuesta_j").append(html);
-$("#ejemplo").dataTable();
-});
-
+// $("#respuesta_j").append(html);
+$("#tableee").append(html);
 var table = $('#ejemplo').DataTable( {
    "paging": true,
    "lengthChange": true,
@@ -142,17 +150,17 @@ var table = $('#ejemplo').DataTable( {
                  titleAttr: 'Copiar',
                  className: 'btn btn-app export copia',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3 ]
+                     columns: [ 0, 1, 2 ]
                  }
              },
              {
                  extend:    'pdfHtml5',
                  text:      '<i class="fas fa-file-pdf"></i>PDF',
-                 title:'Productos del negocio '+ nombreDeNegocio,
+                 title:'Compras del negocio '+ nombreDeNegocio,
                  titleAttr: 'PDF',
                  className: 'btn btn-app export pdf',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3 ]
+                     columns: [ 0, 1, 2 ]
                  },
                  customize:function(doc) {
 
@@ -178,31 +186,31 @@ var table = $('#ejemplo').DataTable( {
              {
                  extend:    'excelHtml5',
                  text:      '<i class="fas fa-file-excel"></i>Excel',
-                 title:'Tabla de Productos del negocio '+ nombreDeNegocio,
+                 title:'Tabla de Compras del negocio '+ nombreDeNegocio,
                  titleAttr: 'Excel',
                  className: 'btn btn-app export excel',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3 ]
+                     columns: [ 0, 1, 2 ]
                  },
              },
              {
                  extend:    'csvHtml5',
                  text:      '<i class="fas fa-file-csv"></i>CSV',
-                 title:'Tabla de Productos del negocio '+ nombreDeNegocio,
+                 title:'Tabla de Compras del negocio '+ nombreDeNegocio,
                  titleAttr: 'CSV',
                  className: 'btn btn-app export csv',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3 ]
+                     columns: [ 0, 1, 2 ]
                  }
              },
              {
                  extend:    'print',
                  text:      '<i class="fas fa-print"></i>Imprimir',
-                 title:'Productos del negocio '+ nombreDeNegocio,
+                 title:'Compras del negocio '+ nombreDeNegocio,
                  titleAttr: 'Imprimir',
                  className: 'btn btn-app export imprimir',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3 ]
+                     columns: [ 0, 1, 2 ]
                  }
              },
              {
@@ -213,6 +221,10 @@ var table = $('#ejemplo').DataTable( {
          ]
        }
    });
+
+});
+
+
 });
 
 function datos2(id) {

@@ -24,6 +24,7 @@ urlpatterns = [
     re_path('compras/eliminar/(?P<pk>\d+)/', eliminar_compra, name='eliminar_compra'),
 
     path('ventas/', view_de_venta, name='view_venta'),
+    path('ventas/reportes', view_de_reportes_venta, name='view_de_reportes_venta'),
     re_path('ventas/lista/(?P<pk>\d+)/', list_ventas, name='lista_de_venta'),
     re_path('ventas/lista/detalle/(?P<pk>\d+)/', detalle_de_venta, name='detalles_ventas'),
     re_path('ventas/lista/detalle/editar_item/(?P<pk>\d+)/', editar_item_detalle_venta, name='editar_item_detalle_venta'),

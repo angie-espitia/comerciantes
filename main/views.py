@@ -84,7 +84,25 @@ def logout(request):
 
 @login_required(login_url="/")
 def principal_app(request):
-    return render(request, 'app/index_app.html')
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=usuario.negocio_id, producto_id__isnull=False)
+    negocioo = []
+    for x in negocio_producto:
+        if x.producto_id.stock <= 9:
+            negocioo.append(x)
+
+    array_producto = []
+    for f in negocio_producto:
+        array_producto.append(f.producto_id.id)
+    venta = Venta.objects.all()
+    array_venta = []
+    for f in venta:
+        array_venta.append(f.id)
+    detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto)
+
+    for x in detalles__ventas:
+        print(x.cantidad)
+    return render(request, 'app/index_app.html', {'negocioo':negocioo}, {'detalles__ventas': detalles__ventas})
 
 # registro de empleados
 @login_required(login_url="/")
@@ -120,7 +138,7 @@ def registrar_empleado(request, pk):
             return render(request, 'registrar_empleado.html', {'error': validators.getMessage() } )
         # Agregar el usuario a la base de datos
     return render( request, 'app/administracion/registrar_empleado.html' )
-    
+
 @login_required(login_url="/")
 def perfil_usuario(request, pk):
     usuario = User.objects.get(id=pk)
@@ -485,17 +503,21 @@ def view_de_venta(request):
     return render(request, 'app/venta/view_venta.html')
 
 @login_required(login_url="/")
+def view_de_reportes_venta(request):
+    return render(request, 'app/venta/view_reportes_venta.html')
+
+@login_required(login_url="/")
 def list_ventas(request, pk):
     usuario = Usuario.objects.get(id=pk)
-    # negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=usuario.negocio_id, producto_id__isnull=True)
-    # array_proveedor = []
-    # for f in negocio_proveedor:
-    #     array_proveedor.append(f.proveedor_id.id)
+    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=usuario.negocio_id, producto_id__isnull=False)
+    array_producto = []
+    for f in negocio_producto:
+        array_producto.append(f.producto_id.id)
     venta = Venta.objects.all()
     array_venta = []
     for f in venta:
         array_venta.append(f.id)
-    detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta)
+    detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto)
     dic = {}
     var = -1
     for i in detalles__ventas:
