@@ -1,7 +1,42 @@
 from django import forms
 
-from .models import Producto, Compra, detalle_compra, detalle_negocio_producto, Proveedor, Venta, detalle_venta
+from .models import Producto, Compra, detalle_compra, detalle_negocio_producto, Proveedor, Venta, detalle_venta, Pabellon, Negocio
 from django.forms.models import inlineformset_factory
+
+class NegocioForm(forms.ModelForm):
+    model = Pabellon
+    fields = ('__all__' )
+    exclude = ('usuario_id', 'pabellon_id')
+    labels = { 'nombre': 'Nombre del Negocio',
+                'nit': 'NIT del negocio',
+                'telefono': 'Telefono del Negocio',
+                'email': 'Email del Negocio'
+              }
+    widgets = { 'nombre': forms.TextInput(attrs={'class':'form-control','placeholder':"Negocio" }),
+                'nit': forms.TextInput(attrs={'class':'form-control','placeholder':"Nit"}),
+                'telefono': forms.TextInput(attrs={'class':'form-control','placeholder':"Telefono",'id':'telefonoId'}),
+                'email': forms.TextInput(attrs={'class':'form-control','placeholder':"Correo Electrónico",'id':'emailId'}),
+            }
+
+    def __init__(self, *args, **kwargs):
+        super(self.__class__, self).__init__(*args, **kwargs)
+        self.fields['nit'].required = False
+        self.fields['telefono'].required = False
+        self.fields['email'].required = False
+
+class PabellonForm(forms.ModelForm):
+    model = Pabellon
+    fields = ('__all__' )
+    labels = { 'nombre': 'Nombre del Producto',
+                'descripcion': 'Descripcion',
+              }
+    widgets = { 'nombre': forms.TextInput(attrs={'class':'form-control'}),
+                'descripcion': forms.Textarea(attrs={'class':'form-control'}),
+            }
+
+    def __init__(self, *args, **kwargs):
+        super(self.__class__, self).__init__(*args, **kwargs)
+        self.fields['descripcion'].required = False
 
 class ProductoForm(forms.ModelForm):
 

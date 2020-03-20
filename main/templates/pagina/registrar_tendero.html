@@ -1,21 +1,16 @@
-{% extends 'pagina/base_login.html' %}
-{% block title %} Registrar {% endblock %}
+{% extends 'pagina/base_corporativo.html' %}
+{% load user_tags %}
+{% block title %} Registrar Propietario{% endblock %}
 
 {%  block content %}
 
-<h3 class="login-heading mb-4">Registrar un negocio!</h3>
+{% if request.user|has_group:"administrativo" %}
+
+<h3 class="login-heading mb-4">Registrar un nuevo propietario</h3>
 
 <form class="form-signin" method="post">
 	{% csrf_token %}
 
-	<div class="form-label-group">
-		<input type="text" name="nombre_negocio" placeholder="Negocio" class="form-control" id="form-usuario">
-		<label class="sr-only">Nombre del negocio</label>
-	</div>
-	<div class="form-label-group">
-		<input type="text" name="nit_negocio" placeholder="NIT" class="form-control" id="form-usuario">
-		<label class="sr-only">NIT del negocio (Si tiene)</label>
-	</div>
     <div class="form-label-group">
     	<input type="text" name="username" placeholder="Usuario" class="form-control" id="form-usuario">
 			<label class="sr-only">Usuario del propietario</label>
@@ -46,10 +41,17 @@
     </div>
 
 		<br><br>
-    <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Registrar negocio y usuario principal</button>
-		<div class="text-center">
-			<a class="small" href="{% url 'login' %}">O inicia sesión aquí</a></div>
+    <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Registrar usuario</button>
 
   </form>
+
+	{% endif %}
+	
+	{% if request.user|has_group:"propietario_negocio" %}
+		<p>Lo siento, no tiene permisos para este contenido :(</p>
+	{% endif %}
+	{% if request.user|has_group:"empleado_negocio" %}
+		<p>Lo siento, no tiene permisos para este contenido :(</p>
+	{% endif %}
 
 {% endblock %}

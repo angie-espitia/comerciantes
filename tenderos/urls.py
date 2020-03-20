@@ -12,8 +12,15 @@ urlpatterns = [
 
     path('login', login , name='login' ),
     path('logout', logout, name = 'logout' ),
-    path('registrar', registrar_comerciante, name='registrar_comerciante' ),
     re_path('usuario/perfil/(?P<pk>\d+)/', perfil_usuario, name='perfil_usuario'),
+
+    path('pabellones/', view_pabellon, name='view_pabellon'),
+    path('pabellones/nuevo/', registrar_pabellon, name='registrar_pabellon'),
+
+    path('registrar', registrar_comerciante, name='registrar_comerciante' ),
+
+    path('negocios/', view_negocio, name='view_negocio'),
+    path('pabellones/nuevo/', registrar_negocio, name='registrar_negocio'),
 
     path('compras/', view_de_compra, name='view_compra'),
     re_path('compras/lista/(?P<pk>\d+)/', list_compras, name='lista_de_compra'),

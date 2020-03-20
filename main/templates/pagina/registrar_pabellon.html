@@ -1,0 +1,36 @@
+{% extends 'pagina/base_corporativo.html' %}
+{% load user_tags %}
+{% block title %} Registrar Pabellón{% endblock %}
+
+{%  block content %}
+
+{% if request.user|has_group:"administrativo" %}
+
+<h3 class="login-heading mb-4">Registrar un nuevo pabellon</h3>
+
+<form class="form-signin" method="post">
+	{% csrf_token %}
+
+	<div class="form-label-group">
+		<input type="text" name="nombre_pabellon" placeholder="Pabellon" class="form-control" id="form-usuario">
+		<label class="sr-only">Nombre del pabellón</label>
+	</div>
+	<div class="form-label-group">
+		<input type="text" name="descripcion_pabellon" placeholder="descripcion" class="form-control" id="form-usuario">
+		<label class="sr-only">Descripción</label>
+	</div>
+		<br><br>
+    <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Registrar negocio y usuario principal</button>
+
+  </form>
+
+{% endif %}
+
+{% if request.user|has_group:"propietario_negocio" %}
+	<p>Lo siento, no tiene permisos para este contenido :(</p>
+{% endif %}
+{% if request.user|has_group:"empleado_negocio" %}
+	<p>Lo siento, no tiene permisos para este contenido :(</p>
+{% endif %}
+
+{% endblock %}

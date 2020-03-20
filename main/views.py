@@ -22,43 +22,6 @@ def toJSON(self):
 def index(request):
     return render(request, 'pagina/index.html')
 
-# registro de propietario y empresa
-def registrar_comerciante(request):
-    error = False
-    if request.method == 'POST':
-        validators = FormRegistroValidator(request.POST)
-        validators.required = ['nombre', 'apellido', 'email', 'username', 'password1']
-
-        if validators.is_valid():
-            negocio = Negocio()
-            negocio.nombre = request.POST['nombre_negocio']
-            negocio.nit = request.POST['nit_negocio']
-            negocio.save()
-
-            usuario = User()
-            usuario.first_name = request.POST['nombre']
-            usuario.last_name = request.POST['apellido']
-            usuario.email = request.POST['email']
-            usuario.username = request.POST['username']
-            usuario.password = make_password(request.POST['password1'])
-            usuario.is_active = True
-            grupo = Group.objects.get(name="propietario")
-            usuario.save()
-            usuario.groups.add(grupo)
-            usuario.save()
-
-            myusuario = Usuario()
-            myusuario.id = usuario
-            myusuario.documento = request.POST['documento']
-            myusuario.negocio_id = Negocio.objects.latest('id')
-            myusuario.save()
-
-            return redirect('login')
-        else:
-            return render(request, 'registrar_tendero.html', {'error': validators.getMessage() } )
-        # Agregar el usuario a la base de datos
-    return render( request, 'registrar_tendero.html' )
-
 def login(request):
 
     if request.method == 'POST':
@@ -79,6 +42,84 @@ def login(request):
 def logout(request):
     auth.logout(request)
     return redirect("/")
+
+# pabellones
+@login_required(login_url="/")
+def view_pabellon(request):
+    pabellon = Pabellon.objects.all()
+    return render(request, 'app/pagina/view_pabellon.html', {'pabellon':pabellon} )
+
+@login_required(login_url="/")
+def registrar_pabellon(request):
+    if request.method == "POST":
+        form = PabellonForm(request.POST)
+        if form.is_valid():
+            pabellon = form.save(commit=False)
+            pabellon.save()
+
+            return redirect('view_pabellon') #, pk=usuario.pk
+    else:
+        form = PabellonForm()
+
+    return render(request, 'app/pagina/registrar_pabellon.html', {'form' : form} )
+
+# registro de propietario y empresa
+@login_required(login_url="/")
+def registrar_comerciante(request):
+    error = False
+    if request.method == 'POST':
+        validators = FormRegistroValidator(request.POST)
+        validators.required = ['nombre', 'apellido', 'email', 'username', 'password1']
+
+        if validators.is_valid():
+            usuario = User()
+            usuario.first_name = request.POST['nombre']
+            usuario.last_name = request.POST['apellido']
+            usuario.email = request.POST['email']
+            usuario.username = request.POST['username']
+            usuario.password = make_password(request.POST['password1'])
+            usuario.is_active = True
+            grupo = Group.objects.get(name="propietario_negocio")
+            usuario.save()
+            usuario.groups.add(grupo)
+            usuario.save()
+
+            myusuario = Usuario()
+            myusuario.id = usuario
+            myusuario.documento = request.POST['documento']
+            myusuario.save()
+
+            return redirect('login')
+        else:
+            return render(request, 'pagina/registrar_tendero.html', {'error': validators.getMessage() } )
+        # Agregar el usuario a la base de datos
+    return render( request, 'pagina/registrar_tendero.html' )
+
+# pabellones
+@login_required(login_url="/")
+def view_negocio(request):
+    negocio = Negocio.objects.all()
+    return render(request, 'app/pagina/view_negocios.html', {'negocio':negocio} )
+
+@login_required(login_url="/")
+def registrar_negocio(request):
+    pabellon = Pabellon.objects.all()
+    propietario_negocio = User.groups.filter(id = STATIC_ROLS['propietario_negocio'])
+    if request.method == 'POST':
+        form = NegocioForm(request.POST)
+        if form.is_valid():
+            negocio = form.save(commit=False)
+            negocio.usuario_id = request.POST.get('usuario_id', None )
+            negocio.pabellon_id = request.POST.get('pabellon_id', None )
+            negocio.save()
+
+            return redirect('view_negocios')
+
+    else:
+        form = NegocioForm()
+
+    return render(request, 'app/pagina/registrar_negocio.html', {'form' : form, 'propietario_negocio' : propietario_negocio, 'pabellon' : pabellon} )
+
 
 # ------------------------------- views manejo negocio tenderos ---------------------------------------------------------
 
@@ -122,7 +163,7 @@ def registrar_empleado(request, pk):
             usuario.username = request.POST['username']
             usuario.password = make_password(request.POST['password1'])
             usuario.is_active = True
-            grupo = Group.objects.get(name="empleado")
+            grupo = Group.objects.get(name="empleado_negocio")
             usuario.save()
             usuario.groups.add(grupo)
             usuario.save()

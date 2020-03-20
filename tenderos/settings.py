@@ -133,4 +133,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 
-STATIC_ROLS = {'propietario': 1, 'empleado': 2}
+STATIC_ROLS = {'administrativo': 1, 'propietario_negocio': 2, 'empleado_negocio': 3}

@@ -1,0 +1,65 @@
+{% extends 'pagina/base_corporativo.html' %}
+{% load user_tags %}
+{% block title %} Registrar Negocio{% endblock %}
+
+{%  block content %}
+
+{% if request.user|has_group:"administrativo" %}
+
+<h3 class="login-heading mb-4">Registrar un nuevo negocio</h3>
+
+<form class="form-signin" method="post">
+	{% csrf_token %}
+
+	<div class="form-label-group">
+		<!-- <input type="text" name="nombre_negocio" placeholder="Negocio" class="form-control" id="form-usuario"> -->
+		{{ form.nombre }}
+		<label class="sr-only">{{ form.nombre.label }} *</label>
+	</div>
+	<div class="form-label-group">
+		<!-- <input type="text" name="nit_negocio" placeholder="NIT" class="form-control" id="form-usuario"> -->
+		{{ form.nit }}
+		<label class="sr-only">{{ form.nit.label }} (Si tiene)</label>
+	</div>
+	<div class="form-label-group">
+		{{ form.telefono }}
+		<label class="sr-only">{{ form.telefono.label }}</label>
+	</div>
+	<div class="form-label-group">
+		{{ form.email }}
+		<label class="sr-only">{{ form.email.label }}</label>
+	</div>
+
+  <div class="col">
+    <label>Propietario del negocio:</label>
+    <select class="form-control" name='propietario_negocio' required="required">
+      <option value="">Seleccionar</option>
+      {% for row in propietario_negocio %}
+        <option value="{{ row.id }}"> {{ row.first_name }} {{ row.last_name }} </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col">
+    <label>Pabellón:</label>
+    <select class="form-control" name='pabellon' required="required">
+      <option value="">Seleccionar</option>
+      {% for row in pabellon %}
+        <option value="{{ row.id }}"> {{ row.nombre }} </option>
+      {% endfor %}
+    </select>
+  </div>
+		<br><br>
+    <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Registrar negocio y usuario principal</button>
+
+  </form>
+
+{% endif %}
+
+{% if request.user|has_group:"propietario_negocio" %}
+	<p>Lo siento, no tiene permisos para este contenido :(</p>
+{% endif %}
+{% if request.user|has_group:"empleado_negocio" %}
+	<p>Lo siento, no tiene permisos para este contenido :(</p>
+{% endif %}
+
+{% endblock %}

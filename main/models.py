@@ -13,21 +13,6 @@ def get_upload_path(instance, filename):
 		negocio = row.negocio_id
 	return 'negocio_{0}/{1}'.format(negocio, filename)
 
-#Manejo negocio
-class Negocio(models.Model):
-	id = models.AutoField( primary_key=True, db_column='id')
-	nombre = models.CharField(max_length = 45, db_column='nombre')
-	nit = models.CharField(max_length = 45, db_column='nit', null=True)
-	telefono = models.CharField(max_length = 45, db_column='telefono', null=True)
-	email = models.CharField(max_length = 45, db_column='email', null=True)
-
-	class Meta:
-		db_table = 'Negocio'
-		managed  = False
-
-	def __str__(self):
-		return '{}'.format(self.nombre)
-
 # Manejo de usuarios
 class Usuario(models.Model):
 	id = models.OneToOneField(User, primary_key=True, on_delete=models.DO_NOTHING, db_column='id')
@@ -35,7 +20,6 @@ class Usuario(models.Model):
 	telefono = models.CharField(max_length = 45, db_column='telefono', null=True)
 	direccion = models.CharField(max_length = 45, db_column='direccion', null=True)
 	foto = models.ImageField( upload_to=get_upload_path, db_column='foto', null=True) #default="../static/my/img/img4.jpg"
-	negocio_id = models.ForeignKey(Negocio, on_delete=models.DO_NOTHING, db_column='negocio_id')
 
 	class Meta:
 		db_table = 'Usuario'
@@ -43,6 +27,35 @@ class Usuario(models.Model):
 
 	def __str__(self):
 		return '{}'.format(self.id)
+
+#Manejo negocio
+class Pabellon(models.Model):
+	id = models.AutoField( primary_key=True, db_column='id')
+	nombre = models.CharField(max_length = 45, db_column='nombre')
+	descripcion = models.TextField( db_column='descripcion', null=True)
+
+	class Meta:
+		db_table = 'Pabellon'
+		managed  = False
+
+	def __str__(self):
+		return '{}'.format(self.nombre)
+
+class Negocio(models.Model):
+	id = models.AutoField( primary_key=True, db_column='id')
+	nombre = models.CharField(max_length = 45, db_column='nombre')
+	nit = models.CharField(max_length = 45, db_column='nit', null=True)
+	telefono = models.CharField(max_length = 45, db_column='telefono', null=True)
+	email = models.CharField(max_length = 45, db_column='email', null=True)
+	usuario_id = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, db_column='Usuario_id')
+	pabellon_id = models.ForeignKey(Pabellon, on_delete=models.DO_NOTHING, db_column='Pabellon_id')
+
+	class Meta:
+		db_table = 'Negocio'
+		managed  = False
+
+	def __str__(self):
+		return '{}'.format(self.nombre)
 
 # Manejo de negocio tenderos
 class Proveedor(models.Model):
