@@ -65,6 +65,12 @@ def registrar_pabellon(request):
 
 # registro de propietario y empresa
 @login_required(login_url="/")
+def view_comerciantes(request):
+    usuarios = User.groups.filter(id = STATIC_ROLS['propietario_negocio'])
+    propietario_negocios = Usuario.objects.filter(id = usuarios)
+    return render(request, 'app/pagina/view_propietarios.html', {'propietario_negocios':propietario_negocios} )
+
+@login_required(login_url="/")
 def registrar_comerciante(request):
     error = False
     if request.method == 'POST':

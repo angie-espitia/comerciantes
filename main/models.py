@@ -8,10 +8,15 @@ import datetime
 ## subir imagenes por carpeta de usuario
 def get_upload_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-	detalle_negocio = detalle_negocio_producto.objects.filter(negocio_id=instance.id)
-	for row in detalle_negocio:
-		negocio = row.negocio_id
-	return 'negocio_{0}/{1}'.format(negocio, filename)
+	try:
+		detalle_negocio = detalle_negocio_producto.objects.filter(negocio_id=instance.id)
+
+		for row in detalle_negocio:
+			negocio = row.negocio_id
+		return 'negocio_{0}/{1}'.format(negocio, filename)
+	except:
+		print('sisirvioxd')
+		return 'corporativo/{0}'.format(filename)
 
 # Manejo de usuarios
 class Usuario(models.Model):

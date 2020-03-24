@@ -4,6 +4,8 @@
 
 {%  block content %}
 
+{% if request.user|has_group:"administrativo" %}
+
 <table class="table table-striped table-bordered table-striped" id="ejemplo">
    <thead class="theadStyle">
      <tr>
@@ -29,5 +31,14 @@
    {% endfor %}
    </tbody>
  </table>
+
+ {% endif %}
+
+ {% if request.user|has_group:"propietario_negocio" %}
+ 	<p>Lo siento, no tiene permisos para este contenido :(</p>
+ {% endif %}
+ {% if request.user|has_group:"empleado_negocio" %}
+ 	<p>Lo siento, no tiene permisos para este contenido :(</p>
+ {% endif %}
 
  {% endblock %}
