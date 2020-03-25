@@ -32,7 +32,7 @@
 
   <div class="col">
     <label>Propietario del negocio:</label>
-    <select class="form-control" name='propietario_negocio' required="required">
+    <select class="form-control" name='usuario_id' required="required">
       <option value="">Seleccionar</option>
       {% for row in propietario_negocio %}
         <option value="{{ row.id }}"> {{ row.first_name }} {{ row.last_name }} </option>
@@ -41,7 +41,7 @@
   </div>
   <div class="col">
     <label>Pabellón:</label>
-    <select class="form-control" name='pabellon' required="required">
+    <select class="form-control" name='pabellon_id' required="required">
       <option value="">Seleccionar</option>
       {% for row in pabellon %}
         <option value="{{ row.id }}"> {{ row.nombre }} </option>

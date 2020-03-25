@@ -1,5 +1,5 @@
 {% extends 'pagina/base_corporativo.html' %}
-{% load staticfiles %}
+{% load user_tags %}
 {% block title %} Lista de pabellones {% endblock %}
 
 {%  block content %}
@@ -20,7 +20,7 @@
        <td>{{ row.nombre }}</td>
        <td>{{ row.descripcion }}</td>
        <td>
-         <!-- <a class="btn btn-green btn-sm" href="{% url 'detalle_producto' pk=row.producto_id.id %}" > Detalles </a> -->
+         <!-- <a class="btn btn-green btn-sm" href="#" > Detalles </a> -->
          <a class="btn btn-green btn-sm" href="#" > Editar </a>
        </td>
      </tr>

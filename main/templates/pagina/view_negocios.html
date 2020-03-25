@@ -1,5 +1,5 @@
 {% extends 'pagina/base_corporativo.html' %}
-{% load staticfiles %}
+{% load user_tags %}
 {% block title %} Lista de negocios {% endblock %}
 
 {%  block content %}
@@ -9,8 +9,11 @@
 <table class="table table-striped table-bordered table-striped" id="ejemplo">
    <thead class="theadStyle">
      <tr>
-       <th>Nombre</th>
-       <th>Descripción</th>
+       <th>Nombre del Negocio</th>
+       <th>Nit</th>
+       <th>Propietario</th>
+       <th>Telefono del Negocio</th>
+       <th>Email del Negocio</th>
        <th>Acciones</th>
      </tr>
    </thead>
@@ -19,11 +22,12 @@
      <tr>
        <td>{{ row.nombre }}</td>
        <td>{{ row.nit }}</td>
+       <td>{{ row.usuario_id.id.first_name }} {{ row.usuario_id.id.last_name }}</td>
        <td>{{ row.telefono }}</td>
        <td>{{ row.email }}</td>
        <td>
-         <!-- <a class="btn btn-green btn-sm" href="{% url 'detalle_producto' pk=row.producto_id.id %}" > Detalles </a> -->
-         <a class="btn btn-green btn-sm" href="#" > Editar </a>
+         <!-- <a class="btn btn-green btn-sm" href="#" > Detalles </a> -->
+         <a class="btn btn-primary btn-sm" href="#" > Editar </a>
        </td>
      </tr>
      {% empty %}

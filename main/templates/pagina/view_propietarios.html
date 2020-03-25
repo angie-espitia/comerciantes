@@ -1,5 +1,5 @@
 {% extends 'pagina/base_corporativo.html' %}
-{% load staticfiles %}
+{% load user_tags %}
 {% block title %} Lista de propietarios {% endblock %}
 
 {%  block content %}
@@ -21,7 +21,7 @@
        <td>{{ row.id.first_name }} {{ row.id.last_name }}</td>
        <td>{{ row.documento }}</td>
        <td>{{ row.id.email }}</td>
-       <td>{{ row..id.username }}</td>
+       <td>{{ row.id.username }}</td>
      </tr>
      {% empty %}
      <tr>

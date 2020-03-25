@@ -20,7 +20,7 @@ class UsuarioInline(admin.StackedInline):
 
 class UserAdmin(BaseUserAdmin):
     inlines = [UsuarioInline] # tabla inline
-    list_display = ('username', 'first_name', 'last_name', 'email', 'documento', 'telefono', 'direccion', 'foto', 'grupo')
+    list_display = ('username', 'first_name', 'last_name', 'email', 'documento', 'telefono', 'direccion', 'grupo')
     list_select_related = ('usuario',) #establecer la relacion entre tablas
     list_display_links = ('username',)
     # list_editable = ('first_name', 'last_name', 'email', 'documento', )
@@ -33,7 +33,7 @@ class UserAdmin(BaseUserAdmin):
 
     list_filter = (
         'is_active',
-        'is_staff',
+        'groups'
     )
 
     def documento(self, instance):
@@ -46,8 +46,8 @@ class UserAdmin(BaseUserAdmin):
     def direccion(self, instance):
         return instance.usuario.direccion
 
-    def foto(self, instance):
-        return instance.usuario.foto
+    # def foto(self, instance):
+    #     return instance.usuario.foto
 
     def grupo(self, instance):
         group =  Group.objects.filter(user = instance)

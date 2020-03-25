@@ -7,20 +7,22 @@ from main.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('', index, name='index' ),
+    path('', login , name='login' ),
     path('principal', principal_app, name='principal_app' ),
 
-    path('login', login , name='login' ),
+    # path('login', login , name='login' ),
     path('logout', logout, name = 'logout' ),
     re_path('usuario/perfil/(?P<pk>\d+)/', perfil_usuario, name='perfil_usuario'),
+    path('corporativo', view_corporativo, name='view_corporativo' ),
 
     path('pabellones/', view_pabellon, name='view_pabellon'),
     path('pabellones/nuevo/', registrar_pabellon, name='registrar_pabellon'),
 
-    path('registrar', registrar_comerciante, name='registrar_comerciante' ),
+    path('comerciantes', view_comerciantes, name='view_comerciantes' ),
+    path('comerciantes/nuevo', registrar_comerciante, name='registrar_comerciante' ),
 
     path('negocios/', view_negocio, name='view_negocio'),
-    path('pabellones/nuevo/', registrar_negocio, name='registrar_negocio'),
+    path('negocios/nuevo/', registrar_negocio, name='registrar_negocio'),
 
     path('compras/', view_de_compra, name='view_compra'),
     re_path('compras/lista/(?P<pk>\d+)/', list_compras, name='lista_de_compra'),
