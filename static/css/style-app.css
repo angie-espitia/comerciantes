@@ -6,6 +6,13 @@ body {
   font-family: 'Roboto Condensed', sans-serif;
 }
 
+.navbar-toggler-icon-color {
+    color: #f8f9fa!important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 /* nav */
 .TitleNegocio{
   background-image: url(../img/bg1.png);
@@ -17,8 +24,17 @@ body {
   font-family: 'Pacifico', cursive;
 }
 
+.TitleNegocioAdmin{
+  background-image: url(../img/bg3.png);
+	background-size: cover;
+  background-color: #f07e2d;
+}
+
 .bgGrayMenu {
     background-color: #ebebeb!important;
+}
+.bgBlackMenu {
+    background-color: #333333!important;
 }
 .borderMenu {
     border-right: 1px solid #ebebeb!important;
@@ -34,6 +50,12 @@ body {
   border: 3px solid #399d3f;
 }
 
+.imgUserCircleOrange{
+  max-width: 115px;
+  border-radius: 50%;
+  border: 3px solid #f07e2d;
+}
+
 .nameUser{
   padding: 0px 15px 15px 15px;
 }
@@ -43,6 +65,14 @@ body {
 }
 .nameUserText2{
   color: #000000;
+  font-weight: bolder;
+}
+.nameUserTextAdmin1{
+  color: #aaaaaa;
+  margin-bottom: 0px;
+}
+.nameUserTextAdmin2{
+  color: #eeeeee;
   font-weight: bolder;
 }
 
@@ -55,6 +85,17 @@ body {
     color: #399d3f;
     background-color: #dadada;
 }
+.listMenuAdmin{
+  border: 1px dashed rgba(255, 255, 255, 0.28);
+  background-color: #333333;
+  font-weight: bolder;
+  color: #eeeeee;
+}
+.listMenuAdmin:active, .listMenuAdmin:hover, .listMenuAdmin:focus {
+  color: #f07e2d;
+  background-color: #4d4d4d
+}
+
 .listSubMenu{
   border: 0px;
   background-color: #ebebeb;
@@ -69,6 +110,23 @@ body {
   border-left: 7px solid #399d3f;
   color: #868686;
 }
+
+.listSubMenuAdmin{
+  border: 0px;
+  background-color: #4d4d4d;
+  position: relative;
+  display: block;
+  padding: .75rem 1.25rem;
+  margin-bottom: -1px;
+  border-left: 7px solid #399d3f00;
+  color: #eeeeee;
+}
+.listSubMenuAdmin:hover, .listSubMenuAdmin:active {
+  background-color: #404040;
+  border-left: 7px solid #f07e2d;
+  color: #a5a5a5;
+}
+
 /* panel */
 .boxIni{
   background-color: #fbfbfb;
@@ -88,6 +146,11 @@ body {
 .TitleBox .navbar-nav .nav-link:hover {
     text-decoration: underline;
 }
+.TitleBoxAdmin{
+  background-image: url(../img/bg3.png);
+	background-size: cover;
+  background-color: #f07e2d;
+}
 .breadcrumbStyle {
     padding: 1.5rem 0rem 0rem 0rem;
     margin-bottom: 0px;
@@ -100,9 +163,19 @@ body {
 .breadcrumb-item.active {
     color: #399d3f;
 }
+.breadcrumb-itemAdmin {
+    color: #495057;
+}
+.breadcrumb-itemAdmin.active {
+    color: #d35f05;
+}
 .titleIniBox{
   font-weight: bold;
   color: #399d3f;
+}
+.titleIniBoxAdmin{
+  font-weight: bold;
+  color: #d35f05;
 }
 .titleSubBox{
   font-weight: bold;
@@ -115,6 +188,9 @@ body {
   background-color: #399d3f;
   color: #ffffff;
   text-align: center;
+}
+.theadStyleOrange{
+  background-color: #f07e2d;
 }
 .theadStyle tr th{
   vertical-align: initial;
@@ -388,6 +464,40 @@ div.dataTables_wrapper div.dataTables_filter {
   background: linear-gradient(to right, #ad0e1e 0%, #c92c31 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ad0e1e', endColorstr='#c92c31', GradientType=1 );
 }
+.btn-orange {
+  color: #fff;
+  background: #ec6a07;
+  background: -moz-linear-gradient(left, #ec6a07 0%, #f07e2d 100%);
+  background: -webkit-gradient(left top, right top, color-stop(0%, #ec6a07), color-stop(100%, #f07e2d));
+  background: -webkit-linear-gradient(left, #ec6a07 0%, #f07e2d 100%);
+  background: -o-linear-gradient(left, #ec6a07 0%, #f07e2d 100%);
+  background: -ms-linear-gradient(left, #ec6a07 0%, #f07e2d 100%);
+  background: linear-gradient(to right, #ec6a07 0%, #f07e2d 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ec6a07', endColorstr='#f07e2d', GradientType=1 );
+}
+.btn-orange:hover{
+  color: #eee;
+  background: #d65d07;
+  background: -moz-linear-gradient(left, #d65d07 0%, #db6f28 100%);
+  background: -webkit-gradient(left top, right top, color-stop(0%, #d65d07), color-stop(100%, #db6f28));
+  background: -webkit-linear-gradient(left, #d65d07 0%, #db6f28 100%);
+  background: -o-linear-gradient(left, #d65d07 0%, #db6f28 100%);
+  background: -ms-linear-gradient(left, #d65d07 0%, #db6f28 100%);
+  background: linear-gradient(to right, #d65d07 0%, #db6f28 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d65d07', endColorstr='#db6f28', GradientType=1 );
+}
+.btn-secondary-orange {
+  color: #fff;
+  background-color: #f07e2d;
+  border-color: #6c757d00;
+}
+.btn-secondary-orange:hover {
+    color: #fff;
+    background-color: #d26d26;
+    border-color: #6c757d00;
+}
+
+
 
 #sidebar-wrapper {
   min-height: 100vh;

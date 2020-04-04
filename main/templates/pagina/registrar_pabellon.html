@@ -6,23 +6,37 @@
 
 {% if request.user|has_group:"administrativo" %}
 
-<h3 class="login-heading mb-4">Registrar un nuevo pabellon</h3>
+<ul class="breadcrumb breadcrumbStyle">
+  <li class="breadcrumb-item"><i class="fas fa-carrot"></i> Pabellones</li>
+  <li class="breadcrumb-itemAdmin active">Nuevo pabellón</li>
+</ul>
 
-<form class="form-signin" method="post">
-	{% csrf_token %}
+<br>
+<h1 class="mt-4 text-center titleIniBoxAdmin"><i class="fas fa-pencil-alt"></i> Nuevo pabellón</h1>
 
-	<div class="form-label-group">
-		{{ form.nombre }}
-		<label class="sr-only">Nombre del pabellón</label>
-	</div>
-	<div class="form-label-group">
-		{{ form.descripcion }}
-		<label class="sr-only">Descripción</label>
-	</div>
-		<br><br>
-    <button type="submit" class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Registrar pabellon</button>
+<br>
+<div id="alert-form"></div>
 
-  </form>
+<div class="col-md-12">
+  <div class="col-md-10 mx-auto">
+		<form class="form" method="POST"  id="formulario_registro_producto">
+			{% csrf_token %}
+
+			<div class="form-label-group">
+				<label>{{ form.nombre.label }}:</label>
+				{{ form.nombre }}
+			</div>
+			<br>
+			<div class="form-label-group">
+				<label>{{ form.descripcion.label }}:</label>
+				{{ form.descripcion }}
+			</div>
+				<br><br>
+		    <button class="save btn btn-orange btn-lg" type="submit">Registrar Pabellón</button>
+
+			</form>
+		</div>
+</div>
 
 {% endif %}
 
