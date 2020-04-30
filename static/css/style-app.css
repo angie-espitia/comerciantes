@@ -383,6 +383,11 @@ div.dataTables_wrapper div.dataTables_filter {
 	padding-left: 0px;
 	padding-right: 0px;
 }
+.badge-font-90{
+  font-size: 90%;
+  font-weight: normal;
+  padding: 8px;
+}
 
 /* modal */
 .modal-backdrop {
