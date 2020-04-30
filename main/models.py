@@ -8,27 +8,23 @@ import datetime
 ## subir imagenes por carpeta de usuario
 def get_upload_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+<<<<<<< HEAD
 	detalle_negocio = detalle_negocio_producto.objects.filter(negocio_id=instance.id)
 	for row in detalle_negocio:
 		negocio = row.negocio_id
 	print("----------------------")
 	print(negocio)
 	return 'negocio_{0}/{1}'.format(negocio, filename)
+=======
+	try:
+		detalle_negocio = detalle_negocio_producto.objects.filter(negocio_id=instance.id)
 
-#Manejo negocio
-class Negocio(models.Model):
-	id = models.AutoField( primary_key=True, db_column='id')
-	nombre = models.CharField(max_length = 45, db_column='nombre')
-	nit = models.CharField(max_length = 45, db_column='nit', null=True)
-	telefono = models.CharField(max_length = 45, db_column='telefono', null=True)
-	email = models.CharField(max_length = 45, db_column='email', null=True)
-
-	class Meta:
-		db_table = 'Negocio'
-		managed  = False
-
-	def __str__(self):
-		return '{}'.format(self.nombre)
+		for row in detalle_negocio:
+			negocio = row.negocio_id
+		return 'negocio_{0}/{1}'.format(negocio, filename)
+	except:
+		print('sisirvioxd')
+		return 'corporativo/{0}'.format(filename)
 
 # Manejo de usuarios
 class Usuario(models.Model):
@@ -37,7 +33,6 @@ class Usuario(models.Model):
 	telefono = models.CharField(max_length = 45, db_column='telefono', null=True)
 	direccion = models.CharField(max_length = 45, db_column='direccion', null=True)
 	foto = models.ImageField( upload_to=get_upload_path, db_column='foto', null=True) #default="../static/my/img/img4.jpg"
-	negocio_id = models.ForeignKey(Negocio, on_delete=models.DO_NOTHING, db_column='negocio_id')
 
 	class Meta:
 		db_table = 'Usuario'
@@ -45,6 +40,36 @@ class Usuario(models.Model):
 
 	def __str__(self):
 		return '{}'.format(self.id)
+>>>>>>> 977b4e88938d59f77945c21c6f5996268ddbda05
+
+#Manejo negocio
+class Pabellon(models.Model):
+	id = models.AutoField( primary_key=True, db_column='id')
+	nombre = models.CharField(max_length = 45, db_column='nombre')
+	descripcion = models.TextField( db_column='descripcion', null=True)
+
+	class Meta:
+		db_table = 'Pabellon'
+		managed  = False
+
+	def __str__(self):
+		return '{}'.format(self.nombre)
+
+class Negocio(models.Model):
+	id = models.AutoField( primary_key=True, db_column='id')
+	nombre = models.CharField(max_length = 45, db_column='nombre')
+	nit = models.CharField(max_length = 45, db_column='nit', null=True)
+	telefono = models.CharField(max_length = 45, db_column='telefono', null=True)
+	email = models.CharField(max_length = 45, db_column='email', null=True)
+	usuario_id = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, db_column='Usuario_id')
+	pabellon_id = models.ForeignKey(Pabellon, on_delete=models.DO_NOTHING, db_column='Pabellon_id')
+
+	class Meta:
+		db_table = 'Negocio'
+		managed  = False
+
+	def __str__(self):
+		return '{}'.format(self.nombre)
 
 # Manejo de negocio tenderos
 class Proveedor(models.Model):
@@ -88,15 +113,40 @@ class Venta(models.Model):
 	def __str__(self):
 		return '{}'.format(self.id)
 
+class Estado(models.Model):
+	id = models.AutoField( primary_key=True, db_column='id')
+	estado = models.CharField(max_length = 45, db_column='estado')
+	detalle = models.CharField(max_length = 45, db_column='detalle')
+
+	class Meta:
+		db_table = 'Estado'
+		managed  = False
+
+	def __str__(self):
+		return '{}'.format(self.estado)
+
+class unidad_medida(models.Model):
+	id = models.AutoField( primary_key=True, db_column='id')
+	nombre_unidad = models.CharField(max_length = 45, db_column='nombre_unidad')
+	abreviatura_unidad = models.CharField(max_length = 45, db_column='abreviatura_unidad')
+
+	class Meta:
+		db_table = 'unidad_medida'
+		managed  = False
+
+	def __str__(self):
+		return '{}'.format(self.nombre_unidad)
+
 class Producto(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
-	codigo = models.CharField(max_length = 45, db_column='codigo', null=True)
 	nombre = models.CharField(max_length = 45, db_column='nombre')
 	stock = models.CharField(max_length = 45, db_column='stock')
 	valor_costo = models.IntegerField( db_column='valor_costo')
 	valor_venta = models.IntegerField( db_column='valor_venta')
 	imagen = models.ImageField( upload_to=get_upload_path , db_column='imagen', null=True) #default="../static/my/img/img4.jpg"
 	descripcion = models.TextField( db_column='descripcion', null=True)
+	estado_id = models.ForeignKey(Estado , on_delete=models.DO_NOTHING, db_column='Estado_id')
+	unidad_medida_id = models.ForeignKey(unidad_medida , on_delete=models.DO_NOTHING, db_column='unidad_medida_id')
 
 	class Meta:
 		db_table = 'Producto'

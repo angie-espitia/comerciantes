@@ -13,60 +13,155 @@
 
     <!-- Bootstrap core CSS -->
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" id="bootstrap-css">
+    <link href="{% static 'bootstrap/css/bootstrap-grid.min.css' %}" rel="stylesheet" id="bootstrap-grid-css">
 
     <!-- Custom styles for this template -->
-    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style-app.css' %}" rel="stylesheet">
+    <link href="{% static 'datatables/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'datatables/buttons.bootstrap4.min.css' %}" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="{% static 'fontawesome/css/fontawesome.css' %}" rel="stylesheet">
     <link href="{% static 'fontawesome/css/brands.css' %}" rel="stylesheet">
     <link href="{% static 'fontawesome/css/solid.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'sweetalert/sweetalert2.min.css' %}">
 
   </head>
 
   <body>
 
-      <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-    <div class="container">
-      <a class="navbar-brand" href="#">Start Bootstrap</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home
-              <span class="sr-only">(current)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Services</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Contact</a>
-          </li>
-        </ul>
+    <div class="d-flex" id="wrapper">
+
+      <!-- Sidebar -->
+      <div class="bgBlackMenu" id="sidebar-wrapper">
+        <div class="TitleNegocio TitleNegocioAdmin" id="nameNegocio">Corporativo</div>
+
+        <div class="datoUser">
+          <div class="UserCircle d-flex justify-content-center">
+            <img src="{% static 'img/default-user.jpg' %}" class="img-fluid imgUserCircleOrange">
+          </div>
+          <div class="nameUser text-center">
+            <h4 class="nameUserTextAdmin1">Bienvenido,</h4>
+            <h2 class="nameUserTextAdmin2">{{user.first_name}} {{user.last_name}}</h2>
+          </div>
+        </div>
+
+        <div class="list-group list-group-flush">
+          <a href="{% url 'view_corporativo' %}" class="list-group-item list-group-item-action listMenuAdmin">Inicio</a>
+
+          <a href="#pabellones_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenuAdmin">
+              <div class="d-flex w-100 justify-content-start align-items-center">
+                  <span class="menu-collapsed"> Pabellones</span>
+              </div>
+          </a>
+          <!-- Submenu content pabellones-->
+          <div id='pabellones_submenu' class="collapse sidebar-submenu">
+              <a href="{% url 'view_pabellon' %}" class="list-group-item-action listSubMenuAdmin">
+                  <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de pabellones</span>
+              </a>
+              <a href="{% url 'registrar_pabellon' %}" class="list-group-item-action listSubMenuAdmin">
+                  <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nuevo pabellon</span>
+              </a>
+          </div>
+
+          <a href="#comerciantes_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenuAdmin">
+              <div class="d-flex w-100 justify-content-start align-items-center">
+                  <span class="menu-collapsed"> Comerciantes</span>
+              </div>
+          </a>
+          <!-- Submenu content comerciantes-->
+          <div id='comerciantes_submenu' class="collapse sidebar-submenu">
+              <a href="{% url 'view_comerciantes' %}" class="list-group-item-action listSubMenuAdmin">
+                  <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de comerciantes</span>
+              </a>
+              <a href="{% url 'registrar_comerciante' %}" class="list-group-item-action listSubMenuAdmin">
+                  <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nuevo comerciante</span>
+              </a>
+          </div>
+
+          <a href="#negocios_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenuAdmin">
+              <div class="d-flex w-100 justify-content-start align-items-center">
+                  <span class="menu-collapsed"> Negocios</span>
+              </div>
+          </a>
+          <!-- Submenu content negocios-->
+          <div id='negocios_submenu' class="collapse sidebar-submenu">
+              <a href="{% url 'view_negocio' %}" class="list-group-item-action listSubMenuAdmin">
+                  <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de negocios</span>
+              </a>
+              <a href="{% url 'registrar_negocio' %}" class="list-group-item-action listSubMenuAdmin">
+                  <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nuevo negocio</span>
+              </a>
+          </div>
+
+        </div>
       </div>
+      <!-- /#sidebar-wrapper -->
+
+      <!-- Page Content -->
+      <div class="boxIni" id="page-content-wrapper">
+
+        <nav class="navbar navbar-expand-lg TitleBox TitleBoxAdmin">
+          <button class="btn btn-light" id="menu-toggle">Ocultar Menú</button>
+          <div id="usuario_id" hidden="false">{{user.id}}</div>
+          <div id="negocio_id" hidden="false">{{usuario.negocio_id}}</div>
+
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon navbar-toggler-icon-color">
+              <i class="fas fa-bars"></i>
+            </span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+              <!-- <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{user.first_name}}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Configuración</a>
+                </div>
+              </li> -->
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">Cerrar Sesión <i class="fas fa-sign-out-alt"></i></a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <div class="container">
+
+          {% block content %}
+          {% endblock %}
+
+        </div>
+      </div>
+      <!-- /#page-content-wrapper -->
+
     </div>
-  </nav>
+    <!-- /#wrapper -->
 
-    {% block content %}
-    {% endblock %}    
-
-
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
     <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
     <script src="{% static 'js/document-js.js' %}"></script>
+    <script type="text/javascript" src="{% static 'sweetalert/sweetalert2.min.js' %}" ></script>
+    {% block javascript %}
+    {% endblock %}
 
-    </body>
-</html>
+    <!-- Menu Toggle Script -->
+    <script>
+      $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+      });
+    </script>
+
+  </body>
+
+  </html>

@@ -1,0 +1,50 @@
+{% extends 'pagina/base_corporativo.html' %}
+{% load user_tags %}
+{% block title %} Registrar Pabellón{% endblock %}
+
+{%  block content %}
+
+{% if request.user|has_group:"administrativo" %}
+
+<ul class="breadcrumb breadcrumbStyle">
+  <li class="breadcrumb-item"><i class="fas fa-carrot"></i> Pabellones</li>
+  <li class="breadcrumb-itemAdmin active">Nuevo pabellón</li>
+</ul>
+
+<br>
+<h1 class="mt-4 text-center titleIniBoxAdmin"><i class="fas fa-pencil-alt"></i> Nuevo pabellón</h1>
+
+<br>
+<div id="alert-form"></div>
+
+<div class="col-md-12">
+  <div class="col-md-10 mx-auto">
+		<form class="form" method="POST"  id="formulario_registro_producto">
+			{% csrf_token %}
+
+			<div class="form-label-group">
+				<label>{{ form.nombre.label }}:</label>
+				{{ form.nombre }}
+			</div>
+			<br>
+			<div class="form-label-group">
+				<label>{{ form.descripcion.label }}:</label>
+				{{ form.descripcion }}
+			</div>
+				<br><br>
+		    <button class="save btn btn-orange btn-lg" type="submit">Registrar Pabellón</button>
+
+			</form>
+		</div>
+</div>
+
+{% endif %}
+
+{% if request.user|has_group:"propietario_negocio" %}
+	<p>Lo siento, no tiene permisos para este contenido :(</p>
+{% endif %}
+{% if request.user|has_group:"empleado_negocio" %}
+	<p>Lo siento, no tiene permisos para este contenido :(</p>
+{% endif %}
+
+{% endblock %}

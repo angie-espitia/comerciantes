@@ -17,13 +17,13 @@
  <table class="table table-striped table-bordered table-striped" id="ejemplo">
     <thead class="theadStyle">
       <tr>
-        <!-- <th>Código</th> -->
+        <th>Imagen</th>
         <th>Nombre</th>
         <th>Stock</th>
+        <th>Unidad</th>
         <th>Costo</th>
         <th>Venta</th>
-        <th>Imagen</th>
-        <!-- <th>Proveedor Inicial</th> -->
+        <th>Estado</th>
         <th>Descripción</th>
         <th>Acciones</th>
       </tr>
@@ -31,19 +31,23 @@
     <tbody class="text-center">
     {% for row in negocio_producto %}
       <tr>
-        <!-- <td>{{ row.producto_id.codigo }}</td> -->
-        <td>{{ row.producto_id.nombre }}</td>
-        <td>{{ row.producto_id.stock }}</td>
-        <td>$ {{ row.producto_id.valor_costo }}</td>
-        <td>$ {{ row.producto_id.valor_venta }}</td>
         {% if row.producto_id.imagen %}
-        <td> <img src="/media/{{ row.producto_id.imagen }}" class="img-fluid" style="max-width: 150px; max-height: 120px;">  </td>
+        <td class="align-middle"> <img src="/media/{{ row.producto_id.imagen }}" class="img-fluid" style="max-width: 150px; max-height: 120px;">  </td>
         {% else %}
-        <td> <img src="{% static 'img/nofoto.png' %}" class="img-fluid" style="max-width: 50px;"> </td>
+        <td class="align-middle"> <img src="{% static 'img/nofoto.png' %}" class="img-fluid" style="max-width: 50px;"> </td>
         {% endif %}
-        <!-- <td>{{ row.proveedor_id.razon_social }}</td> -->
-        <td>{{ row.producto_id.descripcion }}</td>
-        <td>
+        <td class="align-middle">{{ row.producto_id.nombre }}</td>
+        <td class="align-middle">{{ row.producto_id.stock }}</td>
+        <td class="align-middle">{{ row.producto_id.unidad_medida_id.abreviatura_unidad }}</td>
+        <td class="align-middle">$ {{ row.producto_id.valor_costo }}</td>
+        <td class="align-middle">$ {{ row.producto_id.valor_venta }}</td>
+        {% if row.producto_id.estado_id.estado == 'Activo' or row.producto_id.estado_id.estado == 'activo' %}
+        <td class="align-middle"><span class="badge badge-success badge-font-90">{{ row.producto_id.estado_id.estado }}</span></td>
+        {% elif row.producto_id.estado_id.estado == 'Finalizado' or row.producto_id.estado_id.estado == 'finalizado' %}
+        <td class="align-middle"><span class="badge badge-danger badge-font-90">{{ row.producto_id.estado_id.estado }}</span></td>
+        {% endif %}
+        <td class="align-middle">{{ row.producto_id.descripcion }}</td>
+        <td class="align-middle">
           <a class="btn btn-green btn-sm" href="{% url 'detalle_producto' pk=row.producto_id.id %}" > Detalles </a>
         </td>
       </tr>

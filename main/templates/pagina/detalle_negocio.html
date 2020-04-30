@@ -1,0 +1,81 @@
+{% extends 'pagina/base_corporativo.html' %}
+{% load user_tags %}
+{% block title %} Registrar Negocio{% endblock %}
+
+{%  block content %}
+
+{% if request.user|has_group:"administrativo" %}
+
+<ul class="breadcrumb breadcrumbStyle">
+  <li class="breadcrumb-item"><i class="fas fa-users"></i> Negocios </li>
+  <li class="breadcrumb-itemAdmin"> Lista de Negocios</li>
+  <li class="breadcrumb-itemAdmin active"> Detalles Negocio {{ form.nombre.value }}</li>
+</ul>
+
+<h1 class="mt-4 text-center titleIniBoxAdmin"><i class="fas fa-users"></i> Detalles del Negocio</h1>
+
+<br>
+<div id="alert-form"></div>
+
+<div class="col-md-12">
+  <div class="col-md-10 mx-auto">
+    <br>
+    <p>A continuación verá los datos relacionados al negocio <b class="titleIniBoxAdmin">{{ form.nombre.value }}</b> , y podrá editar la información si así lo requiere.</p>
+    <br>
+    <form class="form-signin" method="post">
+			{% csrf_token %}
+
+			<div class="row">
+        <div class="col">
+					<label>{{ form.nombre.label }} *</label>
+					{{ form.nombre }}
+				</div>
+				<div class="col">
+					<label>{{ form.nit.label }} (Si tiene)</label>
+					{{ form.nit }}
+				</div>
+			</div>
+
+			<div class="col-md-12 col-lg-12 col-sm-12"><br></div>
+
+			<div class="row">
+				<div class="col">
+					<label>{{ form.telefono.label }}</label>
+					{{ form.telefono }}
+				</div>
+				<div class="col">
+					<label>{{ form.email.label }}</label>
+					{{ form.email }}
+				</div>
+			</div>
+
+			<div class="col-md-12 col-lg-12 col-sm-12"><br></div>
+
+			<div class="row">
+				<div class="col">
+			    <label>{{ form.usuario_id.label }}</label>
+          {{ form.usuario_id }}
+				</div>
+				<div class="col">
+			    <label>{{ form.pabellon_id.label }}</label>
+          {{ form.pabellon_id }}
+			  </div>
+			</div>
+
+			<br><br>
+	    <button type="submit" class="btn btn-lg btn-orange btn-login font-weight-bold mb-2">Editar Negocio</button>
+
+		</form>
+	</div>
+</div>
+
+{% endif %}
+
+{% if request.user|has_group:"propietario_negocio" %}
+	<p>Lo siento, no tiene permisos para este contenido :(</p>
+{% endif %}
+{% if request.user|has_group:"empleado_negocio" %}
+	<p>Lo siento, no tiene permisos para este contenido :(</p>
+{% endif %}
+
+{% endblock %}

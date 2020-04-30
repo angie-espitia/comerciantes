@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 # Core Django imports
 from django import template
 from django.contrib.auth.models import User, Group
-from main.models import Usuario
+from main.models import Usuario, Negocio
 
 register = template.Library()
 
@@ -14,9 +14,9 @@ def has_group(user, group_name):
     return True if group in user.groups.all() else False
 
 @register.filter(name='get_name_negocio')
-def get_name_negocio(user):
-    print(user.id)
-    usuario = Usuario.objects.get(id=user.id)
-    negocio = usuario.negocio_id.nombre
+def get_name_negocio(negocio):
+    # print(user.id)
+    # usuario = Usuario.objects.get(id=user.id)
+    negocio = Negocio.objects.get(id=negocio)
     print(negocio)
-    return negocio
+    return negocio.nombre

@@ -7,15 +7,28 @@ from main.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('', index, name='index' ),
-    path('principal', principal_app, name='principal_app' ),
+    path('', login , name='login' ),
+    path('usernegocios', escojer_negocio, name='escojer_negocio' ),
+    re_path('principal/(?P<pk>\d+)/', principal_app, name='principal_app' ),
 
-    path('login', login , name='login' ),
+    # path('login', login , name='login' ),
     path('logout', logout, name = 'logout' ),
-    path('registrar', registrar_comerciante, name='registrar_comerciante' ),
     re_path('usuario/perfil/(?P<pk>\d+)/', perfil_usuario, name='perfil_usuario'),
+    path('corporativo', view_corporativo, name='view_corporativo' ),
 
-    path('compras/', view_de_compra, name='view_compra'),
+    path('pabellones/', view_pabellon, name='view_pabellon'),
+    path('pabellones/nuevo/', registrar_pabellon, name='registrar_pabellon'),
+    re_path('pabellones/lista/editar/(?P<pk>\d+)/', editar_pabellon, name='editar_pabellon'),
+
+    path('comerciantes', view_comerciantes, name='view_comerciantes' ),
+    path('comerciantes/nuevo', registrar_comerciante, name='registrar_comerciante' ),
+
+    path('negocios/', view_negocio, name='view_negocio'),
+    path('negocios/nuevo/', registrar_negocio, name='registrar_negocio'),
+    re_path('negocios/lista/editar/(?P<pk>\d+)/', editar_negocio, name='editar_negocio'),
+    re_path('negocios/lista/eliminar/(?P<pk>\d+)/', eliminar_negocio, name='eliminar_negocio'),
+
+    re_path('compras/(?P<pk>\d+)/', view_de_compra, name='view_compra'),
     re_path('compras/lista/(?P<pk>\d+)/', list_compras, name='lista_de_compra'),
     re_path('compras/lista/detalle/(?P<pk>\d+)/', detalle_de_compra, name='detalles_compras'),
     re_path('compras/lista/detalle/editar_item/(?P<pk>\d+)/', editar_item_detalle_compra, name='editar_item_detalle_compra'),
@@ -23,7 +36,7 @@ urlpatterns = [
     re_path('compras/nuevo/(?P<pk>\d+)/', agregar_compra, name='agregar_compra'),
     re_path('compras/eliminar/(?P<pk>\d+)/', eliminar_compra, name='eliminar_compra'),
 
-    path('ventas/', view_de_venta, name='view_venta'),
+    re_path('ventas/(?P<pk>\d+)/', view_de_venta, name='view_venta'),
     path('ventas/reportes', view_de_reportes_venta, name='view_de_reportes_venta'),
     re_path('ventas/lista/(?P<pk>\d+)/', list_ventas, name='lista_de_venta'),
     re_path('ventas/lista/detalle/(?P<pk>\d+)/', detalle_de_venta, name='detalles_ventas'),
@@ -47,3 +60,5 @@ urlpatterns = [
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+admin.site.site_header = 'Administración Plataforma Tenderos'

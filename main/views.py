@@ -19,45 +19,8 @@ def convertir_fecha(o):
 def toJSON(self):
     return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
-def index(request):
-    return render(request, 'pagina/index.html')
-
-# registro de propietario y empresa
-def registrar_comerciante(request):
-    error = False
-    if request.method == 'POST':
-        validators = FormRegistroValidator(request.POST)
-        validators.required = ['nombre', 'apellido', 'email', 'username', 'password1']
-
-        if validators.is_valid():
-            negocio = Negocio()
-            negocio.nombre = request.POST['nombre_negocio']
-            negocio.nit = request.POST['nit_negocio']
-            negocio.save()
-
-            usuario = User()
-            usuario.first_name = request.POST['nombre']
-            usuario.last_name = request.POST['apellido']
-            usuario.email = request.POST['email']
-            usuario.username = request.POST['username']
-            usuario.password = make_password(request.POST['password1'])
-            usuario.is_active = True
-            grupo = Group.objects.get(name="propietario")
-            usuario.save()
-            usuario.groups.add(grupo)
-            usuario.save()
-
-            myusuario = Usuario()
-            myusuario.id = usuario
-            myusuario.documento = request.POST['documento']
-            myusuario.negocio_id = Negocio.objects.latest('id')
-            myusuario.save()
-
-            return redirect('login')
-        else:
-            return render(request, 'registrar_tendero.html', {'error': validators.getMessage() } )
-        # Agregar el usuario a la base de datos
-    return render( request, 'registrar_tendero.html' )
+# def index(request):
+#     return render(request, 'login.html')
 
 def login(request):
 
@@ -68,7 +31,10 @@ def login(request):
         if validators.is_valid():
 
             auth.login(request, validators.acceso)  # Crear una sesion
-            return redirect('/principal')
+            if request.user.groups.filter(name='administrativo').exists():
+                return redirect('/corporativo')
+            else:
+                return redirect('/usernegocios')
 
         else:
             return render(request, 'login.html', {'error': validators.getMessage()} )
@@ -80,12 +46,165 @@ def logout(request):
     auth.logout(request)
     return redirect("/")
 
+@login_required(login_url="/")
+def view_corporativo(request):
+    # pabellon = Pabellon.objects.all()
+    return render(request, 'pagina/view_corporativo.html' )
+
+# pabellones
+@login_required(login_url="/")
+def view_pabellon(request):
+    pabellon = Pabellon.objects.all()
+    return render(request, 'pagina/view_pabellon.html', {'pabellon':pabellon} )
+
+@login_required(login_url="/")
+def registrar_pabellon(request):
+    if request.method == "POST":
+        form = PabellonForm(request.POST)
+        if form.is_valid():
+            pabellon = form.save(commit=False)
+            pabellon.save()
+
+            return redirect('view_pabellon') #, pk=usuario.pk
+    else:
+        form = PabellonForm()
+
+    return render(request, 'pagina/registrar_pabellon.html', {'form' : form} )
+
+@login_required(login_url="/")
+def editar_pabellon(request, pk):
+    pabellon = get_object_or_404(Pabellon, pk=pk)
+    if request.method == "POST" and request.is_ajax():
+        pabellon.nombre = request.POST.get('nombre_p')
+        pabellon.descripcion = request.POST.get('descripcion_p')
+        pabellon.save()
+        return HttpResponse('ok')
+    else:
+        dic = {
+            'idd':pabellon.id,
+            'nombre':pabellon.nombre,
+            'descripcion':pabellon.descripcion,
+        }
+        return HttpResponse(toJSON(dic), content_type='application/json')
+
+# registro de propietario y empresa
+@login_required(login_url="/")
+def view_comerciantes(request):
+    usuarios = User.objects.filter(groups__name='propietario_negocio')
+    propietario_negocios = Usuario.objects.filter(id__in=usuarios)
+    return render(request, 'pagina/view_propietarios.html', {'propietario_negocios':propietario_negocios} )
+
+@login_required(login_url="/")
+def registrar_comerciante(request):
+    error = False
+    if request.method == 'POST':
+        validators = FormRegistroValidator(request.POST)
+        validators.required = ['nombre', 'apellido', 'email', 'username', 'password1']
+
+        if validators.is_valid():
+            usuario = User()
+            usuario.first_name = request.POST['nombre']
+            usuario.last_name = request.POST['apellido']
+            usuario.email = request.POST['email']
+            usuario.username = request.POST['username']
+            usuario.password = make_password(request.POST['password1'])
+            usuario.is_active = True
+            grupo = Group.objects.get(name="propietario_negocio")
+            usuario.save()
+            usuario.groups.add(grupo)
+            usuario.save()
+
+            myusuario = Usuario()
+            myusuario.id = usuario
+            myusuario.documento = request.POST['documento']
+            myusuario.save()
+
+            return redirect('view_comerciantes')
+        else:
+            return render(request, 'pagina/registrar_tendero.html', {'error': validators.getMessage() } )
+        # Agregar el usuario a la base de datos
+    return render( request, 'pagina/registrar_tendero.html' )
+
+# pabellones
+@login_required(login_url="/")
+def view_negocio(request):
+    negocio = Negocio.objects.all()
+    return render(request, 'pagina/view_negocios.html', {'negocio':negocio} )
+
+@login_required(login_url="/")
+def registrar_negocio(request):
+    pabellon = Pabellon.objects.all()
+    propietario_negocio = User.objects.filter(groups__name='propietario_negocio')
+    if request.method == 'POST':
+        form = NegocioForm(request.POST)
+        if form.is_valid():
+            negocio = form.save(commit=False)
+
+            usuario_recibido = request.POST.get('usuario_id')
+            pabellon_recibido = request.POST.get('pabellon_id')
+            usuario_p = Usuario.objects.get(id=usuario_recibido)
+            pabellon_p = Pabellon.objects.get(id=pabellon_recibido)
+
+            negocio.usuario_id = usuario_p
+            negocio.pabellon_id = pabellon_p
+            negocio.save()
+
+            return redirect('view_negocio')
+
+    else:
+        form = NegocioForm()
+
+    return render(request, 'pagina/registrar_negocio.html', {'form' : form, 'propietario_negocio' : propietario_negocio, 'pabellon' : pabellon} )
+
+@login_required(login_url="/")
+def editar_negocio(request, pk):
+    negocio_recibido = get_object_or_404(Negocio, pk=pk)
+    pabellon = Pabellon.objects.all()
+    propietario_negocio = User.objects.filter(groups__name='propietario_negocio')
+
+    if request.method == "POST":
+        form = NegocioForm_dos(request.POST, instance=negocio_recibido)
+        if form.is_valid():
+            negocio = form.save(commit=False)
+            negocio.save()
+
+            return HttpResponseRedirect('view_negocio') #redirige misma pag
+    else:
+        form = NegocioForm_dos(instance=negocio_recibido)
+    return render(request, 'pagina/detalle_negocio.html', {'form' : form, 'propietario_negocio' : propietario_negocio, 'pabellon' : pabellon} )
+
+@login_required(login_url="/")
+def eliminar_negocio(request, pk):
+    negocio = get_object_or_404(Negocio, pk=pk)
+    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
+
+    if request.method == "POST" and request.is_ajax():
+        try:
+            negocio.delete()
+            return HttpResponse('1')
+        except:
+            return HttpResponse('2')
+    else:
+        dic = {
+            'id':negocio.id,
+            'nombre':negocio.nombre,
+        }
+        return HttpResponse(toJSON(dic), content_type='application/json')
+
 # ------------------------------- views manejo negocio tenderos ---------------------------------------------------------
 
 @login_required(login_url="/")
-def principal_app(request):
+def escojer_negocio(request):
     usuario = Usuario.objects.get(id=request.user.id)
-    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=usuario.negocio_id, producto_id__isnull=False)
+    negocio = Negocio.objects.filter(usuario_id=usuario)
+
+    return render(request, 'escojer.html', {'negocio':negocio})
+
+@login_required(login_url="/")
+def principal_app(request, pk):
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = Negocio.objects.get(id=pk)
+    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
     negocioo = []
     for x in negocio_producto:
         if x.producto_id.stock <= 9:
@@ -100,16 +219,16 @@ def principal_app(request):
         array_venta.append(f.id)
     detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto)
 
-    for x in detalles__ventas:
-        print(x.cantidad)
-    return render(request, 'app/index_app.html', {'negocioo':negocioo}, {'detalles__ventas': detalles__ventas})
+    # for x in detalles__ventas:
+    #     print(x.cantidad)
+    return render( request, 'app/index_app.html', {'negocioo':negocioo, 'detalles__ventas': detalles__ventas, 'negocio_id': negocio } )
 
 # registro de empleados
 @login_required(login_url="/")
 def registrar_empleado(request, pk):
     error = False
-    usuario = Usuario.objects.get(id=pk)
-    negocio_actual = usuario.negocio_id
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio_actual = Negocio.objects.get(id=pk)
     if request.method == 'POST':
         validators = FormRegistroValidator(request.POST)
         validators.required = ['nombre', 'apellido', 'email', 'username', 'password1']
@@ -122,7 +241,7 @@ def registrar_empleado(request, pk):
             usuario.username = request.POST['username']
             usuario.password = make_password(request.POST['password1'])
             usuario.is_active = True
-            grupo = Group.objects.get(name="empleado")
+            grupo = Group.objects.get(name="empleado_negocio")
             usuario.save()
             usuario.groups.add(grupo)
             usuario.save()
@@ -135,14 +254,15 @@ def registrar_empleado(request, pk):
 
             return redirect('list_usuarios')
         else:
-            return render(request, 'registrar_empleado.html', {'error': validators.getMessage() } )
+            return render(request, 'registrar_empleado.html', {'error': validators.getMessage(), 'negocio_id': negocio_actual } )
         # Agregar el usuario a la base de datos
-    return render( request, 'app/administracion/registrar_empleado.html' )
+    return render( request, 'app/administracion/registrar_empleado.html', {'negocio_id': negocio_actual} )
 
 @login_required(login_url="/")
 def perfil_usuario(request, pk):
-    usuario = User.objects.get(id=pk)
-    miusuario = Usuario.objects.get(id=usuario)
+    negocio_actual = Negocio.objects.get(id=pk)
+    usuario = User.objects.get(id=request.user.id)
+    miusuario = Usuario.objects.get(id=request.user.id)
     error = False
     if request.method == 'POST':
         # import pdb; pdb.set_trace()
@@ -158,7 +278,7 @@ def perfil_usuario(request, pk):
 
         return HttpResponseRedirect(request.path_info) #redirige misma pag
 
-    return render(request, 'app/administracion/perfil_usuario.html', {'usu': miusuario } )
+    return render(request, 'app/administracion/perfil_usuario.html', {'usu': miusuario, 'negocio_id': negocio_actual } )
 
 @login_required(login_url="/")
 def list_usuarios(request):
@@ -173,7 +293,8 @@ def list_usuarios(request):
 @login_required(login_url="/")
 def modificar_contra(request, pk):
     error = False
-    usuario_contra = User.objects.get(id=pk)
+    # negocio_actual = Negocio.objects.get(id=pk)
+    usuario_contra = User.objects.get(id=request.user.id)
     if request.method == 'POST':
         usuario_contra.password = make_password(request.POST['password1'])
         usuario_contra.save()
@@ -181,17 +302,20 @@ def modificar_contra(request, pk):
         return HttpResponseRedirect(request.path_info) #redirige misma pag
 
 # proveedor
-
 @login_required(login_url="/")
 def view_proveedor(request, pk):
-    usuario = Usuario.objects.get(id=pk)
-    negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=usuario.negocio_id, producto_id__isnull=True)
-    return render(request, 'app/proveedor/view_proveedor.html', {'negocio_proveedor':negocio_proveedor} )
+    negocio_actual = Negocio.objects.get(id=pk)
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=negocio_actual.id, producto_id__isnull=True)
+
+    return render(request, 'app/proveedor/view_proveedor.html', {'negocio_proveedor':negocio_proveedor, 'negocio_id': negocio_actual} )
 
 @login_required(login_url="/")
 def agregar_proveedor(request, pk):
-
-    usu = Usuario.objects.get(id=pk)
+    usu = Usuario.objects.get(id=request.user.id)
+    negocioo = Negocio.objects.get(id=pk)
+    print(negocioo)
+    print('-----------------')
     # import pdb; pdb.set_trace()
     if request.method == "POST":
         if request.is_ajax():
@@ -206,12 +330,12 @@ def agregar_proveedor(request, pk):
 
             proveedor2 = Proveedor.objects.latest('id')
             negocio_proveedor = detalle_negocio_producto()
-            negocio_proveedor.negocio_id = usu.negocio_id
+            negocio_proveedor.negocio_id = negocioo
             negocio_proveedor.proveedor_id = proveedor2
             negocio_proveedor.save()
             return HttpResponse('ok')
 
-    return render(request, 'app/proveedor/agregar_proveedor.html' )
+    return render(request, 'app/proveedor/agregar_proveedor.html', {'negocio_id': negocioo} )
 
 @login_required(login_url="/")
 def editar_proveedor(request, pk):
@@ -236,7 +360,6 @@ def editar_proveedor(request, pk):
             'direccion':proveedor.direccion,
             'celular':proveedor.celular
         }
-        print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
@@ -253,28 +376,35 @@ def eliminar_proveedor(request, pk):
             'id':proveedor.id,
             'razon_social':proveedor.razon_social,
         }
-        print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
 
 # producto
 @login_required(login_url="/")
 def view_producto(request, pk):
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = Negocio.objects.get(id=pk)
+    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
 
-    usuario = Usuario.objects.get(id=pk)
-    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=usuario.negocio_id, producto_id__isnull=False)
-
-    return render(request, 'app/producto/view_producto.html', {'negocio_producto':negocio_producto} )
+    return render(request, 'app/producto/view_producto.html', {'negocio_producto':negocio_producto, 'negocio_id': negocio} )
 
 @login_required(login_url="/")
 def agregar_producto(request, pk):
 
-    usuario = Usuario.objects.get(id=pk)
-    negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=usuario.negocio_id, producto_id__isnull=True)
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = Negocio.objects.get(id=pk)
+    negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
     # import pdb; pdb.set_trace()
+    estado = Estado.objects.all()
+
+    for x in estado:
+        if x.estado == 'Activo' or x.estado == 'activo':
+            estado_ini = x
+
     if request.method == "POST":
         form = ProductoForm(request.POST, request.FILES)
         if form.is_valid():
             producto = form.save(commit=False)
+            producto.estado_id = estado_ini
             producto.save()
 
             producto2 = Producto.objects.latest('id')
@@ -282,7 +412,7 @@ def agregar_producto(request, pk):
             proveedor_p = Proveedor.objects.get(id=proveedor_recibido)
 
             negocio_producto = detalle_negocio_producto()
-            negocio_producto.negocio_id = usuario.negocio_id
+            negocio_producto.negocio_id = negocio
             negocio_producto.producto_id = producto2
             negocio_producto.proveedor_id = proveedor_p
             negocio_producto.save()
@@ -290,36 +420,38 @@ def agregar_producto(request, pk):
             producto2.imagen = request.FILES.get('imagen')
             producto2.save()
 
-            return redirect('view_producto', pk=usuario.pk)
+            return redirect('view_producto', pk=negocio.pk)
     else:
         form = ProductoForm()
 
-    return render(request, 'app/producto/agregar_producto.html', {'form' : form, 'negocio_proveedor': negocio_proveedor } )
+    return render(request, 'app/producto/agregar_producto.html', {'form' : form, 'negocio_proveedor': negocio_proveedor,'negocio_id': negocio} )
 
 @login_required(login_url="/")
 def detalle_producto(request, pk):
     producto_recibido = get_object_or_404(Producto, pk=pk)
     detalle_producto_negocio = detalle_negocio_producto.objects.filter(producto_id=producto_recibido.id)
+    for x in detalle_producto_negocio:
+        id_c = x
+
     for row in detalle_producto_negocio:
         d_p_u = get_object_or_404(detalle_negocio_producto, pk=row.id)
-        negocioo = d_p_u.negocio_id.id
-    print(negocioo)
+        negocioo = d_p_u.negocio_id
     detalle_compra_producto = detalle_compra.objects.filter(producto_id=producto_recibido.id)
 
     if request.method == "POST":
         form = ProductoForm_dos(request.POST, request.FILES, instance=producto_recibido)
-        form2 = DetalleNegocioProductoForm(request.POST, user=negocioo)
+        form2 = DetalleNegocioProductoForm(request.POST, instance=id_c,user=negocioo.id, producto=producto_recibido)
         if form.is_valid() and form2.is_valid():
             producto = form.save(commit=False)
             producto.save()
             producto2 = form2.save(commit=False)
             producto2.save()
 
-            return HttpResponseRedirect(request.path_info) #redirige misma pag
+            return HttpResponseRedirect(request.path_info, {'negocio_id': negocioo}) #redirige misma pag
     else:
         form = ProductoForm_dos(instance=producto_recibido)
-        form2 = DetalleNegocioProductoForm(user=negocioo)
-    return render(request, 'app/producto/editar_producto.html', {'detalle_producto_negocio':detalle_producto_negocio, 'detalle_compra_producto':detalle_compra_producto, 'form' : form, 'form2':form2} )
+        form2 = DetalleNegocioProductoForm(instance=id_c,user=negocioo.id,producto=producto_recibido)
+    return render(request, 'app/producto/editar_producto.html', {'detalle_producto_negocio':detalle_producto_negocio, 'detalle_compra_producto':detalle_compra_producto, 'form' : form, 'form2':form2, 'negocio_id': negocioo} )
 
 @login_required(login_url="/")
 def eliminar_producto(request, pk):
@@ -335,18 +467,20 @@ def eliminar_producto(request, pk):
             'id':producto.id,
             'nombre':producto.nombre,
         }
-        print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
 
 # compras
 @login_required(login_url="/")
-def view_de_compra(request):
-    return render(request, 'app/compra/view_compra.html')
+def view_de_compra(request, pk):
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = Negocio.objects.get(id=pk)
+    return render(request, 'app/compra/view_compra.html',{'negocio_id': negocio})
 
 @login_required(login_url="/")
 def list_compras(request, pk):
-    usuario = Usuario.objects.get(id=pk)
-    negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=usuario.negocio_id, producto_id__isnull=True)
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = Negocio.objects.get(id=pk)
+    negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
     array_proveedor = []
     for f in negocio_proveedor:
         array_proveedor.append(f.proveedor_id.id)
@@ -374,7 +508,15 @@ def list_compras(request, pk):
 def detalle_de_compra(request, pk):
     detalles__compras = detalle_compra.objects.filter(compra_id=pk)
     compra = Compra.objects.filter(id=pk)
-    return render(request, 'app/compra/detalle_compra.html', {'detalles__compras' : detalles__compras, 'compra' : compra })
+    for x in detalles__compras:
+        proveedor = x.proveedor_id
+        print(proveedor)
+    negocio_proveedor = detalle_negocio_producto.objects.filter(proveedor_id=proveedor.id, producto_id__isnull=True)
+    for x in negocio_proveedor:
+        negocio_id = x.negocio_id
+        print(negocio_id)
+
+    return render(request, 'app/compra/detalle_compra.html', {'detalles__compras' : detalles__compras, 'compra' : compra, 'negocio_id': negocio_id })
 
 @login_required(login_url="/")
 def editar_item_detalle_compra(request, pk):
@@ -416,7 +558,6 @@ def editar_item_detalle_compra(request, pk):
             'valor_unitario':item_detalle_compra.valor_unitario,
             'total':item_detalle_compra.total_producto,
         }
-        print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
@@ -445,41 +586,45 @@ def eliminar_item_detalle_compra(request, pk):
             'id':item_detalle_compra.id,
             'nombre':item_detalle_compra.producto_id.nombre,
         }
-        print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
 def agregar_compra(request, pk):
-    usuario = Usuario.objects.get(id=pk)
-    detalle_producto_negocio = detalle_negocio_producto.objects.filter(negocio_id=usuario.negocio_id, producto_id__isnull=True)
-    for row in detalle_producto_negocio:
-        negocioo = row.negocio_id.id
-    print(negocioo)
-    # import pdb; pdb.set_trace()
-    if request.method == "POST":
-        form = CompraForm(request.POST)
-        detalle_compra_form_set = DetalleCompraFormSet(request.POST, form_kwargs={'user': negocioo})
-        if form.is_valid() and detalle_compra_form_set.is_valid():
-            compra = form.save(commit=False)
-            compra.save()
-            detalle_compra_form_set.instance = compra
-            detalle_compra_form_set.save()
+    try:
+        usuario = Usuario.objects.get(id=request.user.id)
+        negocio = Negocio.objects.get(id=pk)
+        detalle_producto_negocio = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
 
-            compra_stock = detalle_compra.objects.filter(compra_id=compra)
-            for row in compra_stock:
-                producto_stock = Producto.objects.get(id=row.producto_id.id)
-                cantidad_compra = row.cantidad
-                cantidad_stock = producto_stock.stock
-                sum_stock = cantidad_compra + cantidad_stock
-                producto_stock.stock = sum_stock
-                producto_stock.save()
+        for row in detalle_producto_negocio:
+            negocioo = row.negocio_id.id
 
-            return redirect('view_compra')
-    else:
-        form = CompraForm()
-        detalle_compra_formset=DetalleCompraFormSet(form_kwargs={'user': negocioo}) # pass parameter to the form
+        # import pdb; pdb.set_trace()
+        if request.method == "POST":
+            form = CompraForm(request.POST)
+            detalle_compra_form_set = DetalleCompraFormSet(request.POST, form_kwargs={'user': negocioo})
+            if form.is_valid() and detalle_compra_form_set.is_valid():
+                compra = form.save(commit=False)
+                compra.save()
+                detalle_compra_form_set.instance = compra
+                detalle_compra_form_set.save()
 
-    return render(request, 'app/compra/agregar_compra.html', {'form' : form, 'detalle_compra_formset': detalle_compra_formset } )
+                compra_stock = detalle_compra.objects.filter(compra_id=compra)
+                for row in compra_stock:
+                    producto_stock = Producto.objects.get(id=row.producto_id.id)
+                    cantidad_compra = row.cantidad
+                    cantidad_stock = producto_stock.stock
+                    sum_stock = cantidad_compra + cantidad_stock
+                    producto_stock.stock = sum_stock
+                    producto_stock.save()
+
+                return redirect('view_compra', pk=negocio.pk)
+        else:
+            form = CompraForm()
+            detalle_compra_formset=DetalleCompraFormSet(form_kwargs={'user': negocioo}) # pass parameter to the form
+
+        return render(request, 'app/compra/agregar_compra.html', {'form' : form, 'detalle_compra_formset': detalle_compra_formset, 'negocio_id': negocio } )
+    except:
+        return render(request, 'app/error.html', {'negocio_id': negocio} )
 
 @login_required(login_url="/")
 def eliminar_compra(request, pk):
@@ -504,22 +649,26 @@ def eliminar_compra(request, pk):
             'fecha':convertir_fecha(compra_recibida.fecha),
             'total':compra_recibida.total,
         }
-        print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
 
 # venta
 @login_required(login_url="/")
-def view_de_venta(request):
-    return render(request, 'app/venta/view_venta.html')
+def view_de_venta(request, pk):
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = Negocio.objects.get(id=pk)
+    return render(request, 'app/venta/view_venta.html',{'negocio_id': negocio})
 
 @login_required(login_url="/")
-def view_de_reportes_venta(request):
-    return render(request, 'app/venta/view_reportes_venta.html')
+def view_de_reportes_venta(request, pk):
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = Negocio.objects.get(id=pk)
+    return render(request, 'app/venta/view_reportes_venta.html',{'negocio_id': negocio})
 
 @login_required(login_url="/")
 def list_ventas(request, pk):
-    usuario = Usuario.objects.get(id=pk)
-    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=usuario.negocio_id, producto_id__isnull=False)
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = Negocio.objects.get(id=pk)
+    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
     array_producto = []
     for f in negocio_producto:
         array_producto.append(f.producto_id.id)
@@ -546,7 +695,14 @@ def list_ventas(request, pk):
 def detalle_de_venta(request, pk):
     detalles__ventas = detalle_venta.objects.filter(venta_id=pk)
     venta = Venta.objects.filter(id=pk)
-    return render(request, 'app/venta/detalle_venta.html', {'detalles__ventas' : detalles__ventas, 'venta' : venta })
+    for x in detalles__ventas:
+        producto = x.producto_id
+        print(producto)
+    negocio_producto = detalle_negocio_producto.objects.filter(producto_id=producto.id)
+    for x in negocio_producto:
+        negocio_id = x.negocio_id
+        print(negocio_id)
+    return render(request, 'app/venta/detalle_venta.html', {'detalles__ventas' : detalles__ventas, 'venta' : venta, 'negocio_id': negocio_id })
 
 @login_required(login_url="/")
 def editar_item_detalle_venta(request, pk):
@@ -588,7 +744,6 @@ def editar_item_detalle_venta(request, pk):
             # 'valor_unitario':item_detalle_venta.valor_unitario,
             'total':item_detalle_venta.total_producto,
         }
-        print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
@@ -617,41 +772,44 @@ def eliminar_item_detalle_venta(request, pk):
             'id':item_detalle_venta.id,
             'nombre':item_detalle_venta.producto_id.nombre,
         }
-        print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
 def agregar_venta(request, pk):
-    usuario = Usuario.objects.get(id=pk)
-    detalle_producto_negocio = detalle_negocio_producto.objects.filter(negocio_id=usuario.negocio_id, producto_id__isnull=True)
-    for row in detalle_producto_negocio:
-        negocioo = row.negocio_id.id
-    print(negocioo)
-    # import pdb; pdb.set_trace()
-    if request.method == "POST":
-        form = VentaForm(request.POST)
-        detalle_venta_form_set = DetalleVentaFormSet(request.POST, form_kwargs={'user': negocioo})
-        if form.is_valid() and detalle_venta_form_set.is_valid():
-            venta = form.save(commit=False)
-            venta.save()
-            detalle_venta_form_set.instance = venta
-            detalle_venta_form_set.save()
+    try:
+        usuario = Usuario.objects.get(id=request.user.id)
+        negocio = Negocio.objects.get(id=pk)
+        detalle_producto_negocio = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
+        for row in detalle_producto_negocio:
+            negocioo = row.negocio_id.id
 
-            venta_stock = detalle_venta.objects.filter(venta_id=venta)
-            for row in venta_stock:
-                producto_stock = Producto.objects.get(id=row.producto_id.id)
-                cantidad_venta = row.cantidad
-                cantidad_stock = producto_stock.stock
-                resta_stock = cantidad_stock - cantidad_venta
-                producto_stock.stock = resta_stock
-                producto_stock.save()
+        # import pdb; pdb.set_trace()
+        if request.method == "POST":
+            form = VentaForm(request.POST)
+            detalle_venta_form_set = DetalleVentaFormSet(request.POST, form_kwargs={'user': negocioo})
+            if form.is_valid() and detalle_venta_form_set.is_valid():
+                venta = form.save(commit=False)
+                venta.save()
+                detalle_venta_form_set.instance = venta
+                detalle_venta_form_set.save()
 
-            return redirect('view_venta')
-    else:
-        form = VentaForm()
-        detalle_venta_formset=DetalleVentaFormSet(form_kwargs={'user': negocioo}) # pass parameter to the form
+                venta_stock = detalle_venta.objects.filter(venta_id=venta)
+                for row in venta_stock:
+                    producto_stock = Producto.objects.get(id=row.producto_id.id)
+                    cantidad_venta = row.cantidad
+                    cantidad_stock = producto_stock.stock
+                    resta_stock = cantidad_stock - cantidad_venta
+                    producto_stock.stock = resta_stock
+                    producto_stock.save()
 
-    return render(request, 'app/venta/agregar_venta.html', {'form' : form, 'detalle_venta_formset': detalle_venta_formset } )
+                return redirect('view_venta', pk=negocio.pk)
+        else:
+            form = VentaForm()
+            detalle_venta_formset=DetalleVentaFormSet(form_kwargs={'user': negocioo}) # pass parameter to the form
+
+        return render(request, 'app/venta/agregar_venta.html', {'form' : form, 'detalle_venta_formset': detalle_venta_formset, 'negocio_id': negocio } )
+    except:
+        return render(request, 'app/error.html', {'negocio_id': negocio} )
 
 @login_required(login_url="/")
 def eliminar_venta(request, pk):
@@ -676,5 +834,4 @@ def eliminar_venta(request, pk):
             'fecha':convertir_fecha(venta_recibida.fecha),
             'total':venta_recibida.total,
         }
-        print(dic)
         return HttpResponse(toJSON(dic), content_type='application/json')

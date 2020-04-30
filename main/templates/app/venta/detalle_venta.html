@@ -205,13 +205,16 @@ function Actualizar() {
 		  'total_item': total,
 		},
 		success:function(data){
-			alert(data);
-			alert('Se ha actualizado con éxito');
+     //  swal('Se han actualizado los campos con éxito','','success').then(function(){
+     //   location.reload();
+     // });
 
 		},
 		error: function(xhr, e, x, status) {
 			console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
-			alert('Ha ocurrido un error, porfavor vuelva a intentar');
+      swal('Ha ocurrido un error, porfavor vuelva a intentar','','warning').then(function(){
+       location.reload();
+      });
 		}
 	})
 }
@@ -250,12 +253,15 @@ function Eliminar() {
       data: { "csrfmiddlewaretoken": csrftoken,
           "id": id2 },
       success:function(data){
-          alert('Se eliminó con éxito');
-          location.reload();
+         swal('Se eliminó con éxito','','success').then(function(){
+           location.reload();
+         });
       },
       error: function(xhr, e, x, status) {
         console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
-        alert('Ha ocurrido un error, porfavor vuelva a intentar');
+        swal('Ha ocurrido un error, porfavor vuelva a intentar','','warning').then(function(){
+         location.reload();
+        });
       }
     })
  }

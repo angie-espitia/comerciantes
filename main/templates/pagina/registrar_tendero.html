@@ -1,0 +1,80 @@
+{% extends 'pagina/base_corporativo.html' %}
+{% load user_tags %}
+{% block title %} Registrar Propietario{% endblock %}
+
+{%  block content %}
+
+{% if request.user|has_group:"administrativo" %}
+
+<ul class="breadcrumb breadcrumbStyle">
+  <li class="breadcrumb-item"><i class="fas fa-users"></i> Comerciantes </li>
+  <li class="breadcrumb-itemAdmin active"> Nuevo Comerciante</li>
+</ul>
+
+<h1 class="mt-4 text-center titleIniBoxAdmin"><i class="fas fa-users"></i> Registrar Comerciantes</h1>
+
+<br>
+<div id="alert-form"></div>
+
+<div class="col-md-12">
+  <div class="col-md-10 mx-auto">
+		<form class="form-signin" method="post">
+			{% csrf_token %}
+
+			<div class="row">
+        <div class="col">
+						<label>Usuario del propietario:</label>
+		    		<input type="text" name="username" placeholder="Usuario" class="form-control" id="form-usuario">
+					</div>
+					<div class="col">
+						<label>Correo del propietario:</label>
+		        <input type="text" name="email" placeholder="Correo" class="form-control" id="form-email">
+					</div>
+	      </div>
+
+				<div class="col-md-12 col-lg-12 col-sm-12"><br></div>
+
+				<div class="row">
+	        <div class="col">
+						<label>Nombre:</label>
+		        <input type="text" name="nombre" placeholder="Nombres" class="form-control" id="form-nombre">
+					</div>
+					<div class="col">
+						<label>Apellido:</label>
+		        <input type="text" name="apellido" placeholder="Apellidos" class="form-control" id="form-apellido">
+					</div>
+					<div class="col">
+						<label>Documento:</label>
+		        <input type="text" name="documento" placeholder="Documento" class="form-control" id="form-telefono">
+					</div>
+	      </div>
+
+				<div class="col-md-12 col-lg-12 col-sm-12"><br></div>
+
+				<div class="row">
+	        <div class="col">
+						<label>Contraseña del usuario:</label>
+			    	<input type="password" name="password1" placeholder="Contraseña" class="form-control" id="form-contraseña">
+					</div>
+					<div class="col">
+						<label>Confirmar contraseña:</label>
+			    	<input type="password" name="password2" placeholder="Confirmar contraseña" class="form-control" id="form-password2">
+					</div>
+				</div>
+
+				<br><br>
+		    <button type="submit" class="btn btn-lg btn-orange btn-login font-weight-bold mb-2">Registrar usuario</button>
+
+		  </form>
+		</div>
+</div>
+	{% endif %}
+
+	{% if request.user|has_group:"propietario_negocio" %}
+		<p>Lo siento, no tiene permisos para este contenido :(</p>
+	{% endif %}
+	{% if request.user|has_group:"empleado_negocio" %}
+		<p>Lo siento, no tiene permisos para este contenido :(</p>
+	{% endif %}
+
+{% endblock %}

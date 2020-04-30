@@ -327,7 +327,9 @@ function Actualizar() {
           },
           error: function(xhr, e, x, status) {
             console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
-            alert('Ha ocurrido un error, porfavor vuelva a intentar');
+            swall('Ha ocurrido un error, porfavor vuelva a intentar','','warning').then(function(){
+             location.reload();
+           });
           }
 
       });
