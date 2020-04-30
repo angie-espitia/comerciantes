@@ -11,6 +11,8 @@ def get_upload_path(instance, filename):
 	detalle_negocio = detalle_negocio_producto.objects.filter(negocio_id=instance.id)
 	for row in detalle_negocio:
 		negocio = row.negocio_id
+	print("----------------------")
+	print(negocio)
 	return 'negocio_{0}/{1}'.format(negocio, filename)
 
 #Manejo negocio

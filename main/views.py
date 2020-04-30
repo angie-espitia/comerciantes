@@ -133,7 +133,7 @@ def registrar_empleado(request, pk):
             myusuario.negocio_id = negocio_actual
             myusuario.save()
 
-            return HttpResponseRedirect(request.path_info) #redirige misma pag
+            return redirect('list_usuarios')
         else:
             return render(request, 'registrar_empleado.html', {'error': validators.getMessage() } )
         # Agregar el usuario a la base de datos
@@ -159,6 +159,16 @@ def perfil_usuario(request, pk):
         return HttpResponseRedirect(request.path_info) #redirige misma pag
 
     return render(request, 'app/administracion/perfil_usuario.html', {'usu': miusuario } )
+
+@login_required(login_url="/")
+def list_usuarios(request):
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = usuario.negocio_id
+    print(negocio)
+    lista_usuarios = Usuario.objects.filter(negocio_id=negocio)
+    for x in lista_usuarios:
+        print(x)
+    return render(request, 'app/administracion/lista_usuarios.html', {'usuarioss':lista_usuarios})
 
 @login_required(login_url="/")
 def modificar_contra(request, pk):

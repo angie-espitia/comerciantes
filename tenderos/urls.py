@@ -43,6 +43,7 @@ urlpatterns = [
     re_path('productos/eliminar/(?P<pk>\d+)/', eliminar_producto, name='eliminar_producto'),
 
     re_path('administracion/nuevoempleado/(?P<pk>\d+)/', registrar_empleado, name='registrar_empleado'),
+    re_path('administracion/empleados/', list_usuarios, name='list_usuarios'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
