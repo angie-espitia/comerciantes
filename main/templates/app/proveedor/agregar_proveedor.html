@@ -80,7 +80,7 @@
  {% block javascript %}
  <script>
   $('#formulario_registro_proveedor').submit(function(event){
-    var user = $("#usuario_id").text();
+    var negocio = $("#negocio_pk").text();
     var nombre = $("#nombre_proveedor").val();
     var razon = $("#razon_social_proveedor").val();
     var direccion = $("#direccion_proveedor").val();
@@ -119,7 +119,7 @@
       $.ajax({
         headers: {'X-CSRF-TOKEN': csrftoken},
         method: 'POST',
-        url: '/proveedores/nuevo/'+user+'/',
+        url: '/proveedores/nuevo/'+negocio+'/',
         dataType: 'text',
         data: { 'csrfmiddlewaretoken': csrftoken ,
             'nombre_proveedor': nombre,

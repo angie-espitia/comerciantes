@@ -8,17 +8,21 @@
 
 <ul class="breadcrumb breadcrumbStyle">
   <li class="breadcrumb-item"><i class="fas fa-users"></i> Negocios </li>
-  <li class="breadcrumb-itemAdmin active"> Lista de Negocios</li>
+  <li class="breadcrumb-itemAdmin"> Lista de Negocios</li>
+  <li class="breadcrumb-itemAdmin active"> Detalles Negocio {{ form.nombre.value }}</li>
 </ul>
 
-<h1 class="mt-4 text-center titleIniBoxAdmin"><i class="fas fa-users"></i> Registrar Negocios</h1>
+<h1 class="mt-4 text-center titleIniBoxAdmin"><i class="fas fa-users"></i> Detalles del Negocio</h1>
 
 <br>
 <div id="alert-form"></div>
 
 <div class="col-md-12">
   <div class="col-md-10 mx-auto">
-		<form class="form-signin" method="post">
+    <br>
+    <p>A continuación verá los datos relacionados al negocio <b class="titleIniBoxAdmin">{{ form.nombre.value }}</b> , y podrá editar la información si así lo requiere.</p>
+    <br>
+    <form class="form-signin" method="post">
 			{% csrf_token %}
 
 			<div class="row">
@@ -41,7 +45,7 @@
 				</div>
 				<div class="col">
 					<label>{{ form.email.label }}</label>
-					{{ form.email }}					
+					{{ form.email }}
 				</div>
 			</div>
 
@@ -49,27 +53,17 @@
 
 			<div class="row">
 				<div class="col">
-			    <label>Propietario del negocio:</label>
-			    <select class="form-control" name='usuario_id' required="required">
-			      <option value="">Seleccionar</option>
-			      {% for row in propietario_negocio %}
-			        <option value="{{ row.id }}"> {{ row.first_name }} {{ row.last_name }} </option>
-			      {% endfor %}
-			    </select>
+			    <label>{{ form.usuario_id.label }}</label>
+          {{ form.usuario_id }}
 				</div>
 				<div class="col">
-			    <label>Pabellón:</label>
-			    <select class="form-control" name='pabellon_id' required="required">
-			      <option value="">Seleccionar</option>
-			      {% for row in pabellon %}
-			        <option value="{{ row.id }}"> {{ row.nombre }} </option>
-			      {% endfor %}
-			    </select>
+			    <label>{{ form.pabellon_id.label }}</label>
+          {{ form.pabellon_id }}
 			  </div>
 			</div>
 
 			<br><br>
-	    <button type="submit" class="btn btn-lg btn-orange btn-login font-weight-bold mb-2">Registrar Negocio</button>
+	    <button type="submit" class="btn btn-lg btn-orange btn-login font-weight-bold mb-2">Editar Negocio</button>
 
 		</form>
 	</div>

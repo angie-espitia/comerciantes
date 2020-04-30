@@ -1,0 +1,18 @@
+{% extends 'pagina/base_login.html' %}
+{% block title %} Negocios Disponibles {% endblock %}
+
+{%  block content %}
+
+{% for row in negocio %}
+<p>
+  <b>{{row.nombre}}</b>
+  <b>{{row.nit}}</b>
+  <b><a class="btn btn-green btn-sm" href="{% url 'principal_app' pk=row.id %}" > Escojer </a></b>
+</p>
+{% empty %}
+<tr>
+  <td colspan="2" class="text-center bg-warning">No hay productos con poco stock</td>
+</tr>
+{% endfor %}
+
+{% endblock %}

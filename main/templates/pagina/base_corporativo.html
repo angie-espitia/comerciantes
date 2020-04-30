@@ -17,11 +17,14 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static 'css/style-app.css' %}" rel="stylesheet">
+    <link href="{% static 'datatables/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'datatables/buttons.bootstrap4.min.css' %}" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="{% static 'fontawesome/css/fontawesome.css' %}" rel="stylesheet">
     <link href="{% static 'fontawesome/css/brands.css' %}" rel="stylesheet">
     <link href="{% static 'fontawesome/css/solid.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'sweetalert/sweetalert2.min.css' %}">
 
   </head>
 
@@ -147,6 +150,7 @@
     <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
     <script src="{% static 'js/document-js.js' %}"></script>
+    <script type="text/javascript" src="{% static 'sweetalert/sweetalert2.min.js' %}" ></script>
     {% block javascript %}
     {% endblock %}
 

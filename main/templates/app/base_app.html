@@ -18,13 +18,14 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static 'css/style-app.css' %}" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.bootstrap4.min.css" rel="stylesheet">
+    <link href="{% static 'datatables/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'datatables/buttons.bootstrap4.min.css' %}" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="{% static 'fontawesome/css/fontawesome.css' %}" rel="stylesheet">
     <link href="{% static 'fontawesome/css/brands.css' %}" rel="stylesheet">
     <link href="{% static 'fontawesome/css/solid.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'sweetalert/sweetalert2.min.css' %}">
 
   </head>
 
@@ -34,7 +35,7 @@
 
     <!-- Sidebar -->
     <div class="bgGrayMenu" id="sidebar-wrapper">
-      <div class="TitleNegocio" id="nameNegocio">{{user|get_name_negocio}}</div>
+      <div class="TitleNegocio" id="nameNegocio">{{negocio_id}}</div>
 
       <div class="datoUser">
         <div class="UserCircle d-flex justify-content-center">
@@ -48,7 +49,7 @@
 
 
       <div class="list-group list-group-flush">
-        <a href="{% url 'principal_app' %}" class="list-group-item list-group-item-action listMenu"><i class="fas fa-home"></i> Inicio</a>
+        <a href="{% url 'principal_app' pk=negocio_id.id %}" class="list-group-item list-group-item-action listMenu"><i class="fas fa-home"></i> Inicio</a>
         <!-- Menu with submenu  productos-->
         <a href="#productos_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenu">
             <div class="d-flex w-100 justify-content-start align-items-center">
@@ -57,10 +58,10 @@
         </a>
         <!-- Submenu content productos-->
         <div id='productos_submenu' class="collapse sidebar-submenu">
-            <a href="{% url 'view_producto' pk=request.user.id %}" class="list-group-item-action listSubMenu">
+            <a href="{% url 'view_producto' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de productos</span>
             </a>
-            <a href="{% url 'agregar_producto' pk=request.user.id %}" class="list-group-item-action listSubMenu">
+            <a href="{% url 'agregar_producto' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nuevo producto</span>
             </a>
         </div>
@@ -73,10 +74,10 @@
         </a>
         <!-- Submenu content compras-->
         <div id='compras_submenu' class="collapse sidebar-submenu">
-            <a href="{% url 'view_compra' %}" class="list-group-item-action listSubMenu">
+            <a href="{% url 'view_compra' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de compras</span>
             </a>
-            <a href="{% url 'agregar_compra' pk=request.user.id %}" class="list-group-item-action listSubMenu">
+            <a href="{% url 'agregar_compra' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nueva compra</span>
             </a>
         </div>
@@ -89,10 +90,10 @@
         </a>
         <!-- Submenu content ventas-->
         <div id='ventas_submenu' class="collapse sidebar-submenu">
-            <a href="{% url 'view_venta' %}" class="list-group-item-action listSubMenu">
+            <a href="{% url 'view_venta' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de ventas</span>
             </a>
-            <a href="{% url 'agregar_venta' pk=request.user.id %}" class="list-group-item-action listSubMenu">
+            <a href="{% url 'agregar_venta' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nueva venta</span>
             </a>
             <a href="{% url 'view_de_reportes_venta' %}" class="list-group-item-action listSubMenu">
@@ -108,10 +109,10 @@
         </a>
         <!-- Submenu content proveedores-->
         <div id='proveedores_submenu' class="collapse sidebar-submenu">
-            <a href="{% url 'view_proveedor' pk=request.user.id %}" class="list-group-item-action listSubMenu">
+            <a href="{% url 'view_proveedor' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de proveedores</span>
             </a>
-            <a href="{% url 'agregar_proveedor' pk=request.user.id %}" class="list-group-item-action listSubMenu">
+            <a href="{% url 'agregar_proveedor' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nuevo proveedor</span>
             </a>
         </div>
@@ -124,10 +125,10 @@
                 </div>
             </a>
             <div id='administracion_submenu' class="collapse sidebar-submenu">
-                <a href="{% url 'registrar_empleado' pk=request.user.id %}" class="list-group-item-action listSubMenu">
+                <a href="{% url 'registrar_empleado' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                     <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Nuevo empleado</span>
                 </a>
-                <a href="{% url 'perfil_usuario' pk=request.user.id %}" class="list-group-item-action listSubMenu">
+                <a href="{% url 'perfil_usuario' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                     <span class="menu-collapsed"><i class="fas fa-list-ul"></i>Perfil de usuario</span>
                 </a>
             </div>
@@ -139,7 +140,7 @@
               </div>
           </a>
           <div id='configuracion_submenu' class="collapse sidebar-submenu">
-              <a href="{% url 'perfil_usuario' pk=request.user.id %}" class="list-group-item-action listSubMenu">
+              <a href="{% url 'perfil_usuario' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                   <span class="menu-collapsed"><i class="fas fa-list-ul"></i>Perfil de usuario</span>
               </a>
           </div>
@@ -155,8 +156,8 @@
 
       <nav class="navbar navbar-expand-lg TitleBox">
         <button class="btn btn-light" id="menu-toggle">Ocultar Menú</button>
-        <div id="usuario_id" hidden="false">{{user.id}}</div>
-        <div id="negocio_id" hidden="false">{{usuario.negocio_id}}</div>
+        <div id="usuario_pk" hidden="false">{{request.user.id}}</div>
+        <div id="negocio_pk" hidden="false">{{negocio_id.id}}</div>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon navbar-toggler-icon-color">
@@ -206,6 +207,7 @@
     <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
     <script src="{% static 'js/document-js.js' %}"></script>
+    <script type="text/javascript" src="{% static 'sweetalert/sweetalert2.min.js' %}" ></script>
      {% block javascript %}
      {% endblock %}
 

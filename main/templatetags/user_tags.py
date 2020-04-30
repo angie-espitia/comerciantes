@@ -14,9 +14,9 @@ def has_group(user, group_name):
     return True if group in user.groups.all() else False
 
 @register.filter(name='get_name_negocio')
-def get_name_negocio(user):
-    print(user.id)
-    usuario = Usuario.objects.get(id=user.id)
-    negocio = Negocio.objects.get(usuario_id=usuario)
+def get_name_negocio(negocio):
+    # print(user.id)
+    # usuario = Usuario.objects.get(id=user.id)
+    negocio = Negocio.objects.get(id=negocio)
     print(negocio)
     return negocio.nombre

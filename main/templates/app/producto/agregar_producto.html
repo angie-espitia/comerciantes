@@ -27,14 +27,18 @@
           {{ form.nombre }}
         </div>
         <div class="col">
-          <label>{{ form.stock.label }}:</label>
-          {{ form.stock }}
+          <label>{{ form.unidad_medida_id.label }}:</label>
+          {{ form.unidad_medida_id }}
         </div>
       </div>
 
       <div class="col-md-12 col-lg-12 col-sm-12"><br></div>
 
       <div class="col-md-12 col-lg-12 col-sm-12 row div-paddings-0px">
+        <div class="col">
+          <label>{{ form.stock.label }}:</label>
+          {{ form.stock }}
+        </div>
         <div class="col">
           <label>{{ form.valor_costo.label }}:</label>
           {{ form.valor_costo }}

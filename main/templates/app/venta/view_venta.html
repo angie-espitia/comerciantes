@@ -50,22 +50,12 @@
 
 {% block javascript %}
 <script src="{% static 'js/fecha_v.js' %}"></script>
-<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.bootstrap4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.colVis.min.js"></script>
-<script src="{% static 'js/manejoDataTable.js' %}"></script>
+{% include "includes/script-datatables.html" %}
 <script>
 
 $(document).ready(function() {
     var nombreDeNegocio = $('#nameNegocio').text();
-    var id = $('#usuario_id').text();
+    var id = $('#negocio_pk').text();
     // console.log(id);
     var csrftoken = '{{ csrf_token }}';
     $.ajax({
@@ -255,12 +245,13 @@ function Eliminar() {
       data: { "csrfmiddlewaretoken": csrftoken,
           "id": id2 },
       success:function(data){
-          alert('Se eliminó con éxito');
-          location.reload();
+          swal('Se eliminó con éxito','','success').then(function(){
+           location.reload()
+         });
       },
       error: function(xhr, e, x, status) {
         console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
-        alert('Ha ocurrido un error, porfavor vuelva a intentar');
+        swal('Ha ocurrido un error, porfavor vuelva a intentar','','warning');
       }
     })
  }

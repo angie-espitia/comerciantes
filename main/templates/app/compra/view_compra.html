@@ -66,7 +66,7 @@ $(document).ready(function() {
 
 var nombreDeNegocio = $('#nameNegocio').text();
 
-var id = $('#usuario_id').text();
+var id = $('#negocio_pk').text();
 // console.log(id);
 var csrftoken = '{{ csrf_token }}';
 $.ajax({
@@ -261,12 +261,13 @@ function Eliminar() {
       data: { "csrfmiddlewaretoken": csrftoken,
           "id": id2 },
       success:function(data){
-          alert('Se eliminó con éxito');
-          location.reload();
+          swal('La compra se eliminó con éxito','','success').then(function(){
+           location.reload();
+         });
       },
       error: function(xhr, e, x, status) {
         console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
-        alert('Ha ocurrido un error, porfavor vuelva a intentar');
+        swal('Ha ocurrido un error, porfavor vuelva a intentar','','warning');
       }
     })
  }
