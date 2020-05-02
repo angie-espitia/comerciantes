@@ -12,7 +12,7 @@
 
 <br>
 
-{% if request.user|has_group:"propietario" %}
+{% if request.user|has_group:"propietario_negocio" %}
 <h1 class="mt-4 text-center titleIniBox"><i class="fas fa-list-ul"></i> Lista de Empleados</h1>
 
 <br>
@@ -32,11 +32,11 @@
     <tbody class="text-center">
     {% for row in usuarioss %}
       <tr>
-        <td>{{ row.id.first_name }} {{ row.id.last_name }}</td>
-        <td>{{ row.id.username }}</td>
-        <td>{{ row.id.email }}</td>
-        <td>{{ row.documento }}</td>
-        <td>{{ row.telefono }}</td>
+        <td>{{ row.usuario_id.id.first_name }} {{ row.usuario_id.id.last_name }}</td>
+        <td>{{ row.usuario_id.id.username }}</td>
+        <td>{{ row.usuario_id.id.email }}</td>
+        <td>{{ row.usuario_id.documento }}</td>
+        <td>{{ row.usuario_id.telefono }}</td>
         <!-- {% if row.producto_id.imagen %}
         <td> <img src="/media/{{ row.producto_id.imagen }}" class="img-fluid" style="max-width: 150px; max-height: 120px;">  </td>
         {% else %}
@@ -57,7 +57,7 @@
 
 
 {% endif %}
-{% if request.user|has_group:"empleado" %}
+{% if request.user|has_group:"empleado_negocio" %}
 	<p>Lo siento, no tiene permisos para este contenido :(</p>
 {% endif %}
 

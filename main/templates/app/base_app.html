@@ -39,7 +39,7 @@
 
       <div class="datoUser">
         <div class="UserCircle d-flex justify-content-center">
-          <img src="{% static 'img/users-d.jpg' %}" class="img-fluid imgUserCircle">
+          <img src="{% static 'img/default-user.jpg' %}" class="img-fluid imgUserCircle">
         </div>
         <div class="nameUser text-center">
           <h4 class="nameUserText1">Bienvenido,</h4>
@@ -96,7 +96,7 @@
             <a href="{% url 'agregar_venta' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nueva venta</span>
             </a>
-            <a href="{% url 'view_de_reportes_venta' %}" class="list-group-item-action listSubMenu">
+            <a href="{% url 'view_de_reportes_venta' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                 <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Reportes venta</span>
             </a>
         </div>
@@ -125,22 +125,14 @@
                 </div>
             </a>
             <div id='administracion_submenu' class="collapse sidebar-submenu">
-<<<<<<< HEAD
-                <a href="{% url 'registrar_empleado' pk=request.user.id %}" class="list-group-item-action listSubMenu">
-                    <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nuevo empleado</span>
-                </a>
-                <a href="{% url 'list_usuarios' %}" class="list-group-item-action listSubMenu">
-                    <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de empleados</span>
-                </a>
-                <a href="{% url 'perfil_usuario' pk=request.user.id %}" class="list-group-item-action listSubMenu">
-                    <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Perfil de usuario</span>
-=======
                 <a href="{% url 'registrar_empleado' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                     <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Nuevo empleado</span>
                 </a>
+                <a href="{% url 'list_usuarios' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
+                    <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de empleados</span>
+                </a>
                 <a href="{% url 'perfil_usuario' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                     <span class="menu-collapsed"><i class="fas fa-list-ul"></i>Perfil de usuario</span>
->>>>>>> 977b4e88938d59f77945c21c6f5996268ddbda05
                 </a>
             </div>
         {% endif %}

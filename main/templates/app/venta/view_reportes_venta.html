@@ -11,6 +11,10 @@
 
 <h1 class="mt-4 text-center titleIniBox"><i class="fas fa-wallet"></i> Reportes de Ventas</h1>
 
+<table id="tablita">
+
+</table>
+
 <br>
 
 <canvas id="myChart"></canvas>
@@ -25,20 +29,20 @@
 
 $(document).ready(function() {
     var nombreDeNegocio = $('#nameNegocio').text();
-    var id = $('#usuario_id').text();
+    var id = $('#negocio_pk').text();
     // console.log(id);
     var csrftoken = '{{ csrf_token }}';
     $.ajax({
       headers: {'X-CSRF-TOKEN': csrftoken},
       method: "GET",
-      url: '/ventas/lista/'+id+'/',
+      url: '/ventas/reportes/lista/'+id+'/',
       dataType: 'json',
       data: { "csrfmiddlewaretoken": csrftoken,
           "id": id }
     })
 
     .done(function(response){
-      // console.log(response);
+      console.log(response);
       var res = response;
       if (JSON.stringify(res)=='{}'){
         html += '<tr><td colspan="4" class="text-center bg-warning">No hay ventas registradas</td></tr>';
@@ -58,43 +62,83 @@ $(document).ready(function() {
           array_reporte_fecha.cantidad.push(res[item].total);
         };
 
+        var array_vp = {};
+        var ant = -0;
+        for(let item in res){
+          if(ant==res[item].id_venta){
+              ant =res[item].id_venta
+          }else{
+            var fecha_array = val_fecha(res[item].fecha).split(" ");
+            array_vp[res[item].id_venta] = {
+              'idd' : res[item].id_venta,
+              'mes' :  fecha_array[2],
+              'dia' : fecha_array[0],
+              'anio' : fecha_array[4],
+              'total' : res[item].total,
+              'producto_id' : [],
+              'producto_nombre' : [],
+              'producto_cantidad' : [],
+              'stock_nuevo' : [],
+              'stock_anterior' : []
+            }
+            ant =res[item].id_venta
+          }
+
+        };
+
+        for(let item in res){
+          for(let item2 in array_vp){
+            if(array_vp[item2].idd == res[item].id_venta){
+              array_vp[item2].producto_id.push(res[item].producto_id);
+              array_vp[item2].producto_nombre.push(res[item].producto_nombre);
+              array_vp[item2].producto_cantidad.push(res[item].producto_cantidad);
+              array_vp[item2].stock_nuevo.push(res[item].producto_stock_nuevo);
+              array_vp[item2].stock_anterior.push(res[item].producto_stock_anterior);
+            }
+          }
+        }
+
+        console.log(array_vp);
+
         // console.log(array_reporte_fecha);
         var item1 = '';
         var arrc = [];
         var arrd = [];
         for (let i = 0; i < array_reporte_fecha.mes.length; i++) {
 
-          if(array_reporte_fecha.mes[i] == 'Noviembre'){
-            item1 = 'Noviembre';
+          if(array_reporte_fecha.mes[i] == 'Mayo'){
+            item1 = 'Mayo';
             arrc.push(array_reporte_fecha.cantidad[i]);
             arrd.push(array_reporte_fecha.dia[i]);
 
           };
         };
 
-        console.log(item1);
-        console.log(arrd);
+        // console.log(item1);
+        // console.log(arrd);
 
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: arrd,
-                datasets: [{
-                    label: item1,
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: '#fff',
-                    data: arrc,
-                    fill: false
-                }]
-            },
+        // var ctx = document.getElementById('myChart').getContext('2d');
+        // var chart = new Chart(ctx, {
+        //     type: 'pie',
+        //     data: {
+        //         labels: arrd,
+        //         datasets: [{
+        //             label: item1,
+        //             backgroundColor: 'rgb(255, 99, 132)',
+        //             borderColor: '#fff',
+        //             data: arrc,
+        //             fill: false
+        //         }]
+        //     },
+        //
+        //     options: {
+        //       title: {
+        //           display: true,
+        //       },
+        //     }
+        // });
 
-            options: {
-              title: {
-                  display: true,
-              },
-            }
-        });
+
       }
 
     });

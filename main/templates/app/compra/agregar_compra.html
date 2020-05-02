@@ -18,9 +18,21 @@
     <form class="form" method="POST"  id="formulario_registro_compra" enctype="multipart/form-data">
       {% csrf_token %}
 
-      <div class="col-md-3 col-sm-3 col-lg-3 text-center">
-        <h5><b> Fecha de la compra: </b></h5>
-        {{ form.fecha }}
+      <div class="row">
+        <div class="col-md-3 col-sm-3 col-lg-3 text-center">
+          <h5><b> Fecha de la compra: </b></h5>
+          {{ form.fecha }}
+        </div>
+        <div class="col-md-3 col-sm-3 col-lg-3 text-center">
+          <h5><b> Proveedor: </b></h5>
+
+          <select class="form-control" id="proveedor_lista" onclick='calcularMult()' required>
+            <option>---</option>
+            {% for row in proveedores %}
+            <option value='{{row.proveedor_id.id}}'>{{row.proveedor_id.razon_social}}</option>
+            {% endfor %}
+          </select>
+        </div>
       </div>
 
       {{ detalle_compra_formset.management_form }}
@@ -33,7 +45,7 @@
             <thead class="theadStyle">
               <tr>
                 <th>Producto</th>
-                <th>Proveedor</th>
+                <!-- <th>Proveedor</th> -->
                 <th>Cantidad</th>
                 <th>Valor Unitario</th>
                 <th>Total Producto</th>
@@ -42,7 +54,7 @@
             <tbody class="text-center formsetBody">
               <tr>
                 <td>{{ form.producto_id }}</td>
-                <td>{{ form.proveedor_id }}</td>
+                <td style="display:none">{{ form.proveedor_id }}</td>
                 <td>{{ form.cantidad }}</td>
                 <td>{{ form.valor_unitario }}</td>
                 <td>{{ form.total_producto }}</td>
@@ -59,7 +71,7 @@
             <tbody class="text-center formsetBody">
               <tr>
                 <td>{{ detalle_compra_formset.empty_form.producto_id }}</td>
-                <td>{{ detalle_compra_formset.empty_form.proveedor_id }}</td>
+                <td style="display:none">{{ detalle_compra_formset.empty_form.proveedor_id }}</td>
                 <td>{{ detalle_compra_formset.empty_form.cantidad }}</td>
                 <td>{{ detalle_compra_formset.empty_form.valor_unitario }}</td>
                 <td>{{ detalle_compra_formset.empty_form.total_producto }}</td>
@@ -72,6 +84,11 @@
       <br>
       <input type="hidden" value="1" name="additems" id="additems">
       <input type="button" id="additemsbutton" value="+" class="btn btn-green btn-lg">
+      <br>
+
+      <div id="alerta-c">
+
+      </div>
 
       <div class="col-md-3 col-sm-3 col-lg-3 text-center mx-auto">
         <h5><b>Total de la compra:</b></h5>
@@ -81,7 +98,7 @@
       <div class="col-md-12 col-lg-12 col-sm-12"><br></div>
 
       <div class="col-md-12 col-lg-12 col-sm-12 text-center">
-        <button class="save btn btn-green btn-lg" type="submit">Guardar</button>
+        <button class="save btn btn-green btn-lg" type="submit" onclick="validate()">Guardar</button>
         <br><br>
       </div>
 
@@ -107,21 +124,42 @@
 
   function calcularMult(){
     var idx = $("#additems").val();
-    console.log(idx);
+    // console.log(idx);
     var sum = 0;
     for (var i = 0; i <= idx; i++) {
+        $("#id_detalle_compra_set-" + i + "-producto_id").attr("required", true);
+        $("#id_detalle_compra_set-" + i + "-proveedor_id").attr("required",true);
+        $("#id_detalle_compra_set-" + i + "-cantidad").attr("required", true);
+        $("#id_detalle_compra_set-" + i + "-valor_unitario").attr("required", true);
+        $("#id_detalle_compra_set-" + i + "-total_producto").attr("required", true);
+
+        var prov = $("#proveedor_lista").val();
+        $("#id_detalle_compra_set-" + i + "-proveedor_id").val(prov);
+
         $("#id_detalle_compra_set-" + i + "-total_producto").val($("#id_detalle_compra_set-" + i + "-cantidad").val() * $("#id_detalle_compra_set-" + i + "-valor_unitario").val());
+
         $("input[id^='id_detalle_compra_set-"+ i + "-total_producto']").each(function() {
           sum += Number($(this).val());
          });
     };
     $("#id_total").val(sum);
+
     // var bla = parseInt($("#id_subtotal_neto").val() / (1.19));
     // console.log(bla);
     // $("#id_IVA").val($("#id_subtotal_neto").val() - bla );
     // $("#id_total").val(parseInt($("#id_subtotal_neto").val()) + parseInt($("#id_IVA").val()) ).val();
 
   };
+
+  function validate(){
+    var ppp = $("#proveedor_lista").val();
+    if(ppp=='---'){
+      $("#alerta-c").html('<div class="alert alert-danger" role="alert">El campo <b>proveedor</b> no debe estar vacio.</div>');
+    }
+    else{
+      $("#alerta-c").html('');
+    }
+  }
 
 </script>
  {% endblock %}

@@ -53,7 +53,7 @@
               <tr>
                 <td>{{ detalle_venta_formset.empty_form.producto_id }}</td>
                 <td>{{ detalle_venta_formset.empty_form.cantidad }}</td>
-                <td>{{ detalle_venta_formset.empty_form.valor_unitario }}</td>
+                <!-- <td>{{ detalle_venta_formset.empty_form.valor_unitario }}</td> -->
                 <td>{{ detalle_venta_formset.empty_form.total_producto }}</td>
               </tr>
             </tbody>
@@ -62,6 +62,10 @@
       </div>
 
       <br>
+
+      <div id="alerta-c">
+
+      </div>
 
       <input type="hidden" value="1" name="additems" id="additems">
       <input type="button" id="additemsbutton" value="+" class="btn btn-green btn-lg">
@@ -84,12 +88,14 @@
       <div class="col-md-12 col-lg-12 col-sm-12"><br></div>
 
       <div class="col-md-12 col-lg-12 col-sm-12 text-center">
-        <button class="save btn btn-green btn-lg" type="submit">Guardar</button>
+        <button id="guardar_submit" class="save btn btn-green btn-lg" type="submit">Guardar</button>
         <br><br>
       </div>
     </form>
 
   </div>
+
+<div id="tabliita" style="display:none"></div>
 
  {% endblock %}
 
@@ -106,27 +112,67 @@
         $('#id_detalle_venta_set-TOTAL_FORMS').val(form_num + 1);
         $("#additems").val(form_num + 1);
      });
+
+     iddd = $("#negocio_pk").text();
+     var csrftoken = '{{ csrf_token }}';
+
+     $.ajax({
+       headers: {'X-CSRF-TOKEN': csrftoken},
+       method: "GET",
+       url: '/ventas/nuevo/datos/'+iddd+'/',
+       dataType: 'json',
+       data: { "csrfmiddlewaretoken": csrftoken,
+           "id": iddd }
+     })
+
+     .done(function(response){
+       var res = response;
+       var html = '';
+
+       for(var item in res){
+           html += '<div><b id="nombrep_'+res[item][0]+'">'+res[item][1]+'</b><b id="stockp_'+res[item][0]+'">'+res[item][2]+'</b></div>';
+       }
+       $('#tabliita').html(html);
+     });
+
   });
 
   function calcularMult(){
     var idx = $("#additems").val();
     // console.log(idx);
-    // var sum = 0;
-    // for (var i = 0; i <= idx; i++) {
-    //     $("#id_detalle_venta_set-" + i + "-total_producto").val($("#id_detalle_venta_set-" + i + "-cantidad").val() * $("#id_detalle_venta_set-" + i + "-valor_unitario").val());
-    //     $("input[id^='id_detalle_venta_set-"+ i + "-total_producto']").each(function() {
-    //       sum += Number($(this).val());
-    //      });
-    // };
-    // $("#id_total").val(sum);
+    var sum = 0;
+    for (var i = 0; i < idx; i++) {
+      // $("#id_detalle_venta_set-" + i + "-producto_id").attr("required", true);
+      // $("#id_detalle_venta_set-" + i + "-cantidad").attr("required", true);
+      // $("#id_detalle_venta_set-" + i + "-total_producto").attr("required", true);
 
+      var id_seleccinado =  $("#id_detalle_venta_set-" + i + "-producto_id").val(); // id producto
+      var nombre_producto = $("#nombrep_"+id_seleccinado).text();
+      var stock_actual = Number($("#stockp_"+id_seleccinado).text()); // stock actual producto
+      var cantidad_ingresada = Number($("#id_detalle_venta_set-" + i + "-cantidad").val()); // cantidad ingresada
+      if(stock_actual == 0){
+        $("#additemsbutton").attr("disabled", true);
+        $("#guardar_submit").attr("disabled", true);
+        $("#alerta-c").html('<div class="alert alert-danger" role="alert">El stock del producto <b>'+nombre_producto+'</b> está agotado.</div>');
+      }
+      else if(stock_actual<cantidad_ingresada){
+        $("#additemsbutton").attr("disabled", true);
+        $("#guardar_submit").attr("disabled", true);
+        $("#alerta-c").html('<div class="alert alert-danger" role="alert">El stock del producto <b>'+nombre_producto+'</b> actualmente es de <b>'+stock_actual+'</b>, por lo que no alcanza el pedido solicitado.</div>');
+      }
+      else{
+        $("#additemsbutton").attr("disabled", false);
+        $("#guardar_submit").attr("disabled", false);
+        $("#alerta-c").html('');
+      }
+    };
 
-
-
-    // var bla = parseInt($("#id_subtotal_neto").val() / (1.19));
-    // console.log(bla);
-    // $("#id_IVA").val($("#id_subtotal_neto").val() - bla );
-    // $("#id_total").val(parseInt($("#id_subtotal_neto").val()) + parseInt($("#id_IVA").val()) ).val();
+    for (var i = 0; i <= idx; i++) {
+        $("input[id^='id_detalle_venta_set-"+ i + "-total_producto']").each(function() {
+          sum += Number($(this).val());
+         });
+    }
+    $("#id_total").val(sum);
 
   };
 

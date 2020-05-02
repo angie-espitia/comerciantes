@@ -41,10 +41,10 @@
         <td class="align-middle">{{ row.producto_id.unidad_medida_id.abreviatura_unidad }}</td>
         <td class="align-middle">$ {{ row.producto_id.valor_costo }}</td>
         <td class="align-middle">$ {{ row.producto_id.valor_venta }}</td>
-        {% if row.producto_id.estado_id.estado == 'Activo' or row.producto_id.estado_id.estado == 'activo' %}
-        <td class="align-middle"><span class="badge badge-success badge-font-90">{{ row.producto_id.estado_id.estado }}</span></td>
-        {% elif row.producto_id.estado_id.estado == 'Finalizado' or row.producto_id.estado_id.estado == 'finalizado' %}
-        <td class="align-middle"><span class="badge badge-danger badge-font-90">{{ row.producto_id.estado_id.estado }}</span></td>
+        {% if row.producto_id.estado == '1'  %}
+        <td class="align-middle"><span class="badge badge-success badge-font-90">Activo</span></td>
+        {% elif row.producto_id.estado == '2' %}
+        <td class="align-middle"><span class="badge badge-danger badge-font-90">Finalizado</span></td>
         {% endif %}
         <td class="align-middle">{{ row.producto_id.descripcion }}</td>
         <td class="align-middle">
@@ -87,17 +87,7 @@
  {% endblock %}
 
  {% block javascript %}
-<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.bootstrap4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.colVis.min.js"></script>
-<script src="{% static 'js/manejoDataTable.js' %}"></script>
+{% include "includes/script-datatables.html" %}
 <script>
 
 $(document).ready(function() {
@@ -111,7 +101,7 @@ var table = $('#ejemplo').DataTable( {
    "info": true,
    "autoWidth": true,
    "language": idioma,
-   "lengthMenu": [[5,10,20, -1],[5,10,50,"Mostrar Todo"]],
+   "lengthMenu": [[15, 25, 50, -1],[15,25,50,"Mostrar Todo"]],
    dom: 'Bfrt<"col-md-6 inline"i> <"col-md-6 inline"p>',
    buttons: {
          dom: {

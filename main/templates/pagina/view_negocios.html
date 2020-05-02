@@ -21,29 +21,45 @@
      <thead class="theadStyle theadStyleOrange">
        <tr>
          <th>Nombre del Negocio</th>
-         <th>Nit</th>
          <th>Propietario</th>
+         <th>Nit</th>
          <th>Telefono del Negocio</th>
          <th>Email del Negocio</th>
          <th>Acciones</th>
        </tr>
      </thead>
      <tbody class="text-center">
-     {% for row in negocio %}
+     {% for row in usuario_negocio %}
        <tr>
-         <td>{{ row.nombre }}</td>
-         <td>{{ row.nit }}</td>
+         <td>{{ row.negocio_id.nombre }}</td>
          <td>{{ row.usuario_id.id.first_name }} {{ row.usuario_id.id.last_name }}</td>
-         <td>{{ row.telefono }}</td>
-         <td>{{ row.email }}</td>
+
+         {% if row.negocio_id.nit == Null %}
+         <td>-</td>
+         {% else %}
+         <td>{{ row.negocio_id.nit }}</td>
+         {% endif %}
+
+         {% if row.negocio_id.telefono == Null %}
+         <td>-</td>
+         {% else %}
+         <td>{{ row.negocio_id.telefono }}</td>
+         {% endif %}
+
+         {% if row.negocio_id.email == Null %}
+         <td>-</td>
+         {% else %}
+         <td>{{ row.negocio_id.email }}</td>
+         {% endif %}
+
          <td>
-           <a class="btn btn-orange btn-sm" href="{% url 'editar_negocio' pk=row.id %}""> Editar </a>
-           <a id="{{row.id}}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)"> Eliminar </a>
+           <a class="btn btn-orange btn-sm" href="{% url 'editar_negocio' pk=row.negocio_id.id %}""> Editar </a>
+           <a id="{{row.negocio_id.id}}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)"> Eliminar </a>
          </td>
        </tr>
        {% empty %}
        <tr>
-         <td colspan="6" class="text-center bg-warning">No hay pabellones registrados</td>
+         <td colspan="6" class="text-center bg-warning">No hay Negocios registrados</td>
        </tr>
      {% endfor %}
      </tbody>
@@ -101,7 +117,7 @@
       "info": true,
       "autoWidth": true,
       "language": idioma,
-      "lengthMenu": [[5,10,20, -1],[5,10,50,"Mostrar Todo"]],
+      "lengthMenu": [[15, 25, 50, -1],[15,25,50,"Mostrar Todo"]],
       dom: 'Bfrt<"col-md-6 inline"i> <"col-md-6 inline"p>',
       buttons: {
             dom: {

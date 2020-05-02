@@ -37,12 +37,14 @@ urlpatterns = [
     re_path('compras/eliminar/(?P<pk>\d+)/', eliminar_compra, name='eliminar_compra'),
 
     re_path('ventas/(?P<pk>\d+)/', view_de_venta, name='view_venta'),
-    path('ventas/reportes', view_de_reportes_venta, name='view_de_reportes_venta'),
+    re_path('ventas/reportes/(?P<pk>\d+)/', view_de_reportes_venta, name='view_de_reportes_venta'),
+    re_path('ventas/reportes/lista/(?P<pk>\d+)/', list_ventas_reportes, name='list_ventas_reportes'),
     re_path('ventas/lista/(?P<pk>\d+)/', list_ventas, name='lista_de_venta'),
     re_path('ventas/lista/detalle/(?P<pk>\d+)/', detalle_de_venta, name='detalles_ventas'),
     re_path('ventas/lista/detalle/editar_item/(?P<pk>\d+)/', editar_item_detalle_venta, name='editar_item_detalle_venta'),
     re_path('ventas/lista/detalle/eliminar_item/(?P<pk>\d+)/', eliminar_item_detalle_venta, name='eliminar_item_detalle_venta'),
     re_path('ventas/nuevo/(?P<pk>\d+)/', agregar_venta, name='agregar_venta'),
+    re_path('ventas/nuevo/datos/(?P<pk>\d+)/', datos_agregar_venta, name='datos_agregar_venta'),
     re_path('ventas/eliminar/(?P<pk>\d+)/', eliminar_venta, name='eliminar_venta'),
 
     re_path('proveedores/(?P<pk>\d+)/', view_proveedor, name='view_proveedor'),
@@ -56,7 +58,7 @@ urlpatterns = [
     re_path('productos/eliminar/(?P<pk>\d+)/', eliminar_producto, name='eliminar_producto'),
 
     re_path('administracion/nuevoempleado/(?P<pk>\d+)/', registrar_empleado, name='registrar_empleado'),
-    re_path('administracion/empleados/', list_usuarios, name='list_usuarios'),
+    re_path('administracion/empleados/(?P<pk>\d+)/', list_usuarios, name='list_usuarios'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

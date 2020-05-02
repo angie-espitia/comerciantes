@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Producto, Compra, detalle_compra, detalle_negocio_producto, Proveedor, Venta, detalle_venta, Pabellon, Negocio
+from .models import Producto, Compra, detalle_compra, detalle_negocio_producto, detalle_usuario_negocio, Proveedor, Venta, detalle_venta, Pabellon, Negocio
 from django.forms.models import inlineformset_factory
 
 class NegocioForm(forms.ModelForm):
@@ -35,7 +35,6 @@ class NegocioForm_dos(forms.ModelForm):
                     'nit': 'NIT del negocio',
                     'telefono': 'Telefono del Negocio',
                     'email': 'Email del Negocio',
-                    'usuario_id': 'Propietario del Negocio',
                     'pabellon_id': 'Pabellón'
                   }
 
@@ -44,6 +43,21 @@ class NegocioForm_dos(forms.ModelForm):
         self.fields['nit'].required = False
         self.fields['telefono'].required = False
         self.fields['email'].required = False
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+class DetalleUsuarioNegocioForm(forms.ModelForm):
+
+    class Meta:
+        model = detalle_usuario_negocio
+        fields = ('usuario_id', )
+        exclude = ( )
+
+    def __init__(self, *args, **kwargs):
+        super(DetalleUsuarioNegocioForm, self).__init__(*args, **kwargs)
+        # self.fields['negocio_id'].required = False
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -70,7 +84,7 @@ class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
         fields = ('__all__' )
-        exclude = ('imagen','estado_id')
+        exclude = ('imagen','estado')
         labels = { 'nombre': 'Nombre del Producto',
         			'stock': 'Stock',
         			'valor_costo': 'valor del costo',
@@ -152,6 +166,7 @@ class DetalleCompraForm(forms.ModelForm):
     class Meta:
         model = detalle_compra
         fields = ('__all__' )
+        exclude = ('cantidad_stock_anterior',)
 
     def __init__(self, *args, **kwargs):
         negocio = kwargs.pop('user')     # client is the parameter passed from views.py
@@ -198,6 +213,7 @@ class DetalleVentaForm(forms.ModelForm):
     class Meta:
         model = detalle_venta
         fields = ('__all__' )
+        exclude = ('cantidad_stock_anterior',)
 
     def __init__(self, *args, **kwargs):
         negocio = kwargs.pop('user')     # client is the parameter passed from views.py
@@ -211,7 +227,7 @@ class DetalleVentaForm(forms.ModelForm):
         self.fields['producto_id'].queryset= po
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
-                'class': 'form-control'
+                'class': 'form-control',
             })
 
 DetalleVentaFormSet = inlineformset_factory(Venta, detalle_venta, form=DetalleVentaForm, extra=1)

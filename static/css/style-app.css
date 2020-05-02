@@ -220,6 +220,10 @@ body {
 form label{
   font-weight: bold;
 }
+.formsetBody select:disabled{
+  background-color: #d4d4d400;
+  color: #727a82;
+}
 .formsetBody input{
     color: #495057;
     background-color: #d4d4d400;
@@ -503,6 +507,9 @@ div.dataTables_wrapper div.dataTables_filter {
 }
 
 
+div.dt-button-background {
+    z-index: 0!important;
+}
 
 #sidebar-wrapper {
   min-height: 100vh;

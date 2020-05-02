@@ -8,14 +8,6 @@ import datetime
 ## subir imagenes por carpeta de usuario
 def get_upload_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-<<<<<<< HEAD
-	detalle_negocio = detalle_negocio_producto.objects.filter(negocio_id=instance.id)
-	for row in detalle_negocio:
-		negocio = row.negocio_id
-	print("----------------------")
-	print(negocio)
-	return 'negocio_{0}/{1}'.format(negocio, filename)
-=======
 	try:
 		detalle_negocio = detalle_negocio_producto.objects.filter(negocio_id=instance.id)
 
@@ -40,7 +32,6 @@ class Usuario(models.Model):
 
 	def __str__(self):
 		return '{}'.format(self.id)
->>>>>>> 977b4e88938d59f77945c21c6f5996268ddbda05
 
 #Manejo negocio
 class Pabellon(models.Model):
@@ -61,7 +52,6 @@ class Negocio(models.Model):
 	nit = models.CharField(max_length = 45, db_column='nit', null=True)
 	telefono = models.CharField(max_length = 45, db_column='telefono', null=True)
 	email = models.CharField(max_length = 45, db_column='email', null=True)
-	usuario_id = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, db_column='Usuario_id')
 	pabellon_id = models.ForeignKey(Pabellon, on_delete=models.DO_NOTHING, db_column='Pabellon_id')
 
 	class Meta:
@@ -113,18 +103,6 @@ class Venta(models.Model):
 	def __str__(self):
 		return '{}'.format(self.id)
 
-class Estado(models.Model):
-	id = models.AutoField( primary_key=True, db_column='id')
-	estado = models.CharField(max_length = 45, db_column='estado')
-	detalle = models.CharField(max_length = 45, db_column='detalle')
-
-	class Meta:
-		db_table = 'Estado'
-		managed  = False
-
-	def __str__(self):
-		return '{}'.format(self.estado)
-
 class unidad_medida(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
 	nombre_unidad = models.CharField(max_length = 45, db_column='nombre_unidad')
@@ -137,6 +115,7 @@ class unidad_medida(models.Model):
 	def __str__(self):
 		return '{}'.format(self.nombre_unidad)
 
+list_estado = ( ('1', 'Activo') , ('2', 'Finalizado'))
 class Producto(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
 	nombre = models.CharField(max_length = 45, db_column='nombre')
@@ -145,7 +124,7 @@ class Producto(models.Model):
 	valor_venta = models.IntegerField( db_column='valor_venta')
 	imagen = models.ImageField( upload_to=get_upload_path , db_column='imagen', null=True) #default="../static/my/img/img4.jpg"
 	descripcion = models.TextField( db_column='descripcion', null=True)
-	estado_id = models.ForeignKey(Estado , on_delete=models.DO_NOTHING, db_column='Estado_id')
+	estado = models.CharField(max_length=1 , choices = list_estado, db_column='estado')
 	unidad_medida_id = models.ForeignKey(unidad_medida , on_delete=models.DO_NOTHING, db_column='unidad_medida_id')
 
 	class Meta:
@@ -161,6 +140,7 @@ class detalle_compra(models.Model):
 	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING, db_column='producto_id')
 	proveedor_id = models.ForeignKey(Proveedor , on_delete=models.DO_NOTHING, db_column='proveedor_id')
 	cantidad = models.IntegerField( db_column='cantidad')
+	cantidad_stock_anterior = models.IntegerField( db_column='cantidad_stock_anterior')
 	valor_unitario = models.IntegerField( db_column='valor_unitario')
 	total_producto = models.IntegerField( db_column='total_producto')
 
@@ -173,6 +153,7 @@ class detalle_venta(models.Model):
 	venta_id = models.ForeignKey(Venta, on_delete=models.DO_NOTHING, db_column='venta_id')
 	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING, db_column='producto_id')
 	cantidad = models.IntegerField( db_column='cantidad')
+	cantidad_stock_anterior = models.IntegerField( db_column='cantidad_stock_anterior')
 	total_producto = models.IntegerField( db_column='total_producto')
 
 	class Meta:
@@ -187,6 +168,15 @@ class detalle_negocio_producto(models.Model):
 
 	class Meta:
 		db_table = 'detalle_negocio_producto'
+		managed  = False
+
+class detalle_usuario_negocio(models.Model):
+	id = models.AutoField( primary_key=True, db_column='id')
+	negocio_id = models.ForeignKey(Negocio, on_delete=models.DO_NOTHING, db_column='negocio_id')
+	usuario_id = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, db_column='usuario_id')
+
+	class Meta:
+		db_table = 'detalle_usuario_negocio'
 		managed  = False
 
 class Log(models.Model):
