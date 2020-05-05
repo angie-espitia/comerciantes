@@ -737,6 +737,7 @@ def list_ventas_reportes(request, pk):
                 'producto_nombre':i.producto_id.nombre,
                 'producto_stock_nuevo':i.producto_id.stock,
                 'producto_cantidad':i.cantidad,
+                'producto_total':i.total_producto,
                 'producto_stock_anterior':i.cantidad_stock_anterior,
             }
             va += 1

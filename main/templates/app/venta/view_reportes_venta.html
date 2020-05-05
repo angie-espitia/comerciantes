@@ -11,21 +11,52 @@
 
 <h1 class="mt-4 text-center titleIniBox"><i class="fas fa-wallet"></i> Reportes de Ventas</h1>
 
-<table id="tablita">
+<div class="row">
+  <div class="col-12 col-sm-3 col-md-3 col-lg-3">
+    <div class="form-group">
+      <label for="sel1">Buscar por:</label>
+      <select class="form-control" id="opcion_buscador" onchange="buscando()">
+        <option value="0">Seleccionar</option>
+        <option value="1">Mes y día</option>
+        <option value="2">Año y Mes</option>
+        <option value="3">Rango de Fechas</option>
+      </select>
+    </div>
+  </div>
+  <div class="col-12 col-sm-3 col-md-3 col-lg-3">
+    <div class="form-group" id="option1">
 
-</table>
+    </div>
+  </div>
+  <div class="col-12 col-sm-3 col-md-3 col-lg-3">
+    <div class="form-group" id="option2">
+
+    </div>
+  </div>
+</div>
+
+<div class="table-responsive tableResStyle">
+ <table class="table table-striped table-bordered table-striped" id="tabliita">
+
+  </table>
+</div>
 
 <br>
 
 <canvas id="myChart"></canvas>
 
 
- {% endblock %}
+{% endblock %}
 
 {% block javascript %}
 <script src="{% static 'js/fecha_v.js' %}"></script>
+<script src="{% static 'js/dias_mes.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
+<script src="{% static 'js/moment.js' %}"></script>
 <script>
+var res;
+var array_reporte_fecha = {};
+var array_vp = {};
 
 $(document).ready(function() {
     var nombreDeNegocio = $('#nameNegocio').text();
@@ -42,12 +73,13 @@ $(document).ready(function() {
     })
 
     .done(function(response){
-      console.log(response);
-      var res = response;
+      // console.log(response);
+      res = response;
       if (JSON.stringify(res)=='{}'){
         html += '<tr><td colspan="4" class="text-center bg-warning">No hay ventas registradas</td></tr>';
       }
       else{
+        // conertir fecha
         array_reporte_fecha = {
           'mes' : [],
           'dia' : [],
@@ -62,7 +94,7 @@ $(document).ready(function() {
           array_reporte_fecha.cantidad.push(res[item].total);
         };
 
-        var array_vp = {};
+        // array con las ventas
         var ant = -0;
         for(let item in res){
           if(ant==res[item].id_venta){
@@ -78,6 +110,7 @@ $(document).ready(function() {
               'producto_id' : [],
               'producto_nombre' : [],
               'producto_cantidad' : [],
+              'producto_total' : [],
               'stock_nuevo' : [],
               'stock_anterior' : []
             }
@@ -86,12 +119,14 @@ $(document).ready(function() {
 
         };
 
+        // for para guardar los productos segun asl ventas
         for(let item in res){
           for(let item2 in array_vp){
             if(array_vp[item2].idd == res[item].id_venta){
               array_vp[item2].producto_id.push(res[item].producto_id);
               array_vp[item2].producto_nombre.push(res[item].producto_nombre);
               array_vp[item2].producto_cantidad.push(res[item].producto_cantidad);
+              array_vp[item2].producto_total.push(res[item].producto_total);
               array_vp[item2].stock_nuevo.push(res[item].producto_stock_nuevo);
               array_vp[item2].stock_anterior.push(res[item].producto_stock_anterior);
             }
@@ -143,6 +178,344 @@ $(document).ready(function() {
 
     });
 });
+
+function buscando(){
+  // pintar las opciones de filtro
+  var opcion_seleccion = $("#opcion_buscador").val();
+
+  if (opcion_seleccion=='0') {
+    $('#option1').html('');
+    $('#option2').html('');
+
+  }else if(opcion_seleccion=='1'){
+
+    var html1 = '<label for="sel1">Mes:</label>';
+    html1 += '<select class="form-control" id="mes_select" onchange="buscando_dia_mes()">';
+    html1 += '<option value="Todos">todos</option>';
+    html1 += '<option value="Enero">Enero</option>';
+    html1 += '<option value="Febrero">Febrero</option>';
+    html1 += '<option value="Marzo">Marzo</option>';
+    html1 += '<option value="Abril">Abril</option>';
+    html1 += '<option value="Mayo">Mayo</option>';
+    html1 += '<option value="Junio">Junio</option>';
+    html1 += '<option value="Julio">Julio</option>';
+    html1 += '<option value="Agosto">Agosto</option>';
+    html1 += '<option value="Septiembre">Septiembre</option>';
+    html1 += '<option value="Octubre">Octubre</option>';
+    html1 += '<option value="Noviembre">Noviembre</option>';
+    html1 += '<option value="Diciembre">Diciembre</option>';
+    html1 += '</select>';
+    $('#option1').html(html1);
+    $('#option2').html('');
+
+    buscando_dia_mes();
+
+  }else if(opcion_seleccion=='2'){
+
+    var anios = [];
+    var anio_cont;
+
+    // guarda el arreglo de años
+    for (let i in array_vp) {
+        anios.push(array_vp[i].anio);
+    }
+
+    // elimina años repetidos del arreglo original
+    let anios_filtrado = anios.filter((valor, indiceActual, arreglo) => arreglo.indexOf(valor) === indiceActual);
+
+    // ordena el arreglo asc
+    anios.sort();
+
+    var html1 = '<label for="sel1">Año:</label>';
+    html1 += '<select class="form-control" id="anio_select" onchange="buscando_anio()">';
+    html1 += '<option value="Todos">Todos</option>';
+
+    for (var i = 0; i < anios_filtrado.length; i++) {
+      html1 += '<option value="'+anios_filtrado[i]+'">'+anios_filtrado[i]+'</option>';
+    }
+
+    html1 += '</select>';
+    $('#option1').html(html1);
+
+    var html2 = '<label for="sel1">Mes:</label>';
+    html2 += '<select class="form-control" id="mes_select2" onchange="filtrado2()">';
+    html2 += '<option value="Todos">Todos</option>';
+    html2 += '<option value="Enero">Enero</option>';
+    html2 += '<option value="Febrero">Febrero</option>';
+    html2 += '<option value="Marzo">Marzo</option>';
+    html2 += '<option value="Abril">Abril</option>';
+    html2 += '<option value="Mayo">Mayo</option>';
+    html2 += '<option value="Junio">Junio</option>';
+    html2 += '<option value="Julio">Julio</option>';
+    html2 += '<option value="Agosto">Agosto</option>';
+    html2 += '<option value="Septiembre">Septiembre</option>';
+    html2 += '<option value="Octubre">Octubre</option>';
+    html2 += '<option value="Noviembre">Noviembre</option>';
+    html2 += '<option value="Diciembre">Diciembre</option>';
+    html2 += '</select>';
+    $('#option2').html(html2);
+
+    buscando_anio();
+
+  }else if(opcion_seleccion=='3'){
+    var html1 = '<label for="sel1">Fecha Inicio:</label>';
+    html1 += '<input class="form-control" type="date" id="fecha_ini" onchange="buscando_fechas()">';
+
+    var html2 = '<label for="sel1">Fecha Fin:</label>';
+    html2 += '<input class="form-control" type="date" id="fecha_fini" onchange="buscando_fechas()">';
+
+    $('#option1').html(html1);
+    $('#option2').html(html2);
+  }
+};
+
+// para el primer filtrado
+function buscando_dia_mes(){
+  // pintar el dia segun el mes buscado
+  var anio_actual = (new Date).getFullYear();
+  var mes_escogidito = $("#mes_select").val();
+  var ss = diasEnUnMes(mes_escogidito, anio_actual);
+
+  if(mes_escogidito=='Todos'){
+    $('#option2').html('');
+    var tables = '<thead class="theadStyle">';
+    tables += '<tr>';
+    tables += '<th>Fecha</th>';
+    tables += '<th>Producto</th>';
+    tables += '<th>Cantidad Vendida</th>';
+    tables += '<th>Total vendido</th>';
+    tables += '<th>Stock Inicial</th>';
+    tables += '<th>Stock Final</th>';
+    tables += '</tr>';
+    tables += '</thead>';
+    tables += '<tbody class="text-center">';
+    for(let item in array_vp){
+      if(array_vp[item].anio==anio_actual){
+        for(let j in array_vp[item].producto_id){
+            tables += '<tr>';
+            tables += '<td>'+array_vp[item].dia+' '+array_vp[item].mes+' '+array_vp[item].anio+'</td>';
+            tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
+            tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
+            tables += '<td>'+array_vp[item].producto_total[j]+'</td>';
+            tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
+            tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
+            tables += '</tr>';
+        }
+      }
+    }
+    tables += '</tbody>';
+    $('#tabliita').html(tables);
+
+  }else{
+    var html2 = '<label for="sel1">Día:</label>';
+    html2 += '<select class="form-control" id="dia_select" onchange="filtrado1()">';
+    html2 += '<option value="0">Todos</option>';
+    for (var i = 01; i <= ss; i++) {
+      if(i>0 && i<10){
+        html2 += '<option value="'+'0'+i+'">'+i+'</option>';
+      }else{
+        html2 += '<option value="'+i+'">'+i+'</option>';
+      }
+    }
+    html2 += '</select>';
+    $('#option2').html(html2);
+
+    filtrado1();
+  }
+}
+
+function filtrado1(){
+  // filtrar por mes y dia del año actual
+  var anio_actual = (new Date).getFullYear();
+  var mes_escogidito = $("#mes_select").val();
+  var dia_escogidito = $("#dia_select").val();
+  var tables = '<thead class="theadStyle">';
+  tables += '<tr>';
+  tables += '<th>Fecha</th>';
+  tables += '<th>Producto</th>';
+  tables += '<th>Cantidad Vendida</th>';
+  tables += '<th>Total vendido</th>';
+  tables += '<th>Stock Inicial</th>';
+  tables += '<th>Stock Final</th>';
+  tables += '</tr>';
+  tables += '</thead>';
+  tables += '<tbody class="text-center">';
+  for(let item in array_vp){
+    if(array_vp[item].mes==mes_escogidito && array_vp[item].anio==anio_actual && dia_escogidito=='0'){
+      for(let j in array_vp[item].producto_id){
+          tables += '<tr>';
+          tables += '<td>'+array_vp[item].dia+' '+array_vp[item].mes+' '+array_vp[item].anio+'</td>';
+          tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
+          tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
+          tables += '<td>'+array_vp[item].producto_total[j]+'</td>';
+          tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
+          tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
+          tables += '</tr>';
+      }
+    }else if(array_vp[item].mes==mes_escogidito && array_vp[item].anio==anio_actual && array_vp[item].dia==dia_escogidito){
+      for(let j in array_vp[item].producto_id){
+          tables += '<tr>';
+          tables += '<td>'+array_vp[item].dia+' '+array_vp[item].mes+' '+array_vp[item].anio+'</td>';
+          tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
+          tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
+          tables += '<td>'+array_vp[item].producto_total[j]+'</td>';
+          tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
+          tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
+          tables += '</tr>';
+      }
+    }
+  }
+
+  tables += '</tbody>';
+  $('#tabliita').html(tables);
+}
+
+// para el segundo filtrado (año)
+function buscando_anio(){
+  // pintar el dia segun el mes buscado
+  var anio_actual = $("#anio_select").val();
+  var mes_escogidito = $("#mes_select2").val();
+  if(anio_actual=='Todos'){
+    var tables = '<thead class="theadStyle">';
+    tables += '<tr>';
+    tables += '<th>Fecha</th>';
+    tables += '<th>Producto</th>';
+    tables += '<th>Cantidad Vendida</th>';
+    tables += '<th>Total vendido</th>';
+    tables += '<th>Stock Inicial</th>';
+    tables += '<th>Stock Final</th>';
+    tables += '</tr>';
+    tables += '</thead>';
+    tables += '<tbody class="text-center">';
+    for(let item in array_vp){
+      for(let j in array_vp[item].producto_id){
+          tables += '<tr>';
+          tables += '<td>'+array_vp[item].dia+' '+array_vp[item].mes+' '+array_vp[item].anio+'</td>';
+          tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
+          tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
+          tables += '<td>'+array_vp[item].producto_total[j]+'</td>';
+          tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
+          tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
+          tables += '</tr>';
+      }
+    }
+    tables += '</tbody>';
+    $('#tabliita').html(tables);
+    $("#mes_select2").val('Todos');
+
+  }else{
+    filtrado2();
+ }
+}
+
+function filtrado2(){
+  // filtrar por mes del año escogido
+  var anio_actual = $("#anio_select").val();
+  var mes_escogidito = $("#mes_select2").val();
+  var tables = '<thead class="theadStyle">';
+  tables += '<tr>';
+  tables += '<th>Fecha</th>';
+  tables += '<th>Producto</th>';
+  tables += '<th>Cantidad Vendida</th>';
+  tables += '<th>Total vendido</th>';
+  tables += '<th>Stock Inicial</th>';
+  tables += '<th>Stock Final</th>';
+  tables += '</tr>';
+  tables += '</thead>';
+  tables += '<tbody class="text-center">';
+  for(let item in array_vp){
+    if( array_vp[item].anio==anio_actual && mes_escogidito=='Todos'){
+      for(let j in array_vp[item].producto_id){
+          tables += '<tr>';
+          tables += '<td>'+array_vp[item].dia+' '+array_vp[item].mes+' '+array_vp[item].anio+'</td>';
+          tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
+          tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
+          tables += '<td>'+array_vp[item].producto_total[j]+'</td>';
+          tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
+          tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
+          tables += '</tr>';
+      }
+    }else if(array_vp[item].mes==mes_escogidito && array_vp[item].anio==anio_actual){
+      for(let j in array_vp[item].producto_id){
+          tables += '<tr>';
+          tables += '<td>'+array_vp[item].dia+' '+array_vp[item].mes+' '+array_vp[item].anio+'</td>';
+          tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
+          tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
+          tables += '<td>'+array_vp[item].producto_total[j]+'</td>';
+          tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
+          tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
+          tables += '</tr>';
+      }
+    }
+  }
+
+  tables += '</tbody>';
+  $('#tabliita').html(tables);
+}
+
+// para el tercer filtradito por Fechas
+function buscando_fechas(){
+  var fecha_inicio = $("#fecha_ini").val();
+  var fecha_fin = $("#fecha_fini").val();
+
+  // funcion para guardar los dias entre las fechas seleccionada
+  var diasEntreFechas = function(desde, hasta) {
+	var dia_actual = desde;
+  var fechas = [];
+	while (dia_actual.isSameOrBefore(hasta)) {
+  	fechas.push(dia_actual.format('DD-MM-YYYY'));
+ 		dia_actual.add(1, 'days');
+	}
+	return fechas;
+  };
+
+  var desde = moment(fecha_inicio);
+  var hasta = moment(fecha_fin);
+  var results = diasEntreFechas(desde, hasta);
+  var fechas_select = [];
+
+  for(let item in results){
+    fechas_select.push(val_fecha_reporte(results[item]));
+  };
+
+  // for(let item in fechas_select){
+  //   console.log(fechas_select[item].split(" "));
+  // };
+
+  var tables = '<thead class="theadStyle">';
+  tables += '<tr>';
+  tables += '<th>Fecha</th>';
+  tables += '<th>Producto</th>';
+  tables += '<th>Cantidad Vendida</th>';
+  tables += '<th>Total vendido</th>';
+  tables += '<th>Stock Inicial</th>';
+  tables += '<th>Stock Final</th>';
+  tables += '</tr>';
+  tables += '</thead>';
+  tables += '<tbody class="text-center">';
+  for(let item in fechas_select){
+
+    for(let item2 in array_vp){
+      if( fechas_select[item].split(" ")[4]==array_vp[item2].dia && fechas_select[item].split(" ")[2]==array_vp[item2].mes && fechas_select[item].split(" ")[0]==array_vp[item2].anio){
+
+        for(let j in array_vp[item2].producto_id){
+            tables += '<tr>';
+            tables += '<td>'+array_vp[item2].dia+' '+array_vp[item2].mes+' '+array_vp[item2].anio+'</td>';
+            tables += '<td>'+array_vp[item2].producto_nombre[j]+'</td>';
+            tables += '<td>'+array_vp[item2].producto_cantidad[j]+'</td>';
+            tables += '<td>'+array_vp[item2].producto_total[j]+'</td>';
+            tables += '<td>'+array_vp[item2].stock_anterior[j]+'</td>';
+            tables += '<td>'+array_vp[item2].stock_nuevo[j]+'</td>';
+            tables += '</tr>';
+        }
+      }
+    }
+  };
+
+  tables += '</tbody>';
+  $('#tabliita').html(tables);
+
+}
 
 </script>
 {% endblock %}
