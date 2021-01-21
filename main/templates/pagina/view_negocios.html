@@ -9,7 +9,7 @@
 
 <ul class="breadcrumb breadcrumbStyle">
   <li class="breadcrumb-item"><i class="fas fa-users"></i> Negocios </li>
-  <li class="breadcrumb-itemAdmin active"> Lista de Negocios</li>
+  <li class="breadcrumb-item breadcrumb-itemAdmin active"> Lista de Negocios</li>
 </ul>
 
 <h1 class="mt-4 text-center titleIniBoxAdmin"><i class="fas fa-users"></i> Lista de Negocios</h1>
@@ -21,6 +21,7 @@
      <thead class="theadStyle theadStyleOrange">
        <tr>
          <th>Nombre del Negocio</th>
+         <th>Pabellón</th>
          <th>Propietario</th>
          <th>Nit</th>
          <th>Telefono del Negocio</th>
@@ -32,6 +33,7 @@
      {% for row in usuario_negocio %}
        <tr>
          <td>{{ row.negocio_id.nombre }}</td>
+         <td>{{ row.negocio_id.pabellon_id }}</td>
          <td>{{ row.usuario_id.id.first_name }} {{ row.usuario_id.id.last_name }}</td>
 
          {% if row.negocio_id.nit == Null %}

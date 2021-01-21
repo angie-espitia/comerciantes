@@ -38,7 +38,7 @@
 
         <div class="datoUser">
           <div class="UserCircle d-flex justify-content-center">
-            <img src="{% static 'img/default-user.jpg' %}" class="img-fluid imgUserCircleOrange">
+            <img src="{% static 'img/iconserregionales.png' %}" class="img-fluid imgUserCircleOrange">
           </div>
           <div class="nameUser text-center">
             <h4 class="nameUserTextAdmin1">Bienvenido,</h4>
@@ -91,6 +91,18 @@
               </a>
               <a href="{% url 'registrar_negocio' %}" class="list-group-item-action listSubMenuAdmin">
                   <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nuevo negocio</span>
+              </a>
+          </div>
+
+          <a href="#configuracion_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenuAdmin">
+              <div class="d-flex w-100 justify-content-start align-items-center">
+                  <span class="menu-collapsed"> Configuración</span>
+              </div>
+          </a>
+          <!-- Submenu content negocios-->
+          <div id='configuracion_submenu' class="collapse sidebar-submenu">
+              <a href="{% url 'perfil_corporativo' pk=user.id %}" class="list-group-item-action listSubMenuAdmin">
+                  <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Perfil de usuario</span>
               </a>
           </div>
 

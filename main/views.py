@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect, render_to_resp
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User, Group
 from django.template import RequestContext
+from django.contrib import messages
 from main.validator import *
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
@@ -46,10 +47,34 @@ def logout(request):
     auth.logout(request)
     return redirect("/")
 
+# corporativo
 @login_required(login_url="/")
 def view_corporativo(request):
     # pabellon = Pabellon.objects.all()
+    print(request.user)
     return render(request, 'pagina/view_corporativo.html' )
+
+@login_required(login_url="/")
+def perfil_corporativo(request, pk):
+    usuario = User.objects.get(id=pk)
+    miusuario = Usuario.objects.get(id=usuario.id)
+    error = False
+    if request.method == 'POST':
+        # import pdb; pdb.set_trace()
+        usuario.email = request.POST.get('email')
+        usuario.first_name = request.POST.get('first_name')
+        usuario.last_name = request.POST.get('last_name')
+        usuario.save()
+
+        miusuario.documento = request.POST.get('documento')
+        miusuario.telefono = request.POST.get('telefono')
+        miusuario.direccion = request.POST.get('direccion')
+        miusuario.save()
+
+        return HttpResponseRedirect(request.path_info) #redirige misma pag
+
+    return render(request, 'pagina/perfil.html', {'usu': miusuario } )
+
 
 # pabellones
 @login_required(login_url="/")
@@ -103,26 +128,29 @@ def registrar_comerciante(request):
         validators.required = ['nombre', 'apellido', 'email', 'username', 'password1']
 
         if validators.is_valid():
-            usuario = User()
-            usuario.first_name = request.POST['nombre']
-            usuario.last_name = request.POST['apellido']
-            usuario.email = request.POST['email']
-            usuario.username = request.POST['username']
-            usuario.password = make_password(request.POST['password1'])
-            usuario.is_active = True
-            grupo = Group.objects.get(name="propietario_negocio")
-            usuario.save()
-            usuario.groups.add(grupo)
-            usuario.save()
+            try:
+                usuario = User()
+                usuario.first_name = request.POST['nombre']
+                usuario.last_name = request.POST['apellido']
+                usuario.email = request.POST['email']
+                usuario.username = request.POST['username']
+                usuario.password = make_password(request.POST['password1'])
+                usuario.is_active = True
+                grupo = Group.objects.get(name="propietario_negocio")
+                usuario.save()
+                usuario.groups.add(grupo)
+                usuario.save()
 
-            myusuario = Usuario()
-            myusuario.id = usuario
-            myusuario.documento = request.POST['documento']
-            myusuario.save()
+                myusuario = Usuario()
+                myusuario.id = usuario
+                myusuario.documento = request.POST['documento']
+                myusuario.save()
 
-            return redirect('view_comerciantes')
+                return redirect('view_comerciantes')
+            except Exception as e:
+                messages.error(request, 'El usuario no es valido, por favor eliga otro usuario.')
         else:
-            return render(request, 'pagina/registrar_tendero.html', {'error': validators.getMessage() } )
+            messages.error(request, validators.getMessage() )
         # Agregar el usuario a la base de datos
     return render( request, 'pagina/registrar_tendero.html' )
 
@@ -211,9 +239,12 @@ def eliminar_negocio(request, pk):
 def escojer_negocio(request):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio_usuario = detalle_usuario_negocio.objects.filter(usuario_id=usuario)
+    arr_n = []
     for x in negocio_usuario:
         n = x.negocio_id.id
-    negocio = Negocio.objects.filter(id=n)
+        arr_n.append(n)
+
+    negocio = Negocio.objects.filter(id__in=arr_n)
 
     return render(request, 'escojer.html', {'negocio':negocio})
 
@@ -224,7 +255,7 @@ def principal_app(request, pk):
     negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
     negocioo = []
     for x in negocio_producto:
-        if x.producto_id.stock <= 9:
+        if x.producto_id.stock <= 9 and x.producto_id.estado=='1':
             negocioo.append(x)
 
     array_producto = []
@@ -246,39 +277,44 @@ def registrar_empleado(request, pk):
     error = False
     usuario = Usuario.objects.get(id=request.user.id)
     negocio_actual = Negocio.objects.get(id=pk)
+    us = Usuario.objects.all()
     if request.method == 'POST':
         validators = FormRegistroValidator(request.POST)
         validators.required = ['nombre', 'apellido', 'email', 'username', 'password1']
 
         if validators.is_valid():
-            usuario = User()
-            usuario.first_name = request.POST['nombre']
-            usuario.last_name = request.POST['apellido']
-            usuario.email = request.POST['email']
-            usuario.username = request.POST['username']
-            usuario.password = make_password(request.POST['password1'])
-            usuario.is_active = True
-            grupo = Group.objects.get(name="empleado_negocio")
-            usuario.save()
-            usuario.groups.add(grupo)
-            usuario.save()
+            try:
+                usuario = User()
+                usuario.first_name = request.POST['nombre']
+                usuario.last_name = request.POST['apellido']
+                usuario.email = request.POST['email']
+                usuario.username = request.POST['username']
+                usuario.password = make_password(request.POST['password1'])
+                usuario.is_active = True
+                grupo = Group.objects.get(name="empleado_negocio")
+                usuario.save()
+                usuario.groups.add(grupo)
+                usuario.save()
 
-            myusuario = Usuario()
-            myusuario.id = usuario
-            myusuario.documento = request.POST['documento']
-            myusuario.save()
+                myusuario = Usuario()
+                myusuario.id = usuario
+                myusuario.documento = request.POST['documento']
 
+                myusuario.save()
+                negocio_usuario = detalle_usuario_negocio()
+                negocio_usuario.usuario_id = myusuario
+                negocio_usuario.negocio_id = negocio_actual
+                negocio_usuario.save()
 
-            negocio_usuario = detalle_usuario_negocio()
-            negocio_usuario.usuario_id = myusuario
-            negocio_usuario.negocio_id = negocio_actual
-            negocio_usuario.save()
+                return redirect('list_usuarios', pk=negocio_actual.pk)
 
-            return redirect('list_usuarios', pk=negocio_actual.pk)
+            except Exception as e:
+                messages.error(request, 'El usuario no es valido, por favor eliga otro usuario.')
+
         else:
-            return render(request, 'app/administracion/registrar_empleado.html', {'error': validators.getMessage(), 'negocio_id': negocio_actual } )
+            messages.error(request, validators.getMessage() )
         # Agregar el usuario a la base de datos
-    return render( request, 'app/administracion/registrar_empleado.html', {'negocio_id': negocio_actual} )
+    return render( request, 'app/administracion/registrar_empleado.html', {'negocio_id': negocio_actual, 'us':us} )
 
 @login_required(login_url="/")
 def perfil_usuario(request, pk):
@@ -494,6 +530,12 @@ def view_de_compra(request, pk):
     return render(request, 'app/compra/view_compra.html',{'negocio_id': negocio})
 
 @login_required(login_url="/")
+def view_de_reportes_compra(request, pk):
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = Negocio.objects.get(id=pk)
+    return render(request, 'app/compra/view_reportes_compra.html',{'negocio_id': negocio})
+
+@login_required(login_url="/")
 def list_compras(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
@@ -519,6 +561,40 @@ def list_compras(request, pk):
                 'total':i.compra_id.total,
             }
             var = i.compra_id.id
+    return HttpResponse(toJSON(dic), content_type='application/json')
+
+@login_required(login_url="/")
+def list_compras_reportes(request, pk):
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = Negocio.objects.get(id=pk)
+    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
+    array_producto = []
+    for f in negocio_producto:
+        array_producto.append(f.producto_id.id)
+    compra = Compra.objects.all()
+    array_compra = []
+    for f in compra:
+        array_compra.append(f.id)
+    detalles__compras = detalle_compra.objects.filter(compra_id__in=array_compra, producto_id__in=array_producto)
+    dic = {}
+    va = 1
+    for i in detalles__compras:
+            dic[va] = {
+                'id_compra':i.compra_id.id,
+                'fecha':convertir_fecha(i.compra_id.fecha),
+                'total':i.compra_id.total,
+                'proveedor':i.proveedor_id.razon_social,
+                'producto_id':i.producto_id.id,
+                'producto_nombre':i.producto_id.nombre,
+                'producto_stock_nuevo':i.cantidad_stock_momento,
+                'producto_cantidad':i.cantidad,
+                'valor_unitario':i.valor_unitario,
+                'producto_total':i.total_producto,
+                'producto_stock_anterior':i.cantidad_stock_anterior,
+            }
+            va += 1
+
+    print(dic)
     return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
@@ -636,6 +712,8 @@ def agregar_compra(request, pk):
 
                     sum_stock = cantidad_compra + cantidad_stock
                     producto_stock.stock = sum_stock
+                    row.cantidad_stock_momento = sum_stock
+                    row.save()
                     producto_stock.save()
 
                 return redirect('view_compra', pk=negocio.pk)
@@ -735,7 +813,7 @@ def list_ventas_reportes(request, pk):
                 'total':i.venta_id.total,
                 'producto_id':i.producto_id.id,
                 'producto_nombre':i.producto_id.nombre,
-                'producto_stock_nuevo':i.producto_id.stock,
+                'producto_stock_nuevo':i.cantidad_stock_momento,
                 'producto_cantidad':i.cantidad,
                 'producto_total':i.total_producto,
                 'producto_stock_anterior':i.cantidad_stock_anterior,
@@ -858,6 +936,8 @@ def agregar_venta(request, pk):
 
                     resta_stock = cantidad_stock - cantidad_venta
                     producto_stock.stock = resta_stock
+                    row.cantidad_stock_momento = resta_stock
+                    row.save()
                     producto_stock.save()
 
                 return redirect('view_venta', pk=negocio.pk)

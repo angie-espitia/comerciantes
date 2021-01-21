@@ -3,12 +3,14 @@
 
 {%  block content %}
 
+<h3><b style="color: #4CAF50;">Negocios Disponibles</b></h3>
+<br>
 {% for row in negocio %}
 <p>
-  <b>{{row.nombre}}</b>
-  <b>{{row.nit}}</b>
+  <b style="font-size: 25px;color: #585858;vertical-align: bottom;margin-right: 15px;">{{row.nombre}}</b>
   <b><a class="btn btn-green btn-sm" href="{% url 'principal_app' pk=row.id %}" > Escojer </a></b>
 </p>
+<br>
 {% empty %}
 <tr>
   <td colspan="2" class="text-center bg-warning">No hay productos con poco stock</td>

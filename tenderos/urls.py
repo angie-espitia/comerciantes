@@ -15,6 +15,7 @@ urlpatterns = [
     path('logout', logout, name = 'logout' ),
     re_path('usuario/perfil/(?P<pk>\d+)/', perfil_usuario, name='perfil_usuario'),
     path('corporativo', view_corporativo, name='view_corporativo' ),
+    re_path('corporativo/perfil/(?P<pk>\d+)/', perfil_corporativo, name='perfil_corporativo'),
 
     path('pabellones/', view_pabellon, name='view_pabellon'),
     path('pabellones/nuevo/', registrar_pabellon, name='registrar_pabellon'),
@@ -29,6 +30,8 @@ urlpatterns = [
     re_path('negocios/lista/eliminar/(?P<pk>\d+)/', eliminar_negocio, name='eliminar_negocio'),
 
     re_path('compras/(?P<pk>\d+)/', view_de_compra, name='view_compra'),
+    re_path('compras/reportes/(?P<pk>\d+)/', view_de_reportes_compra, name='view_de_reportes_compra'),
+    re_path('compras/reportes/lista/(?P<pk>\d+)/', list_compras_reportes, name='list_compras_reportes'),
     re_path('compras/lista/(?P<pk>\d+)/', list_compras, name='lista_de_compra'),
     re_path('compras/lista/detalle/(?P<pk>\d+)/', detalle_de_compra, name='detalles_compras'),
     re_path('compras/lista/detalle/editar_item/(?P<pk>\d+)/', editar_item_detalle_compra, name='editar_item_detalle_compra'),

@@ -166,7 +166,7 @@ class DetalleCompraForm(forms.ModelForm):
     class Meta:
         model = detalle_compra
         fields = ('__all__' )
-        exclude = ('cantidad_stock_anterior',)
+        exclude = ('cantidad_stock_anterior','cantidad_stock_momento',)
 
     def __init__(self, *args, **kwargs):
         negocio = kwargs.pop('user')     # client is the parameter passed from views.py
@@ -179,7 +179,7 @@ class DetalleCompraForm(forms.ModelForm):
         array_e = []
         for f in negocio_producto:
             array_e.append(f.producto_id.id)
-        po = Producto.objects.filter(id__in=array_e)
+        po = Producto.objects.filter(id__in=array_e, estado='1')
 
         super(DetalleCompraForm, self).__init__(*args, **kwargs)
         self.fields['producto_id'].queryset= po
@@ -213,7 +213,7 @@ class DetalleVentaForm(forms.ModelForm):
     class Meta:
         model = detalle_venta
         fields = ('__all__' )
-        exclude = ('cantidad_stock_anterior',)
+        exclude = ('cantidad_stock_anterior','cantidad_stock_momento',)
 
     def __init__(self, *args, **kwargs):
         negocio = kwargs.pop('user')     # client is the parameter passed from views.py
@@ -221,7 +221,7 @@ class DetalleVentaForm(forms.ModelForm):
         array_e = []
         for f in negocio_producto:
             array_e.append(f.producto_id.id)
-        po = Producto.objects.filter(id__in=array_e)
+        po = Producto.objects.filter(id__in=array_e, estado='1')
 
         super(DetalleVentaForm, self).__init__(*args, **kwargs)
         self.fields['producto_id'].queryset= po

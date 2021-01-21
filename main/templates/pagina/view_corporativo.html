@@ -1,6 +1,7 @@
 {% extends 'pagina/base_corporativo.html' %}
+{% load staticfiles %}
 {% load user_tags %}
-{% block title %} Index {% endblock %}
+{% block title %} Inicio {% endblock %}
 
 {%  block content %}
 
@@ -11,7 +12,19 @@
 </ul>
 
 <br>
-<h1 class="mt-4 text-center titleIniBoxAdmin"> Bienvenido</h1>
+<h1 class="mt-4 text-center titleIniBoxAdmin">Bienvenido {{user.first_name}} {{user.last_name}}</h1>
+<div class="col-12">
+  <br><br>
+</div>
+<div class="col-12 row">
+  <div class="col-12 col-sm-6">
+    <p style="font-size: 19px;text-align: justify;">Contribuimos en el crecimiento económico de la ciudad y la región, gerenciando de manera responsable todos los procesos y a su vez mejorandolos para proporcionarle a los consumidores productos de alta calidad, garantizando su bienestar asi como tambien les brindamos a los usuarios de nuestros servicios las herramientas y condiciones para su óptima operatividad y funcionamiento.</p>
+  </div>
+  <div class="col"></div>
+  <div class="col-12 col-sm-5">
+    <img src="{% static 'img/logoserregionales.png' %}" class="img-fluid">
+  </div>
+</div>
 
 {% endif %}
 

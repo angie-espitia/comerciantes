@@ -15,11 +15,21 @@
 <h1 class="mt-4 text-center titleIniBox"><i class="fas fa-pencil-alt"></i> Registrar un Empleado</h1>
 
 <br>
-<div id="alert-form"></div>
+
 <div class="col-md-12">
   <div class="col-md-10 mx-auto">
 		<form class="form" method="POST" id="formulario_registro_empleado">
 		{% csrf_token %}
+
+    <div class="alert alert-danger" role="alert">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    </div>
 
 		<div class="row">
 			<div class="col">

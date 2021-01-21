@@ -140,6 +140,7 @@ class detalle_compra(models.Model):
 	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING, db_column='producto_id')
 	proveedor_id = models.ForeignKey(Proveedor , on_delete=models.DO_NOTHING, db_column='proveedor_id')
 	cantidad = models.IntegerField( db_column='cantidad')
+	cantidad_stock_momento = models.IntegerField( db_column='cantidad_stock_momento')
 	cantidad_stock_anterior = models.IntegerField( db_column='cantidad_stock_anterior')
 	valor_unitario = models.IntegerField( db_column='valor_unitario')
 	total_producto = models.IntegerField( db_column='total_producto')
@@ -153,6 +154,7 @@ class detalle_venta(models.Model):
 	venta_id = models.ForeignKey(Venta, on_delete=models.DO_NOTHING, db_column='venta_id')
 	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING, db_column='producto_id')
 	cantidad = models.IntegerField( db_column='cantidad')
+	cantidad_stock_momento = models.IntegerField( db_column='cantidad_stock_momento')
 	cantidad_stock_anterior = models.IntegerField( db_column='cantidad_stock_anterior')
 	total_producto = models.IntegerField( db_column='total_producto')
 
