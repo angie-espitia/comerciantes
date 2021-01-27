@@ -18,26 +18,29 @@
 
 <div class="col-md-12">
   <div class="col-md-10 mx-auto">
+    <br>
+    <p>Los campos que aparecen con asteríscos <b>(*)</b> son <b>obligatorios</b>.</p>
+    <br>
 		<form class="form" method="POST" id="formulario_registro_empleado">
 		{% csrf_token %}
 
-    <div class="alert alert-danger" role="alert">
     {% if messages %}
+    <div class="alert alert-danger" role="alert">
         <ul class="messages">
             {% for message in messages %}
             <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
             {% endfor %}
         </ul>
-    {% endif %}
     </div>
+    {% endif %}
 
 		<div class="row">
 			<div class="col">
-				<label class="">Usuario del empleado</label>
+				<label class="">Usuario del empleado: *</label>
 	    	<input type="text" name="username" placeholder="Usuario" class="form-control" id="form-usuario">
 	    </div>
 	    <div class="col">
-				<label class="">Correo del empleado</label>
+				<label class="">Correo del empleado: *</label>
 	      <input type="text" name="email" placeholder="Correo" class="form-control" id="form-email">
 			</div>
 		</div>
@@ -46,15 +49,15 @@
 
 		<div class="row">
 			<div class="col">
-					<label class="">Nombre del empleado</label>
+					<label class="">Nombre del empleado: *</label>
 	        <input type="text" name="nombre" placeholder="Nombres" class="form-control" id="form-nombre">
 			</div>
 	    <div class="col">
-					<label class="">Apellido del empleado</label>
+					<label class="">Apellido del empleado: *</label>
 	        <input type="text" name="apellido" placeholder="Apellidos" class="form-control" id="form-apellido">
 			</div>
 			<div class="col">
-					<label class="">Documento del empleado</label>
+					<label class="">Documento del empleado: *</label>
 	        <input type="text" name="documento" placeholder="Documento" class="form-control" id="form-telefono">
 			</div>
 		</div>
@@ -63,11 +66,11 @@
 
 		 <div class="row">
 			 <div class="col">
-					 <label class="">Contraseña para el usuario</label>
+					 <label class="">Contraseña para el usuario: *</label>
 		    	<input type="password" name="password1" placeholder="Contraseña" class="form-control" id="form-contraseña">
 		    </div>
 		    <div class="col">
-						<label class="">Confirmar contraseña</label>
+						<label class="">Confirmar contraseña: *</label>
 		    	<input type="password" name="password2" placeholder="Confirmar contraseña" class="form-control" id="form-password2">
 		    </div>
 		 </div>

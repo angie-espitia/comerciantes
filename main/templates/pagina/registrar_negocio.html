@@ -18,8 +18,26 @@
 
 <div class="col-md-12">
   <div class="col-md-10 mx-auto">
-		<form class="form-signin" method="post">
+    <br>
+    <p>Los campos que aparecen con asteríscos <b>(*)</b> son <b>obligatorios</b>.</p>
+    <br>
+		<form class="form-signin" method="post" id="form-negocio-add">
 			{% csrf_token %}
+
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
 
 			<div class="row">
         <div class="col">
@@ -29,6 +47,7 @@
 				<div class="col">
 					<label>{{ form.nit.label }} (Si tiene)</label>
 					{{ form.nit }}
+          {{ form.nit.errrors }}
 				</div>
 			</div>
 
@@ -38,10 +57,12 @@
 				<div class="col">
 					<label>{{ form.telefono.label }}</label>
 					{{ form.telefono }}
+          <div id="errortelefono"></div>
 				</div>
 				<div class="col">
 					<label>{{ form.email.label }}</label>
 					{{ form.email }}
+          <div class="" id="erroremail"></div>
 				</div>
 			</div>
 
@@ -49,7 +70,7 @@
 
 			<div class="row">
 				<div class="col">
-			    <label>Propietario del negocio:</label>
+			    <label>Propietario del negocio: *</label>
 			    <select class="form-control" name='usuario_id' required="required">
 			      <option value="">Seleccionar</option>
 			      {% for row in propietario_negocio %}
@@ -58,7 +79,7 @@
 			    </select>
 				</div>
 				<div class="col">
-			    <label>Pabellón:</label>
+			    <label>Pabellón: *</label>
 			    <select class="form-control" name='pabellon_id' required="required">
 			      <option value="">Seleccionar</option>
 			      {% for row in pabellon %}
@@ -69,7 +90,7 @@
 			</div>
 
 			<br><br>
-	    <button type="submit" class="btn btn-lg btn-orange btn-login font-weight-bold mb-2">Registrar Negocio</button>
+	    <button id="submit_button" type="submit" class="btn btn-lg btn-orange btn-login font-weight-bold mb-2">Registrar Negocio</button>
 
 		</form>
 	</div>
@@ -84,4 +105,37 @@
 	<p>Lo siento, no tiene permisos para este contenido :(</p>
 {% endif %}
 
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function() {
+
+ var validacion_nombre = /^([A-Za-zñÑáéíóúÁÉÍÓÚ\s])*$/;
+ var validacion_numeros = /^([0-9])*$/;
+ var validacion_email = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
+
+$('.teli').keyup(function() {
+  var telefono = $("#telefonoId").val();
+  var email = $("#emailId").val();
+
+   if (telefono != "" && !validacion_numeros.test(telefono)){
+     $("#submit_button").attr( "disabled", "disabled" );
+     $('#errortelefono').html('<small class="form-text text-muted">Ingrese un número de teléfono válido sin dejar espacios.</small>');
+  } else if (email != "" && !validacion_email.test(email)){
+    $("#submit_button").attr( "disabled", "disabled" );
+    $('#emailId').focus();
+    $('#erroremail').html('<small class="form-text text-muted">Ingrese una dirección de correo válida.</small>');
+  } else {
+    $("#submit_button").removeAttr("disabled");
+    $('#errortelefono').html('');
+    $('#erroremail').html('');
+  }
+
+});
+
+
+});
+
+</script>
 {% endblock %}

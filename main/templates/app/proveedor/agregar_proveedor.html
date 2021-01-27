@@ -16,18 +16,21 @@
 
 <div class="col-md-12">
   <div class="col-md-10 mx-auto">
+    <br>
+    <p>Los campos que aparecen con asteríscos <b>(*)</b> son <b>obligatorios</b>.</p>
+    <br>
     <form class="form" method="POST" id="formulario_registro_proveedor">
       {% csrf_token %}
 
       <div class="row">
         <div class="col">
-          <label>Nombre de contácto:</label>
+          <label>Nombre de contácto: *</label>
           <input type="text" class="form-control" id="nombre_proveedor" required>
           <div id="errornombre"></div>
         </div>
 
         <div class="col">
-          <label>Razon Social:</label>
+          <label>Razon Social: *</label>
           <input type="text" class="form-control" id="razon_social_proveedor" required>
         </div>
       </div>

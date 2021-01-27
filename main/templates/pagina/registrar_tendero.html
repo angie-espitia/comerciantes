@@ -18,16 +18,31 @@
 
 <div class="col-md-12">
   <div class="col-md-10 mx-auto">
+    <br>
+    <p>Los campos que aparecen con asteríscos <b>(*)</b> son <b>obligatorios</b>.</p>
+    <br>
 		<form class="form-signin" method="post">
 			{% csrf_token %}
 
+
+      {% if messages %}
+      <div class="alert alert-danger" role="alert">
+          <ul class="messages">
+              {% for message in messages %}
+              <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+              {% endfor %}
+          </ul>
+      </div>
+      {% endif %}
+
+
 			<div class="row">
         <div class="col">
-						<label>Usuario del propietario:</label>
+						<label>Usuario del propietario: *</label>
 		    		<input type="text" name="username" placeholder="Usuario" class="form-control" id="form-usuario">
 					</div>
 					<div class="col">
-						<label>Correo del propietario:</label>
+						<label>Correo del propietario: *</label>
 		        <input type="text" name="email" placeholder="Correo" class="form-control" id="form-email">
 					</div>
 	      </div>
@@ -36,15 +51,15 @@
 
 				<div class="row">
 	        <div class="col">
-						<label>Nombre:</label>
+						<label>Nombre: *</label>
 		        <input type="text" name="nombre" placeholder="Nombres" class="form-control" id="form-nombre">
 					</div>
 					<div class="col">
-						<label>Apellido:</label>
+						<label>Apellido: *</label>
 		        <input type="text" name="apellido" placeholder="Apellidos" class="form-control" id="form-apellido">
 					</div>
 					<div class="col">
-						<label>Documento:</label>
+						<label>Documento: *</label>
 		        <input type="text" name="documento" placeholder="Documento" class="form-control" id="form-telefono">
 					</div>
 	      </div>
@@ -53,11 +68,11 @@
 
 				<div class="row">
 	        <div class="col">
-						<label>Contraseña del usuario:</label>
+						<label>Contraseña del usuario: *</label>
 			    	<input type="password" name="password1" placeholder="Contraseña" class="form-control" id="form-contraseña">
 					</div>
 					<div class="col">
-						<label>Confirmar contraseña:</label>
+						<label>Confirmar contraseña: *</label>
 			    	<input type="password" name="password2" placeholder="Confirmar contraseña" class="form-control" id="form-password2">
 					</div>
 				</div>

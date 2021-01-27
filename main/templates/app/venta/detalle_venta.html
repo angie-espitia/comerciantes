@@ -34,7 +34,7 @@
         <th>imagen</th>
         <th>producto</th>
         <th>cantidad</th>
-        <th>valor unitario</th>
+        <!-- <th>valor unitario</th> -->
         <th>total producto</th>
         <th>acciones</th>
       </tr>
@@ -49,7 +49,7 @@
           {% endif %}
           <td>{{ row.producto_id.nombre }}</td>
           <td>{{ row.cantidad }}</td>
-          <td>{{ row.valor_unitario }}</td>
+          <!-- <td>{{ row.valor_unitario }}</td> -->
           <td>{{ row.total_producto }}</td>
           <td>
             <a id="{{row.id}}" class="btn btn-green btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a>
@@ -87,7 +87,7 @@
                   <div class="row">
                     <div class="col">
                       <label>Cantidad:</label>
-                      <input type="text" class="form-control" id="cantidad_d" onkeyup='calcularMult()'>
+                      <input type="number" class="form-control" id="cantidad_d" onkeyup='calcularMult()' min="1">
                     </div>
 
                     <!-- <div class="col">
@@ -97,7 +97,7 @@
 
                     <div class="col">
                       <label>Total:</label>
-                      <input type="text" class="form-control" id="total_d" >
+                      <input type="number" class="form-control" id="total_d" min="1">
                       <!-- disabled="true" -->
                     </div>
                   </div>

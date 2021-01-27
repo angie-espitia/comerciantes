@@ -19,11 +19,14 @@
 
 <div class="col-md-12">
   <div class="col-md-10 mx-auto">
+    <br>
+    <p>Los campos que aparecen con asteríscos <b>(*)</b> son <b>obligatorios</b>.</p>
+    <br>
 		<form class="form" method="POST"  id="formulario_registro_producto">
 			{% csrf_token %}
 
 			<div class="form-label-group">
-				<label>{{ form.nombre.label }}:</label>
+				<label>{{ form.nombre.label }}: *</label>
 				{{ form.nombre }}
 			</div>
 			<br>

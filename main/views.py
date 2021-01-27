@@ -12,6 +12,7 @@ from main.forms import *
 import json
 from django.core import serializers
 import datetime
+import operator
 
 def convertir_fecha(o):
     if isinstance(o, datetime.datetime):
@@ -197,7 +198,7 @@ def editar_negocio(request, pk):
     negocio_recibido = get_object_or_404(Negocio, pk=pk)
     pabellon = Pabellon.objects.all()
     propietario_negocio = User.objects.filter(groups__name='propietario_negocio')
-    usuario_negocio = detalle_usuario_negocio.objects.get(negocio_id=negocio_recibido)
+    usuario_negocio = detalle_usuario_negocio.objects.filter(negocio_id=negocio_recibido).first()
     print(usuario_negocio)
 
     if request.method == "POST":
@@ -209,7 +210,7 @@ def editar_negocio(request, pk):
             negocio_usuario = form2.save(commit=False)
             negocio_usuario.save()
 
-            return HttpResponseRedirect('view_negocio') #redirige misma pag
+            return redirect('view_negocio') #redirige misma pag
     else:
         form = NegocioForm_dos(instance=negocio_recibido)
         form2 = DetalleUsuarioNegocioForm(instance=usuario_negocio)
@@ -219,12 +220,18 @@ def editar_negocio(request, pk):
 def eliminar_negocio(request, pk):
     negocio = get_object_or_404(Negocio, pk=pk)
     negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
+    negocio_usuario = detalle_usuario_negocio.objects.filter(negocio_id=negocio.id)
+    count_n = 0
+    for x in negocio_usuario:
+        count_n += 1
 
+    print(count_n)
     if request.method == "POST" and request.is_ajax():
-        try:
+        if not negocio_producto and count_n < 2:
+            negocio_usuario.delete()
             negocio.delete()
             return HttpResponse('1')
-        except:
+        else:
             return HttpResponse('2')
     else:
         dic = {
@@ -253,23 +260,46 @@ def principal_app(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
     negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
+    # producto de poco stock
     negocioo = []
     for x in negocio_producto:
         if x.producto_id.stock <= 9 and x.producto_id.estado=='1':
             negocioo.append(x)
 
     array_producto = []
+    array_producto_name = []
     for f in negocio_producto:
         array_producto.append(f.producto_id.id)
+        array_producto_name.append(f.producto_id.nombre)
+
     venta = Venta.objects.all()
     array_venta = []
     for f in venta:
         array_venta.append(f.id)
     detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto)
 
-    # for x in detalles__ventas:
-    #     print(x.cantidad)
-    return render( request, 'app/index_app.html', {'negocioo':negocioo, 'detalles__ventas': detalles__ventas, 'negocio_id': negocio } )
+    dic_arr = {} # diccionario de productos totales
+    for i in array_producto_name:
+        dic_arr.update({ i: [] })
+
+    for x in detalles__ventas: # for para guardar la cantidad de productos vendidos individuales
+        for i in dic_arr:
+            if x.producto_id.nombre == i:
+                dic_arr[i].append(x.cantidad)
+
+    dic_result = {}
+    for key, value in dic_arr.items(): # iterar los item del diccionario
+        suma = 0 # variable donde se guardará la suma de los elementos
+        for v in value: # iterar los elementos
+            suma += v # sumar los elementos y guardarlos
+        dic_result[key] = suma # añadir al nuevo diccionario la misma llave con la suma de los elementos
+
+    resultado = sorted(dic_result.items(), key=operator.itemgetter(1))
+    resultado.reverse()
+    
+    print(resultado)
+
+    return render( request, 'app/index_app.html', {'negocioo':negocioo, 'detalles__ventas': detalles__ventas, 'negocio_id': negocio, 'resultado': resultado } )
 
 # registro de empleados
 @login_required(login_url="/")

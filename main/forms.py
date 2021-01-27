@@ -16,9 +16,9 @@ class NegocioForm(forms.ModelForm):
                   }
         widgets = { 'nombre': forms.TextInput(attrs={'class':'form-control','placeholder':"Negocio" }),
                     'nit': forms.TextInput(attrs={'class':'form-control','placeholder':"Nit"}),
-                    'telefono': forms.TextInput(attrs={'class':'form-control','placeholder':"Telefono",'id':'telefonoId'}),
-                    'email': forms.TextInput(attrs={'class':'form-control','placeholder':"Correo Electrónico",'id':'emailId'}),
-                }
+                    'telefono': forms.TextInput(attrs={'class':'form-control teli','placeholder':"Telefono",'id':'telefonoId'}),
+                    'email': forms.EmailInput(attrs={'class':'form-control teli','placeholder':"Correo Electrónico",'id':'emailId'}),
+                  }
 
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
@@ -36,6 +36,11 @@ class NegocioForm_dos(forms.ModelForm):
                     'telefono': 'Telefono del Negocio',
                     'email': 'Email del Negocio',
                     'pabellon_id': 'Pabellón'
+                  }
+        widgets = { 'nombre': forms.TextInput(attrs={'class':'form-control'}),
+                    'nit': forms.TextInput(attrs={'class':'form-control'}),
+                    'telefono': forms.TextInput(attrs={'class':'form-control','id':'telefonoId'}),
+                    'email': forms.EmailInput(attrs={'class':'form-control','id':'emailId'}),
                   }
 
     def __init__(self, *args, **kwargs):
@@ -97,6 +102,9 @@ class ProductoForm(forms.ModelForm):
         super(self.__class__, self).__init__(*args, **kwargs)
         # asi vuelves tus campos no requeridos
         self.fields['descripcion'].required = False  # solo con los campos que especificaste en la clase Meta
+        self.fields['stock'].widget.attrs['min'] = 1
+        self.fields['valor_costo'].widget.attrs['min'] = 1
+        self.fields['valor_venta'].widget.attrs['min'] = 1
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -113,6 +121,9 @@ class ProductoForm_dos(forms.ModelForm):
         super(ProductoForm_dos, self).__init__(*args, **kwargs)
         self.fields['descripcion'].required = False
         self.fields['imagen'].required = False
+        self.fields['stock'].widget.attrs['min'] = 1
+        self.fields['valor_costo'].widget.attrs['min'] = 1
+        self.fields['valor_venta'].widget.attrs['min'] = 1
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -184,6 +195,9 @@ class DetalleCompraForm(forms.ModelForm):
         super(DetalleCompraForm, self).__init__(*args, **kwargs)
         self.fields['producto_id'].queryset= po
         self.fields['proveedor_id'].queryset= p
+        self.fields['cantidad'].widget.attrs['min'] = 1
+        self.fields['valor_unitario'].widget.attrs['min'] = 1
+        self.fields['total_producto'].widget.attrs['min'] = 1
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -225,6 +239,8 @@ class DetalleVentaForm(forms.ModelForm):
 
         super(DetalleVentaForm, self).__init__(*args, **kwargs)
         self.fields['producto_id'].queryset= po
+        self.fields['cantidad'].widget.attrs['min'] = 1
+        self.fields['total_producto'].widget.attrs['min'] = 1
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control',

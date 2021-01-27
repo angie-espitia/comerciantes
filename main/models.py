@@ -8,6 +8,7 @@ import datetime
 ## subir imagenes por carpeta de usuario
 def get_upload_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+	print(instance)
 	try:
 		detalle_negocio = detalle_negocio_producto.objects.filter(negocio_id=instance.id)
 
@@ -49,7 +50,7 @@ class Pabellon(models.Model):
 class Negocio(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
 	nombre = models.CharField(max_length = 45, db_column='nombre')
-	nit = models.CharField(max_length = 45, db_column='nit', null=True)
+	nit = models.CharField(max_length = 45, db_column='nit', null=True, unique=True)
 	telefono = models.CharField(max_length = 45, db_column='telefono', null=True)
 	email = models.CharField(max_length = 45, db_column='email', null=True)
 	pabellon_id = models.ForeignKey(Pabellon, on_delete=models.DO_NOTHING, db_column='Pabellon_id')
@@ -119,7 +120,7 @@ list_estado = ( ('1', 'Activo') , ('2', 'Finalizado'))
 class Producto(models.Model):
 	id = models.AutoField( primary_key=True, db_column='id')
 	nombre = models.CharField(max_length = 45, db_column='nombre')
-	stock = models.CharField(max_length = 45, db_column='stock')
+	stock = models.IntegerField( db_column='stock')
 	valor_costo = models.IntegerField( db_column='valor_costo')
 	valor_venta = models.IntegerField( db_column='valor_venta')
 	imagen = models.ImageField( upload_to=get_upload_path , db_column='imagen', null=True) #default="../static/my/img/img4.jpg"

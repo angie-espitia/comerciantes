@@ -17,17 +17,35 @@
 
 <div class="col-md-12">
   <div class="col-md-10 mx-auto">
+    <br>
+    <p>Los campos que aparecen con asteríscos <b>(*)</b> son <b>obligatorios</b>.</p>
+    <br>
     <form class="form" method="POST"  id="formulario_registro_producto" enctype="multipart/form-data">
       {% csrf_token %}
       <!-- {{ form.as_p }} -->
 
+      {% if form.errors %}
+          {% for field in form %}
+              {% for error in field.errors %}
+                  <div class="alert alert-danger">
+                      <strong>{{ error|escape }}</strong>
+                  </div>
+              {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+              <div class="alert alert-danger">
+                  <strong>{{ error|escape }}</strong>
+              </div>
+          {% endfor %}
+      {% endif %}
+
       <div class="col-md-12 col-lg-12 col-sm-12 row div-paddings-0px">
         <div class="col">
-          <label>{{ form.nombre.label }}:</label>
+          <label>{{ form.nombre.label }}: *</label>
           {{ form.nombre }}
         </div>
         <div class="col">
-          <label>{{ form.unidad_medida_id.label }}:</label>
+          <label>{{ form.unidad_medida_id.label }}: *</label>
           {{ form.unidad_medida_id }}
         </div>
       </div>
@@ -36,15 +54,15 @@
 
       <div class="col-md-12 col-lg-12 col-sm-12 row div-paddings-0px">
         <div class="col">
-          <label>{{ form.stock.label }}:</label>
+          <label>{{ form.stock.label }}: *</label>
           {{ form.stock }}
         </div>
         <div class="col">
-          <label>{{ form.valor_costo.label }}:</label>
+          <label>{{ form.valor_costo.label }}: *</label>
           {{ form.valor_costo }}
         </div>
         <div class="col">
-          <label>{{ form.valor_venta.label }}:</label>
+          <label>{{ form.valor_venta.label }}: *</label>
           {{ form.valor_venta }}
         </div>
       </div>
@@ -66,7 +84,7 @@
         </div>
 
         <div class="col">
-          <label>Proveerdor:</label>
+          <label>Proveerdor: *</label>
           <select class="form-control" name='negocio_proveedor' required="required">
             <option value="">Seleccionar</option>
             {% for row in negocio_proveedor %}
