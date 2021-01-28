@@ -51,6 +51,10 @@
 {% block javascript %}
 <script src="{% static 'js/fecha_v.js' %}"></script>
 {% include "includes/script-datatables.html" %}
+<script src="{% static 'js/moment.js' %}"></script>
+<script src="{% static 'js/locate-es.js' %}"></script>
+<script src="{% static 'js/datetime-moment.js' %}"></script>
+<script src="{% static 'js/render-datetime-moment.js' %}"></script>
 <script>
 
 $(document).ready(function() {
@@ -95,7 +99,7 @@ $(document).ready(function() {
         for(var item in res){
           // console.log(res[item]);
           html +='<tr>';
-          html +='<td>'+val_fecha(res[item].fecha)+'</td>';
+          html +='<td>'+res[item].fecha+'</td>';
           html +='<td>$ '+res[item].total+'</td>';
           html +='<td><a class="btn btn-success btn-sm" href="/ventas/lista/detalle/'+res[item].id_venta+'/"> Detalles </a> ';
           html +=' <a class="btn btn-danger btn-sm"  data-toggle="modal" data-target="#eliminarmodal" onclick="datos2('+res[item].id_venta+')">Borrar </a></td>';
@@ -116,6 +120,12 @@ $(document).ready(function() {
          "autoWidth": true,
          "language": idioma,
          "lengthMenu": [[15, 25, 50, -1],[15,25,50,"Mostrar Todo"]],
+         "columnDefs":[{
+                        "targets": [0],
+                        "render": function(data) {
+                                  return moment(data).format('YYYY / MMMM / DD');
+                                },
+                    }],
          dom: 'Bfrt<"col-md-6 inline"i> <"col-md-6 inline"p>',
          buttons: {
                dom: {

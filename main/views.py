@@ -296,7 +296,6 @@ def principal_app(request, pk):
 
     resultado = sorted(dic_result.items(), key=operator.itemgetter(1))
     resultado.reverse()
-    
     print(resultado)
 
     return render( request, 'app/index_app.html', {'negocioo':negocioo, 'detalles__ventas': detalles__ventas, 'negocio_id': negocio, 'resultado': resultado } )
@@ -591,6 +590,9 @@ def list_compras(request, pk):
                 'total':i.compra_id.total,
             }
             var = i.compra_id.id
+
+    # valores_ord = dict(sorted(dic.items(), reverse=True)) # reverse valores
+    print(dic)
     return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")

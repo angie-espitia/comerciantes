@@ -50,6 +50,11 @@
 {% block javascript %}
 <script src="{% static 'js/fecha_v.js' %}"></script>
 {% include "includes/script-datatables.html" %}
+<script src="{% static 'js/moment.js' %}"></script>
+<script src="{% static 'js/locate-es.js' %}"></script>
+<script src="{% static 'js/datetime-moment.js' %}"></script>
+<script src="{% static 'js/render-datetime-moment.js' %}"></script>
+
 <script>
 
 $(document).ready(function() {
@@ -69,10 +74,11 @@ data: { "csrfmiddlewaretoken": csrftoken,
 })
 
 .done(function(response){
-// console.log(response);
+
 var res = response;
 var html = '';
 var url = "{% url 'detalles_compras' ";
+
 if (JSON.stringify(res)=='{}'){
   html += '<table class="table table-striped table-bordered" id="ejemplo">';
   html += '<thead class="theadStyle">';
@@ -98,7 +104,7 @@ else{
   for(var item in res){
     // console.log(res[item]);
     html +='<tr>';
-    html +='<td>'+val_fecha(res[item].fecha)+'</td>';
+    html +='<td>'+res[item].fecha+'</td>';
     html +='<td>'+res[item].proveedor+'</td>';
     html +='<td><b> $ '+res[item].total+'</b></td>';
     html +='<td><a class="btn btn-green btn-sm" href="/compras/lista/detalle/'+res[item].id_compra+'/"> Detalles </a> ';
@@ -119,6 +125,12 @@ var table = $('#ejemplo').DataTable( {
    "autoWidth": true,
    "language": idioma,
    "lengthMenu": [[15, 25, 50, -1],[15,25,50,"Mostrar Todo"]],
+   "columnDefs":[{
+                  "targets": [0],
+                  "render": function(data) {
+                            return moment(data).format('YYYY / MMMM / DD');
+                          },
+              }],
    dom: 'Bfrt<"col-md-6 inline"i> <"col-md-6 inline"p>',
    buttons: {
          dom: {
