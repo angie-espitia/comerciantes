@@ -14,7 +14,7 @@
 <div class="row">
   <div class="col-12 col-sm-3 col-md-3 col-lg-3">
     <div class="form-group">
-      <label for="sel1">Buscar por:</label>
+      <label for="sel1"><b>Filtrar por:</b></label>
       <select class="form-control" id="opcion_buscador" onchange="buscando()">
         <option value="0">Seleccionar</option>
         <option value="1">Mes y día</option>
@@ -35,8 +35,8 @@
   </div>
 </div>
 
-<div class="table-responsive tableResStyle">
- <table class="table table-striped table-bordered table-striped" id="tabliita">
+<div class="table-responsive tableResStyle" id="tabliita">
+ <table class="table table-striped table-bordered table-striped ejemploo" id="ejemplo">
 
   </table>
 </div>
@@ -52,13 +52,20 @@
 <script src="{% static 'js/fecha_v.js' %}"></script>
 <script src="{% static 'js/dias_mes.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
+{% include "includes/script-datatables.html" %}
 <script src="{% static 'js/moment.js' %}"></script>
+<script src="{% static 'js/locate-es.js' %}"></script>
+<script src="{% static 'js/datetime-moment.js' %}"></script>
+<script src="{% static 'js/render-datetime-moment.js' %}"></script>
+
 <script>
 var res;
 var array_reporte_fecha = {};
 var array_vp = {};
+var nombreDeNegocio = $('#nameNegocio').text();
 
 $(document).ready(function() {
+
     var nombreDeNegocio = $('#nameNegocio').text();
     var id = $('#negocio_pk').text();
     // console.log(id);
@@ -103,6 +110,7 @@ $(document).ready(function() {
             var fecha_array = val_fecha(res[item].fecha).split(" ");
             array_vp[res[item].id_compra] = {
               'idd' : res[item].id_compra,
+              'fecha_completa' : res[item].fecha,
               'mes' :  fecha_array[2],
               'dia' : fecha_array[0],
               'anio' : fecha_array[4],
@@ -282,9 +290,9 @@ function buscando_dia_mes(){
 
   if(mes_escogidito=='Todos'){
     $('#option2').html('');
-    var tables = '<thead class="theadStyle">';
+    var tables = '<table class="table table-striped table-bordered table-striped ejemploo" id="ejemplo"> <thead class="theadStyle">';
     tables += '<tr>';
-    tables += '<th>Fecha</th>';
+    tables += '<th>Fecha de la compra</th>';
     tables += '<th>Proveedor</th>';
     tables += '<th>Producto</th>';
     tables += '<th>Cantidad Vendida</th>';
@@ -299,7 +307,7 @@ function buscando_dia_mes(){
       if(array_vp[item].anio==anio_actual){
         for(let j in array_vp[item].producto_id){
             tables += '<tr>';
-            tables += '<td>'+array_vp[item].dia+' '+array_vp[item].mes+' '+array_vp[item].anio+'</td>';
+            tables += '<td>'+array_vp[item].fecha_completa+'</td>';
             tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
             tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
             tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
@@ -311,8 +319,9 @@ function buscando_dia_mes(){
         }
       }
     }
-    tables += '</tbody>';
+    tables += '</tbody> </table>';
     $('#tabliita').html(tables);
+    datetablee();
 
   }else{
     var html2 = '<label for="sel1">Día:</label>';
@@ -337,9 +346,9 @@ function filtrado1(){
   var anio_actual = (new Date).getFullYear();
   var mes_escogidito = $("#mes_select").val();
   var dia_escogidito = $("#dia_select").val();
-  var tables = '<thead class="theadStyle">';
+  var tables = '<table class="table table-striped table-bordered table-striped ejemploo" id="ejemplo"> <thead class="theadStyle">';
   tables += '<tr>';
-  tables += '<th>Fecha</th>';
+  tables += '<th>Fecha de la compra</th>';
   tables += '<th>Proveedor</th>';
   tables += '<th>Producto</th>';
   tables += '<th>Cantidad Vendida</th>';
@@ -354,7 +363,7 @@ function filtrado1(){
     if(array_vp[item].mes==mes_escogidito && array_vp[item].anio==anio_actual && dia_escogidito=='0'){
       for(let j in array_vp[item].producto_id){
           tables += '<tr>';
-          tables += '<td>'+array_vp[item].dia+' '+array_vp[item].mes+' '+array_vp[item].anio+'</td>';
+          tables += '<td>'+array_vp[item].fecha_completa+'</td>';
           tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
@@ -367,7 +376,7 @@ function filtrado1(){
     }else if(array_vp[item].mes==mes_escogidito && array_vp[item].anio==anio_actual && array_vp[item].dia==dia_escogidito){
       for(let j in array_vp[item].producto_id){
           tables += '<tr>';
-          tables += '<td>'+array_vp[item].dia+' '+array_vp[item].mes+' '+array_vp[item].anio+'</td>';
+          tables += '<td>'+array_vp[item].fecha_completa+'</td>';
           tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
@@ -380,8 +389,9 @@ function filtrado1(){
     }
   }
 
-  tables += '</tbody>';
+  tables += '</tbody> </table>';
   $('#tabliita').html(tables);
+  datetablee();
 }
 
 // para el segundo filtrado (año)
@@ -390,9 +400,9 @@ function buscando_anio(){
   var anio_actual = $("#anio_select").val();
   var mes_escogidito = $("#mes_select2").val();
   if(anio_actual=='Todos'){
-    var tables = '<thead class="theadStyle">';
+    var tables = '<table class="table table-striped table-bordered table-striped ejemploo" id="ejemplo"> <thead class="theadStyle">';
     tables += '<tr>';
-    tables += '<th>Fecha</th>';
+    tables += '<th>Fecha de la compra</th>';
     tables += '<th>Proveedor</th>';
     tables += '<th>Producto</th>';
     tables += '<th>Cantidad Vendida</th>';
@@ -406,7 +416,7 @@ function buscando_anio(){
     for(let item in array_vp){
       for(let j in array_vp[item].producto_id){
           tables += '<tr>';
-          tables += '<td>'+array_vp[item].dia+' '+array_vp[item].mes+' '+array_vp[item].anio+'</td>';
+          tables += '<td>'+array_vp[item].fecha_completa+'</td>';
           tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
@@ -417,8 +427,9 @@ function buscando_anio(){
           tables += '</tr>';
       }
     }
-    tables += '</tbody>';
+    tables += '</tbody> </table>';
     $('#tabliita').html(tables);
+    datetablee();
     $("#mes_select2").val('Todos');
 
   }else{
@@ -430,9 +441,9 @@ function filtrado2(){
   // filtrar por mes del año escogido
   var anio_actual = $("#anio_select").val();
   var mes_escogidito = $("#mes_select2").val();
-  var tables = '<thead class="theadStyle">';
+  var tables = '<table class="table table-striped table-bordered table-striped ejemploo" id="ejemplo"> <thead class="theadStyle">';
   tables += '<tr>';
-  tables += '<th>Fecha</th>';
+  tables += '<th>Fecha de la compra</th>';
   tables += '<th>Proveedor</th>';
   tables += '<th>Producto</th>';
   tables += '<th>Cantidad Vendida</th>';
@@ -447,7 +458,7 @@ function filtrado2(){
     if( array_vp[item].anio==anio_actual && mes_escogidito=='Todos'){
       for(let j in array_vp[item].producto_id){
           tables += '<tr>';
-          tables += '<td>'+array_vp[item].dia+' '+array_vp[item].mes+' '+array_vp[item].anio+'</td>';
+          tables += '<td>'+array_vp[item].fecha_completa+'</td>';
           tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
@@ -460,7 +471,7 @@ function filtrado2(){
     }else if(array_vp[item].mes==mes_escogidito && array_vp[item].anio==anio_actual){
       for(let j in array_vp[item].producto_id){
           tables += '<tr>';
-          tables += '<td>'+array_vp[item].dia+' '+array_vp[item].mes+' '+array_vp[item].anio+'</td>';
+          tables += '<td>'+array_vp[item].fecha_completa+'</td>';
           tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
@@ -473,8 +484,10 @@ function filtrado2(){
     }
   }
 
-  tables += '</tbody>';
+  tables += '</tbody> </table>';
   $('#tabliita').html(tables);
+  datetablee();
+
 }
 
 // para el tercer filtradito por Fechas
@@ -506,9 +519,9 @@ function buscando_fechas(){
   //   console.log(fechas_select[item].split(" "));
   // };
 
-  var tables = '<thead class="theadStyle">';
+  var tables = '<table class="table table-striped table-bordered table-striped ejemploo" id="ejemplo"> <thead class="theadStyle">';
   tables += '<tr>';
-  tables += '<th>Fecha</th>';
+  tables += '<th>Fecha de la compra</th>';
   tables += '<th>Proveedor</th>';
   tables += '<th>Producto</th>';
   tables += '<th>Cantidad Vendida</th>';
@@ -526,7 +539,7 @@ function buscando_fechas(){
 
         for(let j in array_vp[item2].producto_id){
             tables += '<tr>';
-            tables += '<td>'+array_vp[item2].dia+' '+array_vp[item2].mes+' '+array_vp[item2].anio+'</td>';
+            tables += '<td>'+array_vp[item2].fecha_completa+'</td>';
             tables += '<td>'+array_vp[item2].proveedor[j]+'</td>';
             tables += '<td>'+array_vp[item2].producto_nombre[j]+'</td>';
             tables += '<td>'+array_vp[item2].producto_cantidad[j]+'</td>';
@@ -540,8 +553,119 @@ function buscando_fechas(){
     }
   };
 
-  tables += '</tbody>';
+  tables += '</tbody> </table>';
   $('#tabliita').html(tables);
+  datetablee();
+}
+
+function datetablee(){
+
+    var table = $('#ejemplo').DataTable( {
+       "paging": true,
+       "lengthChange": true,
+       "searching": true,
+       "ordering": true,
+       "info": true,
+       "autoWidth": true,
+       "language": idioma,
+       "lengthMenu": [[15, 25, 50, -1],[15,25,50,"Mostrar Todo"]],
+       "columnDefs":[{
+                      "targets": [0],
+                      "render": function(data) {
+                                return moment(data).format('YYYY / MM / DD');
+                              },
+                  }],
+       dom: 'Bfrt<"col-md-6 inline"i> <"col-md-6 inline"p>',
+       buttons: {
+             dom: {
+               container:{
+                 tag:'div',
+                 className:'flexcontent'
+               },
+               buttonLiner: {
+                 tag: null
+               }
+             },
+
+             buttons: [
+                 {
+                     extend:    'copyHtml5',
+                     text:      '<i class="fa fa-clipboard"></i> Copiar',
+                     title:'Tabla de productos copiada',
+                     titleAttr: 'Copiar',
+                     className: 'btn btn-app export copia',
+                     exportOptions: {
+                         columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+                     }
+                 },
+                 {
+                     extend:    'pdfHtml5',
+                     text:      '<i class="fas fa-file-pdf"></i>PDF',
+                     title:'Compras del negocio '+ nombreDeNegocio,
+                     titleAttr: 'PDF',
+                     className: 'btn btn-app export pdf',
+                     exportOptions: {
+                         columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+                     },
+                     customize:function(doc) {
+
+                         doc.styles.title = {
+                             color: '#4c8aa0',
+                             fontSize: '30',
+                             alignment: 'center'
+                         }
+                         doc.styles['td:nth-child(2)'] = {
+                             width: '100px',
+                             'max-width': '100px'
+                         },
+                         doc.styles.tableHeader = {
+                             fillColor:'#4c8aa0',
+                             color:'white',
+                             alignment:'center'
+                         },
+                         doc.content[1].margin = [ 100, 0, 100, 0 ]
+
+                     }
+                 },
+
+                 {
+                     extend:    'excelHtml5',
+                     text:      '<i class="fas fa-file-excel"></i>Excel',
+                     title:'Tabla de Compras del negocio '+ nombreDeNegocio,
+                     titleAttr: 'Excel',
+                     className: 'btn btn-app export excel',
+                     exportOptions: {
+                         columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+                     },
+                 },
+                 {
+                     extend:    'csvHtml5',
+                     text:      '<i class="fas fa-file-csv"></i>CSV',
+                     title:'Tabla de Compras del negocio '+ nombreDeNegocio,
+                     titleAttr: 'CSV',
+                     className: 'btn btn-app export csv',
+                     exportOptions: {
+                         columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+                     }
+                 },
+                 {
+                     extend:    'print',
+                     text:      '<i class="fas fa-print"></i>Imprimir',
+                     title:'Compras del negocio '+ nombreDeNegocio,
+                     titleAttr: 'Imprimir',
+                     className: 'btn btn-app export imprimir',
+                     exportOptions: {
+                         columns: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+                     }
+                 },
+                 {
+                     extend:    'pageLength',
+                     titleAttr: 'Registros a mostrar',
+                     className: 'selectTable'
+                 }
+             ]
+           }
+       });
 
 }
 
