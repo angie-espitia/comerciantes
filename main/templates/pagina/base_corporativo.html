@@ -47,11 +47,11 @@
         </div>
 
         <div class="list-group list-group-flush">
-          <a href="{% url 'view_corporativo' %}" class="list-group-item list-group-item-action listMenuAdmin">Inicio</a>
+          <a href="{% url 'view_corporativo' %}" class="list-group-item list-group-item-action listMenuAdmin"><i class="fas fa-home"></i> Inicio</a>
 
           <a href="#pabellones_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenuAdmin">
               <div class="d-flex w-100 justify-content-start align-items-center">
-                  <span class="menu-collapsed"> Pabellones</span>
+                  <span class="menu-collapsed"><i class="fas fa-building"></i> Pabellones</span>
               </div>
           </a>
           <!-- Submenu content pabellones-->
@@ -66,7 +66,7 @@
 
           <a href="#comerciantes_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenuAdmin">
               <div class="d-flex w-100 justify-content-start align-items-center">
-                  <span class="menu-collapsed"> Comerciantes</span>
+                  <span class="menu-collapsed"><i class="fas fa-users"></i> Comerciantes</span>
               </div>
           </a>
           <!-- Submenu content comerciantes-->
@@ -81,7 +81,7 @@
 
           <a href="#negocios_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenuAdmin">
               <div class="d-flex w-100 justify-content-start align-items-center">
-                  <span class="menu-collapsed"> Negocios</span>
+                  <span class="menu-collapsed"><i class="fas fa-store"></i> Negocios</span>
               </div>
           </a>
           <!-- Submenu content negocios-->
@@ -96,13 +96,13 @@
 
           <a href="#configuracion_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenuAdmin">
               <div class="d-flex w-100 justify-content-start align-items-center">
-                  <span class="menu-collapsed"> Configuración</span>
+                  <span class="menu-collapsed"><i class="fas fa-tools"></i> Configuración</span>
               </div>
           </a>
           <!-- Submenu content negocios-->
           <div id='configuracion_submenu' class="collapse sidebar-submenu">
               <a href="{% url 'perfil_corporativo' pk=user.id %}" class="list-group-item-action listSubMenuAdmin">
-                  <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Perfil de usuario</span>
+                  <span class="menu-collapsed"><i class="fas fa-user"></i> Perfil de usuario</span>
               </a>
           </div>
 

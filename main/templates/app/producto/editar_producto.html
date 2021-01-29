@@ -48,7 +48,11 @@
         {% elif row.producto_id.estado == '2' %}
         <td class="align-middle"><span class="badge badge-danger badge-font-90">Finalizado</span></td>
         {% endif %}
+        {% if row.producto_id.descripcion == "" %}
+        <td class="align-middle">-</td>
+        {% else %}
         <td class="align-middle">{{ row.producto_id.descripcion }}</td>
+        {% endif %}
         <td class="align-middle">
           <a class="btn btn-green btn-sm" data-toggle="modal" data-target="#editarmodal">Editar</a>
         </td>

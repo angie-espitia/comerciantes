@@ -81,7 +81,7 @@
                 <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nueva compra</span>
             </a>
             <a href="{% url 'view_de_reportes_compra' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
-                <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Reportes compra</span>
+                <span class="menu-collapsed"><i class="fas fa-chart-bar"></i> Reportes compra</span>
             </a>
         </div>
         <!-- fin compras -->
@@ -100,7 +100,7 @@
                 <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nueva venta</span>
             </a>
             <a href="{% url 'view_de_reportes_venta' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
-                <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Reportes venta</span>
+                <span class="menu-collapsed"><i class="fas fa-chart-bar"></i> Reportes venta</span>
             </a>
         </div>
         <!-- fin ventas -->
@@ -129,13 +129,13 @@
             </a>
             <div id='administracion_submenu' class="collapse sidebar-submenu">
                 <a href="{% url 'registrar_empleado' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
-                    <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Nuevo empleado</span>
+                    <span class="menu-collapsed"><i class="fas fa-pencil-alt"></i> Nuevo empleado</span>
                 </a>
                 <a href="{% url 'list_usuarios' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
                     <span class="menu-collapsed"><i class="fas fa-list-ul"></i> Lista de empleados</span>
                 </a>
                 <a href="{% url 'perfil_usuario' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
-                    <span class="menu-collapsed"><i class="fas fa-list-ul"></i>Perfil de usuario</span>
+                    <span class="menu-collapsed"><i class="fas fa-user"></i> Perfil de usuario</span>
                 </a>
             </div>
         {% endif %}
@@ -147,7 +147,7 @@
           </a>
           <div id='configuracion_submenu' class="collapse sidebar-submenu">
               <a href="{% url 'perfil_usuario' pk=negocio_id.id %}" class="list-group-item-action listSubMenu">
-                  <span class="menu-collapsed"><i class="fas fa-list-ul"></i>Perfil de usuario</span>
+                  <span class="menu-collapsed"><i class="fas fa-user"></i> Perfil de usuario</span>
               </a>
           </div>
 

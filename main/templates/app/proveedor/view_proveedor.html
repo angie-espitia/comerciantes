@@ -31,10 +31,31 @@
         <tr>
           <td>{{ row.proveedor_id.nombre }}</td>
           <td>{{ row.proveedor_id.razon_social }}</td>
+
+          {% if row.proveedor_id.telefono == "" %}
+          <td>-</td>
+          {% else %}
           <td>{{ row.proveedor_id.telefono }}</td>
+          {% endif %}
+
+          {% if row.proveedor_id.direccion == "" %}
+          <td>-</td>
+          {% else %}
           <td>{{ row.proveedor_id.direccion }}</td>
+          {% endif %}
+
+          {% if row.proveedor_id.celular == "" %}
+          <td>-</td>
+          {% else %}
           <td>{{ row.proveedor_id.celular }}</td>
+          {% endif %}
+
+          {% if row.proveedor_id.email == "" %}
+          <td>-</td>
+          {% else %}
           <td>{{ row.proveedor_id.email }}</td>
+          {% endif %}
+
           <td>
             <a id="{{row.proveedor_id.id}}" class="btn btn-green btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a>
           </td>
@@ -160,7 +181,7 @@
                   titleAttr: 'Copiar',
                   className: 'btn btn-app export copia',
                   exportOptions: {
-                      columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                      columns: [ 0, 1, 2, 3, 4, 5 ]
                   }
               },
               {
@@ -170,7 +191,7 @@
                   titleAttr: 'PDF',
                   className: 'btn btn-app export pdf',
                   exportOptions: {
-                      columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                      columns: [ 0, 1, 2, 3, 4, 5 ]
                   },
                   customize:function(doc) {
 
@@ -200,7 +221,7 @@
                   titleAttr: 'Excel',
                   className: 'btn btn-app export excel',
                   exportOptions: {
-                      columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                      columns: [ 0, 1, 2, 3, 4, 5 ]
                   },
               },
               {
@@ -210,7 +231,7 @@
                   titleAttr: 'CSV',
                   className: 'btn btn-app export csv',
                   exportOptions: {
-                      columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                      columns: [ 0, 1, 2, 3, 4, 5 ]
                   }
               },
               {
@@ -220,7 +241,7 @@
                   titleAttr: 'Imprimir',
                   className: 'btn btn-app export imprimir',
                   exportOptions: {
-                      columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                      columns: [ 0, 1, 2, 3, 4, 5 ]
                   }
               },
               {

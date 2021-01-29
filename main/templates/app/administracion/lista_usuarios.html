@@ -36,7 +36,13 @@
         <td>{{ row.usuario_id.id.username }}</td>
         <td>{{ row.usuario_id.id.email }}</td>
         <td>{{ row.usuario_id.documento }}</td>
+
+        {% if row.usuario_id.telefono == Null %}
+        <td>-</td>
+        {% else %}
         <td>{{ row.usuario_id.telefono }}</td>
+        {% endif %}
+
         <!-- {% if row.producto_id.imagen %}
         <td> <img src="/media/{{ row.producto_id.imagen }}" class="img-fluid" style="max-width: 150px; max-height: 120px;">  </td>
         {% else %}
@@ -95,21 +101,21 @@ var table = $('#ejemplo').DataTable( {
              {
                  extend:    'copyHtml5',
                  text:      '<i class="fa fa-clipboard"></i> Copiar',
-                 title:'Tabla de productos copiada',
+                 title:'Lista de empleados copiada',
                  titleAttr: 'Copiar',
                  className: 'btn btn-app export copia',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                     columns: [ 0, 1, 2, 3, 4 ]
                  }
              },
              {
                  extend:    'pdfHtml5',
                  text:      '<i class="fas fa-file-pdf"></i>PDF',
-                 title:'Proveedores del negocio '+ nombreDeNegocio,
+                 title:'Empleados del negocio '+ nombreDeNegocio,
                  titleAttr: 'PDF',
                  className: 'btn btn-app export pdf',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                     columns: [ 0, 1, 2, 3, 4 ]
                  },
                  customize:function(doc) {
 
@@ -135,31 +141,31 @@ var table = $('#ejemplo').DataTable( {
              {
                  extend:    'excelHtml5',
                  text:      '<i class="fas fa-file-excel"></i>Excel',
-                 title:'Tabla de Proveedores del negocio '+ nombreDeNegocio,
+                 title:'Tabla de Empleados del negocio '+ nombreDeNegocio,
                  titleAttr: 'Excel',
                  className: 'btn btn-app export excel',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                     columns: [ 0, 1, 2, 3, 4 ]
                  },
              },
              {
                  extend:    'csvHtml5',
                  text:      '<i class="fas fa-file-csv"></i>CSV',
-                 title:'Tabla de Proveedores del negocio '+ nombreDeNegocio,
+                 title:'Tabla de Empleados del negocio '+ nombreDeNegocio,
                  titleAttr: 'CSV',
                  className: 'btn btn-app export csv',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                     columns: [ 0, 1, 2, 3, 4 ]
                  }
              },
              {
                  extend:    'print',
                  text:      '<i class="fas fa-print"></i>Imprimir',
-                 title:'Proveedores del negocio '+ nombreDeNegocio,
+                 title:'Empleados del negocio '+ nombreDeNegocio,
                  titleAttr: 'Imprimir',
                  className: 'btn btn-app export imprimir',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3, 4, 5, 6 ]
+                     columns: [ 0, 1, 2, 3, 4 ]
                  }
              },
              {

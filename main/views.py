@@ -328,6 +328,7 @@ def registrar_empleado(request, pk):
                 myusuario = Usuario()
                 myusuario.id = usuario
                 myusuario.documento = request.POST['documento']
+                myusuario.telefono = request.POST['telefono']
 
                 myusuario.save()
                 negocio_usuario = detalle_usuario_negocio()

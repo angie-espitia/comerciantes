@@ -46,7 +46,11 @@
         {% elif row.producto_id.estado == '2' %}
         <td class="align-middle"><span class="badge badge-danger badge-font-90">Finalizado</span></td>
         {% endif %}
+        {% if row.producto_id.descripcion == "" %}
+        <td class="align-middle">-</td>
+        {% else %}
         <td class="align-middle">{{ row.producto_id.descripcion }}</td>
+        {% endif %}
         <td class="align-middle">
           <a class="btn btn-green btn-sm" href="{% url 'detalle_producto' pk=row.producto_id.id %}" > Detalles </a>
         </td>
@@ -122,7 +126,7 @@ var table = $('#ejemplo').DataTable( {
                  titleAttr: 'Copiar',
                  className: 'btn btn-app export copia',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3 ]
+                     columns: [ 1, 2, 3, 4, 5, 6, 7 ]
                  }
              },
              {
@@ -132,7 +136,7 @@ var table = $('#ejemplo').DataTable( {
                  titleAttr: 'PDF',
                  className: 'btn btn-app export pdf',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3 ]
+                     columns: [ 1, 2, 3, 4, 5, 6, 7 ]
                  },
                  customize:function(doc) {
 
@@ -162,7 +166,7 @@ var table = $('#ejemplo').DataTable( {
                  titleAttr: 'Excel',
                  className: 'btn btn-app export excel',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3 ]
+                     columns: [ 1, 2, 3, 4, 5, 6, 7 ]
                  },
              },
              {
@@ -172,7 +176,7 @@ var table = $('#ejemplo').DataTable( {
                  titleAttr: 'CSV',
                  className: 'btn btn-app export csv',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3 ]
+                     columns: [ 1, 2, 3, 4, 5, 6, 7 ]
                  }
              },
              {
@@ -182,7 +186,7 @@ var table = $('#ejemplo').DataTable( {
                  titleAttr: 'Imprimir',
                  className: 'btn btn-app export imprimir',
                  exportOptions: {
-                     columns: [ 0, 1, 2, 3 ]
+                     columns: [ 1, 2, 3, 4, 5, 6, 7 ]
                  }
              },
              {
