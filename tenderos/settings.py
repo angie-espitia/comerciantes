@@ -19,7 +19,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -68,13 +68,22 @@ WSGI_APPLICATION = 'tenderos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bd_tenderos',
-        'USER': 'root',
-        'PASSWORD': '1234567',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
-        'STORAGE_ENGINE': 'INNODB'
+
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'bd_tenderos',
+        # 'USER': 'root',
+        # 'PASSWORD': '1234567',
+        # 'HOST': 'localhost',
+        # 'PORT': '3306',
+        # 'STORAGE_ENGINE': 'INNODB'
+
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+         'NAME': 'd9f12ct43vnd4f',
+         'USER': 'yapciqupdzcbuz',
+         'PASSWORD': 'abc4eac788084f581d02db55ff8f32ad293606fe1eee670f341608c0be58abf5',
+         'HOST': 'ec2-54-172-17-119.compute-1.amazonaws.com',
+         'PORT': '5432',
+
     }
 }
 
