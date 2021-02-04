@@ -147,6 +147,7 @@ USE_TZ = True
 
 #URL para acceder a los archivos estaticos
 STATIC_URL = '/static/'
+STATIC_ROOT = 'staticfiles'
 
 #Directorio donde se almacenaran archivos css
 STATICFILES_DIRS = [ BASE_DIR + '/static' ]
@@ -158,3 +159,6 @@ MEDIA_URL = '/media/'
 STATIC_ROLS = {'administrativo': 1, 'propietario_negocio': 2, 'empleado_negocio': 3}
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Cargue para heroku
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
