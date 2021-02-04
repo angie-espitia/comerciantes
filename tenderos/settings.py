@@ -77,16 +77,20 @@ WSGI_APPLICATION = 'tenderos.wsgi.application'
 
 ### herokuostgres
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#          'NAME': 'd9f12ct43vnd4f',
-#          'USER': 'yapciqupdzcbuz',
-#          'PASSWORD': 'abc4eac788084f581d02db55ff8f32ad293606fe1eee670f341608c0be58abf5',
-#          'HOST': 'ec2-54-172-17-119.compute-1.amazonaws.com',
-#          'PORT': '5432',
-#     }
-# }
+import dj_database_url
+from decouple import config
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+         'NAME': 'd9f12ct43vnd4f',
+         'USER': 'yapciqupdzcbuz',
+         'PASSWORD': 'abc4eac788084f581d02db55ff8f32ad293606fe1eee670f341608c0be58abf5',
+         'HOST': 'ec2-54-172-17-119.compute-1.amazonaws.com',
+         'PORT': '5432',
+    }
+}
+DATABASES['default'] = dj_database_url.config()
+
 
 ### db para sqlite
 
@@ -97,13 +101,13 @@ WSGI_APPLICATION = 'tenderos.wsgi.application'
 #    }
 # }
 
-import dj_database_url
-from decouple import config
-DATABASES = {
-    'default' : dj_database_url.config{
-        default=config('DATABASE_URL')
-    }
-}
+
+
+# DATABASES = {
+#     'default': dj_database_url.config{
+#         default=config('DATABASE_URL')
+#     }
+# }
 
 
 # Password validation
