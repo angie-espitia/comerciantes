@@ -32,13 +32,13 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'tenderos.urls'
@@ -61,34 +61,34 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'tenderos.wsgi.application'
 
+### mysql
 
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'bd_tenderos',
+#         'USER': 'root',
+#         'PASSWORD': '1234567',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#         'STORAGE_ENGINE': 'INNODB'
+#     }
+# }
 
-# ## db para mysql
+### herokuostgres
 
-DATABASES = {
-    'default': {
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#          'NAME': 'd9f12ct43vnd4f',
+#          'USER': 'yapciqupdzcbuz',
+#          'PASSWORD': 'abc4eac788084f581d02db55ff8f32ad293606fe1eee670f341608c0be58abf5',
+#          'HOST': 'ec2-54-172-17-119.compute-1.amazonaws.com',
+#          'PORT': '5432',
+#     }
+# }
 
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'bd_tenderos',
-        # 'USER': 'root',
-        # 'PASSWORD': '1234567',
-        # 'HOST': 'localhost',
-        # 'PORT': '3306',
-        # 'STORAGE_ENGINE': 'INNODB'
-
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-         'NAME': 'd9f12ct43vnd4f',
-         'USER': 'yapciqupdzcbuz',
-         'PASSWORD': 'abc4eac788084f581d02db55ff8f32ad293606fe1eee670f341608c0be58abf5',
-         'HOST': 'ec2-54-172-17-119.compute-1.amazonaws.com',
-         'PORT': '5432',
-
-    }
-}
-
-# ### db para sqlite
+### db para sqlite
 
 # DATABASES = {
 #    'default': {
@@ -96,6 +96,14 @@ DATABASES = {
 #      'NAME': 'db_tenderos',
 #    }
 # }
+
+ import dj_database_url
+ from decouple import config
+ DATABASES = {
+    'default' : dj_database_url.config{
+        default=config('DATABASE_URL')
+    }
+ }
 
 
 # Password validation
@@ -144,4 +152,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 STATIC_ROLS = {'administrativo': 1, 'propietario_negocio': 2, 'empleado_negocio': 3}
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
