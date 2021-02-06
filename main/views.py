@@ -948,7 +948,7 @@ def agregar_venta(request, pk):
         for row in detalle_producto_negocio:
             negocioo = row.negocio_id.id
 
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         if request.method == "POST":
             form = VentaForm(request.POST)
             detalle_venta_form_set = DetalleVentaFormSet(request.POST, form_kwargs={'user': negocioo})
