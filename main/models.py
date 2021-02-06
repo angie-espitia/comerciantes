@@ -36,7 +36,7 @@ class Usuario(models.Model):
 
 #Manejo negocio
 class Pabellon(models.Model):
-	id = models.AutoField( primary_key=True)
+	# id = models.AutoField( primary_key=True)
 	nombre = models.CharField(max_length = 45 )
 	descripcion = models.TextField( null=True)
 
@@ -48,7 +48,7 @@ class Pabellon(models.Model):
 		return '{}'.format(self.nombre)
 
 class Negocio(models.Model):
-	id = models.AutoField( primary_key=True)
+	# id = models.AutoField( primary_key=True)
 	nombre = models.CharField(max_length = 45)
 	nit = models.CharField(max_length = 45, null=True, unique=True)
 	telefono = models.CharField(max_length = 45, null=True)
@@ -64,7 +64,7 @@ class Negocio(models.Model):
 
 # Manejo de negocio tenderos
 class Proveedor(models.Model):
-	id = models.AutoField( primary_key=True )
+	# id = models.AutoField( primary_key=True )
 	razon_social = models.CharField(max_length = 45)
 	nombre = models.CharField(max_length = 45)
 	telefono = models.CharField(max_length = 45, null=True)
@@ -80,8 +80,8 @@ class Proveedor(models.Model):
 		return '{}'.format(self.razon_social)
 
 class Compra(models.Model):
-	id = models.AutoField( primary_key=True)
-	fecha = models.DateField()
+	# id = models.AutoField( primary_key=True)
+	fecha = models.DateTimeField()
 	total = models.IntegerField()
 
 	# class Meta:
@@ -92,8 +92,8 @@ class Compra(models.Model):
 		return '{}'.format(self.id)
 
 class Venta(models.Model):
-	id = models.AutoField( primary_key=True)
-	fecha = models.DateField()
+	# id = models.AutoField( primary_key=True)
+	fecha = models.DateTimeField()
 	total = models.IntegerField()
 	observacion = models.CharField(max_length = 45, null=True)
 
@@ -105,7 +105,7 @@ class Venta(models.Model):
 		return '{}'.format(self.id)
 
 class unidad_medida(models.Model):
-	id = models.AutoField( primary_key=True)
+	# id = models.AutoField( primary_key=True)
 	nombre_unidad = models.CharField(max_length = 45)
 	abreviatura_unidad = models.CharField(max_length = 45)
 
@@ -118,7 +118,7 @@ class unidad_medida(models.Model):
 
 list_estado = ( ('1', 'Activo') , ('2', 'Finalizado'))
 class Producto(models.Model):
-	id = models.AutoField( primary_key=True)
+	# id = models.AutoField( primary_key=True)
 	nombre = models.CharField(max_length = 45)
 	stock = models.IntegerField()
 	valor_costo = models.IntegerField()
@@ -136,13 +136,13 @@ class Producto(models.Model):
 		return '{}'.format(self.nombre)
 
 class detalle_compra(models.Model):
-	id = models.AutoField( primary_key=True)
+	# id = models.AutoField( primary_key=True)
 	compra_id = models.ForeignKey(Compra, on_delete=models.DO_NOTHING)
 	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING)
 	proveedor_id = models.ForeignKey(Proveedor , on_delete=models.DO_NOTHING)
 	cantidad = models.IntegerField()
-	cantidad_stock_momento = models.IntegerField()
-	cantidad_stock_anterior = models.IntegerField()
+	cantidad_stock_momento = models.IntegerField(null=True)
+	cantidad_stock_anterior = models.IntegerField(null=True)
 	valor_unitario = models.IntegerField()
 	total_producto = models.IntegerField()
 
@@ -151,12 +151,12 @@ class detalle_compra(models.Model):
 	# 	managed  = False
 
 class detalle_venta(models.Model):
-	id = models.AutoField( primary_key=True)
+	# id = models.AutoField( primary_key=True)
 	venta_id = models.ForeignKey(Venta, on_delete=models.DO_NOTHING)
 	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING)
 	cantidad = models.IntegerField()
-	cantidad_stock_momento = models.IntegerField()
-	cantidad_stock_anterior = models.IntegerField()
+	cantidad_stock_momento = models.IntegerField(null=True)
+	cantidad_stock_anterior = models.IntegerField(null=True)
 	total_producto = models.IntegerField()
 
 	# class Meta:
@@ -164,7 +164,7 @@ class detalle_venta(models.Model):
 	# 	managed  = False
 
 class detalle_negocio_producto(models.Model):
-	id = models.AutoField( primary_key=True)
+	# id = models.AutoField( primary_key=True)
 	negocio_id = models.ForeignKey(Negocio, on_delete=models.DO_NOTHING)
 	producto_id = models.ForeignKey(Producto , on_delete=models.DO_NOTHING, null=True)
 	proveedor_id = models.ForeignKey(Proveedor , on_delete=models.DO_NOTHING)
@@ -174,7 +174,7 @@ class detalle_negocio_producto(models.Model):
 	# 	managed  = False
 
 class detalle_usuario_negocio(models.Model):
-	id = models.AutoField( primary_key=True)
+	# id = models.AutoField( primary_key=True)
 	negocio_id = models.ForeignKey(Negocio, on_delete=models.DO_NOTHING)
 	usuario_id = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING)
 
@@ -183,11 +183,11 @@ class detalle_usuario_negocio(models.Model):
 	# 	managed  = False
 
 class Log(models.Model):
-	id = models.AutoField( primary_key=True)
-	usuario = models.IntegerField()
-	negocio = models.IntegerField()
-	tiempo= models.DateField( default=datetime.datetime.now)
-	accion= models.TextField()
+	# id = models.AutoField( primary_key=True)
+	usuario = models.IntegerField(null=True)
+	negocio = models.IntegerField(null=True)
+	tiempo= models.DateTimeField(default=datetime.datetime.now)
+	accion= models.TextField(null=True)
 
 	# class Meta:
 	# 	db_table = 'Log'

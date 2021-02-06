@@ -77,8 +77,6 @@ WSGI_APPLICATION = 'tenderos.wsgi.application'
 
 ### herokuostgres
 
-import dj_database_url
-from decouple import config
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -89,8 +87,6 @@ DATABASES = {
          'PORT': '5432',
     }
 }
-DATABASES['default'] = dj_database_url.config()
-
 
 ### db para sqlite
 
@@ -100,8 +96,6 @@ DATABASES['default'] = dj_database_url.config()
 #      'NAME': 'db_tenderos',
 #    }
 # }
-
-
 
 # DATABASES = {
 #     'default': dj_database_url.config{
