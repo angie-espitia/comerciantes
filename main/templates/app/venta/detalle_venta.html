@@ -1,6 +1,6 @@
 {% extends 'app/base_app.html' %}
 {% load staticfiles %}
-{% block title %} Inicio {% endblock %}
+{% block title %} Detalle de la venta {% endblock %}
 
 {%  block content %}
 
@@ -31,12 +31,12 @@
  <table class="table table-striped table-bordered table-striped">
     <thead class="theadStyle">
       <tr>
-        <th>imagen</th>
-        <th>producto</th>
-        <th>cantidad</th>
-        <!-- <th>valor unitario</th> -->
-        <th>total producto</th>
-        <th>acciones</th>
+        <th>Imagen</th>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Unidad Medida</th>
+        <th>Total producto</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody class="text-center">
@@ -49,7 +49,7 @@
           {% endif %}
           <td>{{ row.producto_id.nombre }}</td>
           <td>{{ row.cantidad }}</td>
-          <!-- <td>{{ row.valor_unitario }}</td> -->
+          <td>{{ row.producto_id.unidad_medida_id.abreviatura_unidad }}</td>
           <td>{{ row.total_producto }}</td>
           <td>
             <a id="{{row.id}}" class="btn btn-green btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a>

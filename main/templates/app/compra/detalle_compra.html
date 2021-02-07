@@ -36,6 +36,7 @@
         <th>Producto</th>
         <th>Proveedor</th>
         <th>Cantidad</th>
+        <th>Unidad Medida</th>
         <th>Valor unitario</th>
         <th>Total producto</th>
         <th>Acciones</th>
@@ -52,6 +53,7 @@
           <td>{{ row.producto_id.nombre }}</td>
           <td>{{ row.proveedor_id.razon_social }}</td>
           <td>{{ row.cantidad }}</td>
+          <td>{{ row.producto_id.unidad_medida_id.abreviatura_unidad }}</td>
           <td>$ {{ row.valor_unitario }}</td>
           <td>$ {{ row.total_producto }}</td>
           <td>
@@ -103,6 +105,10 @@
                     <br>
                     <label>Total:</label>
                     <input type="number" class="form-control" id="total_d" disabled="true">
+                  </div>
+
+                  <div id="alerta-c">
+
                   </div>
 
                   <button class="save btn btn-green btn-lg" type="submit" onclick="Actualizar()">Guardar</button>
@@ -196,28 +202,38 @@ function Actualizar() {
     var total = $("#total_d").val();
     var csrftoken = '{{ csrf_token }}';
 
-	$.ajax({
-		headers: {'X-CSRF-TOKEN': csrftoken},
-		method: 'POST',
-		url: '/compras/lista/detalle/editar_item/'+id+'/',
-		dataType: 'text',
-		data: { 'csrfmiddlewaretoken': csrftoken ,
-		  'cantidad_item': cantidad,
-		  'valor_unitario_item': valor,
-		  'total_item': total,
-		},
-		success:function(data){
-  			// swal('Se han actualizado los campos con éxito','','success').then(function(){
-       //   location.reload();
-       // });
-		},
-		error: function(xhr, e, x, status) {
-			console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
-			swal('Ha ocurrido un error, porfavor vuelva a intentar','','warning').then(function(){
-       location.reload();
-      });
-		}
-	})
+    if(cantidad < 1){
+      $("#alerta-c").html('<div class="alert alert-danger" role="alert">La <b>cantidad</b> no puede ser menor a 1 o negativo.</div>');
+    }else if(valor < 1){
+      $("#alerta-c").html('<div class="alert alert-danger" role="alert">El <b>valor unitario</b> no puede ser menor a 1 o negativo.</div>');
+    }else{
+      $("#alerta-c").html('');
+
+      $.ajax({
+    		headers: {'X-CSRF-TOKEN': csrftoken},
+    		method: 'POST',
+    		url: '/compras/lista/detalle/editar_item/'+id+'/',
+    		dataType: 'text',
+    		data: { 'csrfmiddlewaretoken': csrftoken ,
+    		  'cantidad_item': cantidad,
+    		  'valor_unitario_item': valor,
+    		  'total_item': total,
+    		},
+    		success:function(data){
+      			// swal('Se han actualizado los campos con éxito','','success').then(function(){
+           //   location.reload();
+           // });
+    		},
+    		error: function(xhr, e, x, status) {
+    			console.log(xhr.status + " -- " + status + " -- " + e + " -- " + x);
+    			swal('Ha ocurrido un error, porfavor vuelva a intentar','','warning').then(function(){
+           location.reload();
+          });
+    		}
+    	})
+
+    }
+
 }
 
 function datos2(id) {

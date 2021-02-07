@@ -28,7 +28,7 @@
 
           <select class="form-control" id="proveedor_lista" onclick='calcularMult()' required>
             <option>---</option>
-            {% for row in proveedores %}
+            {% for row in proveedores|dictsort:"proveedor_id.razon_social" %}
             <option value='{{row.proveedor_id.id}}'>{{row.proveedor_id.razon_social}}</option>
             {% endfor %}
           </select>
@@ -152,12 +152,26 @@
   };
 
   function validate(){
+    var idx = $("#additems").val();
     var ppp = $("#proveedor_lista").val();
     if(ppp=='---'){
       $("#alerta-c").html('<div class="alert alert-danger" role="alert">El campo <b>proveedor</b> no debe estar vacio.</div>');
+      return false;
     }
     else{
       $("#alerta-c").html('');
+      for (var i = 0; i <= idx; i++) {
+        var can = $("#id_detalle_compra_set-" + i + "-cantidad").val();
+        var valu = $("#id_detalle_compra_set-" + i + "-valor_unitario").val();
+        if (can < 1 || valu < 1){
+          $("#alerta-c").html('<div class="alert alert-danger" role="alert">La <b>cantidad</b> y el <b>valor unitario</b> no pueden ser menor a 1 o negativos.</div>');
+          return false;
+        }
+        else{
+          $("#alerta-c").html('');
+          return true;
+        }
+      }
     }
   }
 

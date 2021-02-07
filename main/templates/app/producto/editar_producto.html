@@ -136,7 +136,11 @@
  {% endblock %}
 
  {% block javascript %}
-{% include "includes/script-datatables.html" %}
+ {% include "includes/script-datatables.html" %}
+ <script src="{% static 'js/moment.js' %}"></script>
+ <script src="{% static 'js/locate-es.js' %}"></script>
+ <script src="{% static 'js/datetime-moment.js' %}"></script>
+ <script src="{% static 'js/render-datetime-moment.js' %}"></script>
 <script>
 
 $(document).ready(function() {
@@ -152,6 +156,12 @@ var table = $('#ejemplo').DataTable( {
    "autoWidth": true,
    "language": idioma,
    "lengthMenu": [[15, 25, 50, -1],[15,25,50,"Mostrar Todo"]],
+   "columnDefs":[{
+                  "targets": [0],
+                  "render": function(data) {
+                            return moment(data).format('YYYY / MM / DD');
+                          },
+              }],
    dom: 'Bfrt<"col-md-6 inline"i> <"col-md-6 inline"p>',
    buttons: {
          dom: {

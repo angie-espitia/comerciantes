@@ -167,6 +167,7 @@ class CompraForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CompraForm, self).__init__(*args, **kwargs)
+        self.fields['total'].widget.attrs['disabled'] = True
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -190,7 +191,7 @@ class DetalleCompraForm(forms.ModelForm):
         array_e = []
         for f in negocio_producto:
             array_e.append(f.producto_id.id)
-        po = Producto.objects.filter(id__in=array_e, estado='1')
+        po = Producto.objects.filter(id__in=array_e, estado='1').order_by('nombre')
 
         super(DetalleCompraForm, self).__init__(*args, **kwargs)
         self.fields['producto_id'].queryset= po
@@ -217,6 +218,7 @@ class VentaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(VentaForm, self).__init__(*args, **kwargs)
         self.fields['observacion'].required = False
+        # self.fields['total'].widget.attrs['disabled'] = True
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
@@ -235,7 +237,7 @@ class DetalleVentaForm(forms.ModelForm):
         array_e = []
         for f in negocio_producto:
             array_e.append(f.producto_id.id)
-        po = Producto.objects.filter(id__in=array_e, estado='1')
+        po = Producto.objects.filter(id__in=array_e, estado='1').order_by('nombre')
 
         super(DetalleVentaForm, self).__init__(*args, **kwargs)
         self.fields['producto_id'].queryset= po
