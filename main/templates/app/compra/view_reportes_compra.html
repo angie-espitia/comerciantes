@@ -10,17 +10,14 @@
 </ul>
 
 <h1 class="mt-4 text-center titleIniBox"><i class="fas fa-wallet"></i> Reportes de Compras</h1>
-
+<br>
 <div class="row">
   <div class="col-12 col-sm-3 col-md-3 col-lg-3">
     <div class="form-group">
       <label for="sel1"><b>Filtrar por:</b></label>
-      <select class="form-control" id="opcion_buscador" onchange="buscando()">
-        <option value="0">Seleccionar</option>
-        <option value="1">Mes y día</option>
-        <option value="2">Año y Mes</option>
-        <option value="3">Rango de Fechas</option>
-      </select>
+      <div id="filters_p">
+
+      </div>
     </div>
   </div>
   <div class="col-12 col-sm-3 col-md-3 col-lg-3">
@@ -33,6 +30,10 @@
 
     </div>
   </div>
+</div>
+
+<div class="col-12" id="cargandoo">
+
 </div>
 
 <div class="table-responsive tableResStyle" id="tabliita">
@@ -62,14 +63,14 @@
 <script src="{% static 'js/datetime-moment.js' %}"></script>
 <script src="{% static 'js/render-datetime-moment.js' %}"></script>
 
-<script>
+<script async="async">
 var res;
 var array_reporte_fecha = {};
 var array_vp = {};
 var nombreDeNegocio = $('#nameNegocio').text();
 
 $(document).ready(function() {
-
+  console.log('adasdasdasdasd');
     var id = $('#negocio_pk').text();
     var csrftoken = '{{ csrf_token }}';
     $.ajax({
@@ -78,10 +79,22 @@ $(document).ready(function() {
       url: '/compras/reportes/lista/'+id+'/',
       dataType: 'json',
       data: { "csrfmiddlewaretoken": csrftoken,
-          "id": id }
+          "id": id },
+      beforeSend: function() {
+                $('#cargandoo').html('<div class="text-center"><div class="spinner-border text-success" style="width: 4rem; height: 4rem;" role="status" aria-hidden="true"></div><br><br><p>Contenido cargando, por favor espere.</p></div>'); // se muestra mientras recive respuesta del servidor
+            }
     })
 
     .done(function(response){
+      // console.log('ajax');
+      $('#cargandoo').html("");
+      var htmlf = '<select class="form-control" id="opcion_buscador" onchange="buscando()">';
+      htmlf += '<option value="0">Seleccionar</option>';
+      htmlf += '<option value="1">Mes y día</option>';
+      htmlf += '<option value="2">Año y Mes</option>';
+      htmlf += '<option value="3">Rango de Fechas</option>';
+      htmlf += '</select>';
+      $('#filters_p').html(htmlf);
       // console.log(response);
       res = response;
       if (JSON.stringify(res)=='{}'){
@@ -491,7 +504,8 @@ function filtrado1(){
 
   // reportes
 
-  // $('#titl2').html('Ganancias Totales por Mes');
+  $('#titl2').html('');
+  var ctx = $('#myChart').html('');
   // var mes = [];
   // var total = [];
   // for (let i = 0; i < 12; i++) {
@@ -499,7 +513,7 @@ function filtrado1(){
   //   total.push(Object.values(arr_reporte)[i].reduce((a, b) => a + b, 0));
   // };
   //
-  // var ctx = document.getElementById('myChart').getContext("2d");
+  // ctx = document.getElementById('myChart').getContext("2d");
   // var myChart = new Chart(ctx, {
   //     type: 'bar',
   //     data: {
