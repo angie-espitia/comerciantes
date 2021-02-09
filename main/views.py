@@ -857,6 +857,79 @@ def list_ventas_reportes(request, pk):
     return HttpResponse(toJSON(dic), content_type='application/json')
 
 @login_required(login_url="/")
+def view_de_reportes_ganancias(request, pk):
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = Negocio.objects.get(id=pk)
+    return render(request, 'app/venta/view_reporte_ganancias.html',{'negocio_id': negocio})
+
+@login_required(login_url="/")
+def list_ventas_reportes_ganancias(request, pk):
+    now = datetime.datetime.now()
+    usuario = Usuario.objects.get(id=request.user.id)
+    negocio = Negocio.objects.get(id=pk)
+    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
+    array_producto = []
+    for f in negocio_producto:
+        array_producto.append(f.producto_id.id)
+    venta = Venta.objects.all()
+    array_venta = []
+    for f in venta:
+        array_venta.append(f.id)
+    detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto) # ventas por negocio y productos
+    dic = {}
+    va = 1
+    # for i in detalles__ventas:
+    #         dic[va] = {
+    #             'id_venta':i.venta_id.id,
+    #             'fecha':convertir_fecha(i.venta_id.fecha),
+    #             'total':i.venta_id.total,
+    #             'producto_id':i.producto_id.id,
+    #             'producto_nombre':i.producto_id.nombre,
+    #             'producto_stock_nuevo':i.cantidad_stock_momento,
+    #             'producto_cantidad':i.cantidad,
+    #             'producto_total':i.total_producto,
+    #             'producto_stock_anterior':i.cantidad_stock_anterior,
+    #         }
+    #         va += 1
+
+    #funcion para guardar total ventas por mes de anio actual
+    dic_mes = { '01':[],'02':[],'03':[],'04':[],'05':[],'06':[],'07':[],'08':[],'09':[],'10':[],'11':[],'12':[]} # diccionario de ventas mes anio actual totales
+    anio_actual = now.year # anio actual
+    for f in detalles__ventas:
+        x = convertir_fecha(f.venta_id.fecha)
+        if str(x.split('-')[0]) == str(anio_actual):
+            for key in dic_mes:
+                if key == str(x.split('-')[1]):
+                    dic_mes[key].append(f.total_producto)
+
+    dic_meses_anio_actual = {}
+    for key, value in dic_mes.items(): # iterar los item del diccionario
+        suma = 0 # variable donde se guardará la suma de los elementos
+        for v in value: # iterar los elementos
+            suma += v # sumar los elementos y guardarlos
+        dic_meses_anio_actual[key] = suma # añadir al nuevo diccionario la misma llave con la suma de los elementos
+
+    # funcion para guardar total ventas por dia del mes del anio actal
+    dic_mes_dia = {'mes':[],'dia':[],'total':[]}
+    asd = 1
+    for f in detalles__ventas:
+        x = convertir_fecha(f.venta_id.fecha)
+        if str(x.split('-')[0]) == str(anio_actual):
+            dic[asd] = {
+                        'mes':convertir_fecha(i.venta_id.fecha),
+                        'dia':i.venta_id.total,
+                        'producto_id':i.producto_id.id,
+                        'producto_nombre':i.producto_id.nombre,
+                        'producto_stock_nuevo':i.cantidad_stock_momento,
+                        'producto_cantidad':i.cantidad,
+                        'producto_total':i.total_producto,
+                        'producto_stock_anterior':i.cantidad_stock_anterior,
+            }
+            asd += 1
+
+    return HttpResponse(toJSON(dic), content_type='application/json')
+
+@login_required(login_url="/")
 def detalle_de_venta(request, pk):
     detalles__ventas = detalle_venta.objects.filter(venta_id=pk)
     venta = Venta.objects.filter(id=pk)

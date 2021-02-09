@@ -167,7 +167,7 @@ class CompraForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CompraForm, self).__init__(*args, **kwargs)
-        self.fields['total'].widget.attrs['disabled'] = True
+        # self.fields['total'].widget.attrs['disabled'] = True
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
