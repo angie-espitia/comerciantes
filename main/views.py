@@ -876,21 +876,6 @@ def list_ventas_reportes_ganancias(request, pk):
     for f in venta:
         array_venta.append(f.id)
     detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto) # ventas por negocio y productos
-    dic = {}
-    va = 1
-    # for i in detalles__ventas:
-    #         dic[va] = {
-    #             'id_venta':i.venta_id.id,
-    #             'fecha':convertir_fecha(i.venta_id.fecha),
-    #             'total':i.venta_id.total,
-    #             'producto_id':i.producto_id.id,
-    #             'producto_nombre':i.producto_id.nombre,
-    #             'producto_stock_nuevo':i.cantidad_stock_momento,
-    #             'producto_cantidad':i.cantidad,
-    #             'producto_total':i.total_producto,
-    #             'producto_stock_anterior':i.cantidad_stock_anterior,
-    #         }
-    #         va += 1
 
     #funcion para guardar total ventas por mes de anio actual
     dic_mes = { '01':[],'02':[],'03':[],'04':[],'05':[],'06':[],'07':[],'08':[],'09':[],'10':[],'11':[],'12':[]} # diccionario de ventas mes anio actual totales
@@ -909,25 +894,76 @@ def list_ventas_reportes_ganancias(request, pk):
             suma += v # sumar los elementos y guardarlos
         dic_meses_anio_actual[key] = suma # añadir al nuevo diccionario la misma llave con la suma de los elementos
 
-    # funcion para guardar total ventas por dia del mes del anio actal
-    dic_mes_dia = {'mes':[],'dia':[],'total':[]}
-    asd = 1
-    for f in detalles__ventas:
-        x = convertir_fecha(f.venta_id.fecha)
+    # funcion para guardar total ventas por dia de todos los meses del anio actal
+    dic_mes_dia = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} # dic inicial
+    dic_meses_dia_anio_actual = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} #dic final
+    for f in detalles__ventas: # agrega diccionario dias a las llaves de meses
+        w = convertir_fecha(f.venta_id.fecha)
+        x = w.split(' ')[0]
         if str(x.split('-')[0]) == str(anio_actual):
-            dic[asd] = {
-                        'mes':convertir_fecha(i.venta_id.fecha),
-                        'dia':i.venta_id.total,
-                        'producto_id':i.producto_id.id,
-                        'producto_nombre':i.producto_id.nombre,
-                        'producto_stock_nuevo':i.cantidad_stock_momento,
-                        'producto_cantidad':i.cantidad,
-                        'producto_total':i.total_producto,
-                        'producto_stock_anterior':i.cantidad_stock_anterior,
-            }
-            asd += 1
+            dic_mes_dia[x.split('-')[1]].update({ x.split('-')[2] : [] })
+            dic_meses_dia_anio_actual[x.split('-')[1]].update({ x.split('-')[2] : [] })
 
-    return HttpResponse(toJSON(dic), content_type='application/json')
+    for ff in detalles__ventas: #agrega los totales de ventas por dias del mes
+         w = convertir_fecha(ff.venta_id.fecha)
+         x = w.split(' ')[0]
+         if str(x.split('-')[0]) == str(anio_actual):
+             for key in dic_mes_dia:
+                 if key == str(x.split('-')[1]):
+                     for key2 in dic_mes_dia[key]:
+                         if key2 == str(x.split('-')[2]):
+                             dic_mes_dia[key][key2].append(ff.total_producto)
+
+    for llave in dic_mes_dia: #suma los totales de ventas por dia del mes
+        for key, value in dic_mes_dia[llave].items():
+            suma = 0
+            for v in value:
+                suma += v
+            dic_meses_dia_anio_actual[llave][key] = suma
+
+    # funcion total ventas por mes y anio
+    dic_anio_mes = {}
+    dic_anio_meses_estesi = {}
+    for f in detalles__ventas: # guarda llave anios
+        w = convertir_fecha(f.venta_id.fecha)
+        x = w.split(' ')[0]
+        dic_anio_mes.update({x.split('-')[0]:{}})
+        dic_anio_meses_estesi.update({x.split('-')[0]:{}})
+
+    for ff in detalles__ventas: # guarda mes anios
+        w = convertir_fecha(ff.venta_id.fecha)
+        x = w.split(' ')[0]
+        for key in dic_anio_mes:
+            if str(x.split('-')[0]) == key:
+                dic_anio_mes[key].update({ x.split('-')[1] : [] })
+                dic_anio_meses_estesi[key].update({ x.split('-')[1] : [] })
+
+    for fff in detalles__ventas: #agrega los totales de ventas por mes del anio
+         w = convertir_fecha(fff.venta_id.fecha)
+         x = w.split(' ')[0]
+         for key in dic_anio_mes:
+             if key == str(x.split('-')[0]): # anio
+                 for key2 in dic_anio_mes[key]:
+                     if key2 == str(x.split('-')[1]): # mes
+                         dic_anio_mes[key][key2].append(fff.total_producto)
+
+    for llave in dic_anio_mes: #suma los totales de ventas mes de anios
+        for key, value in dic_anio_mes[llave].items():
+            suma = 0
+            for v in value:
+                suma += v
+            dic_anio_meses_estesi[llave][key] = suma
+
+    # dic_meses_anio_actual = diccionario con el total por meses del anio vigente
+    # dic_meses_dia_anio_actual = diccionario con el total por dia de todos los meses del anio vigente
+    # dic_anio_meses_estesi = diccionario con los totales de venta por meses de cada anio registrado
+
+    dic_final = {'mes_anio_actual':{},'dia_mes_anio_actual':{},'meses_anios':{}}
+    dic_final['mes_anio_actual'].update(dic_meses_anio_actual)
+    dic_final['dia_mes_anio_actual'].update(dic_meses_dia_anio_actual)
+    dic_final['meses_anios'].update(dic_anio_meses_estesi)
+
+    return HttpResponse(toJSON(dic_final), content_type='application/json')
 
 @login_required(login_url="/")
 def detalle_de_venta(request, pk):
