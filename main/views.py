@@ -696,44 +696,42 @@ def list_compras_reportes_gastos(request, pk):
             dic_meses_dia_anio_actual[llave][key] = suma
 
     # funcion para guardar total compras por proveedor proveedor dia de todos los meses del anio actal
-    dic_mes_dia = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} # dic inicial
-    dic_meses_dia_anio_actual = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} #dic final
+    dic_mes_dia_prov = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} # dic inicial
+    dic_meses_dia_anio_actual_prov = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} #dic final
     for f in detalles__compras: # agrega diccionario dias a las llaves de meses
         w = convertir_fecha(f.compra_id.fecha)
         x = w.split(' ')[0]
         if str(x.split('-')[0]) == str(anio_actual):
-            dic_mes_dia[x.split('-')[1]].update({ x.split('-')[2] : {} })
-            dic_meses_dia_anio_actual[x.split('-')[1]].update({ x.split('-')[2] : {} })
+            dic_mes_dia_prov[x.split('-')[1]].update({ x.split('-')[2] : {} })
+            dic_meses_dia_anio_actual_prov[x.split('-')[1]].update({ x.split('-')[2] : {} })
 
     for ff in detalles__compras: # agrega diccionario proveedores a las llaves dias a las llaves de meses
         w = convertir_fecha(ff.compra_id.fecha)
         x = w.split(' ')[0]
         if str(x.split('-')[0]) == str(anio_actual):
-            for dia in dic_mes_dia[x.split('-')[1]]:
-                dic_mes_dia[x.split('-')[1]][dia].update({ ff.proveedor_id.razon_social : [] })
-                dic_meses_dia_anio_actual[x.split('-')[1]][dia].update({ ff.proveedor_id.razon_social : [] })
+            for dia in dic_mes_dia_prov[x.split('-')[1]]:
+                dic_mes_dia_prov[x.split('-')[1]][dia].update({ ff.proveedor_id.razon_social : [] })
+                dic_meses_dia_anio_actual_prov[x.split('-')[1]][dia].update({ ff.proveedor_id.razon_social : [] })
 
     for fff in detalles__compras: #agrega los totales de compras por dias del mes
         w = convertir_fecha(fff.compra_id.fecha)
         x = w.split(' ')[0]
         if str(x.split('-')[0]) == str(anio_actual):
-            for key in dic_mes_dia:
+            for key in dic_mes_dia_prov:
                 if key == str(x.split('-')[1]):
-                    for dia in dic_mes_dia[key]:
+                    for dia in dic_mes_dia_prov[key]:
                         if dia == str(x.split('-')[2]):
-                            for prov in dic_mes_dia[key][dia]:
+                            for prov in dic_mes_dia_prov[key][dia]:
                                 if prov == str(fff.proveedor_id.razon_social):
-                                    dic_mes_dia[key][dia][prov].append(fff.total_producto)
+                                    dic_mes_dia_prov[key][dia][prov].append(fff.total_producto)
 
-    for mes in dic_mes_dia: #suma los totales de compras por dia del mes
-        for dia in dic_mes_dia[mes]:
-            for prov, value in dic_mes_dia[mes][dia].items():
+    for mes in dic_mes_dia_prov: #suma los totales de compras por dia del mes
+        for dia in dic_mes_dia_prov[mes]:
+            for prov, value in dic_mes_dia_prov[mes][dia].items():
                 suma = 0
                 for v in value:
                     suma += v
-                dic_meses_dia_anio_actual[mes][dia][prov] = suma
-
-    print(dic_meses_dia_anio_actual)
+                dic_meses_dia_anio_actual_prov[mes][dia][prov] = suma
 
     # funcion total compras por mes y anio
     dic_anio_mes = {}
@@ -769,12 +767,14 @@ def list_compras_reportes_gastos(request, pk):
             dic_anio_meses_estesi[llave][key] = suma
 
     # dic_meses_anio_actual = diccionario con el total por meses del anio vigente
+    # dic_meses_dia_anio_actual_prov = diccionario con total por proveedor por dia de todos los meses del anio vigente
     # dic_meses_dia_anio_actual = diccionario con el total por dia de todos los meses del anio vigente
     # dic_anio_meses_estesi = diccionario con los totales de venta por meses de cada anio registrado
 
-    dic_final = {'mes_anio_actual':{},'dia_mes_anio_actual':{},'meses_anios':{}}
+    dic_final = {'mes_anio_actual':{},'dia_mes_anio_actual':{},'dia_mes_prov_anio_actual':{},'meses_anios':{}}
     dic_final['mes_anio_actual'].update(dic_meses_anio_actual)
     dic_final['dia_mes_anio_actual'].update(dic_meses_dia_anio_actual)
+    dic_final['dia_mes_prov_anio_actual'].update(dic_meses_dia_anio_actual_prov)
     dic_final['meses_anios'].update(dic_anio_meses_estesi)
 
     return HttpResponse(toJSON(dic_final), content_type='application/json')
