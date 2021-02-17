@@ -34,14 +34,18 @@
     </div>
     {% endif %}
 
+    <div id="errortelefono">
+
+    </div>
+
 		<div class="row">
 			<div class="col">
 				<label class="">Usuario del empleado: *</label>
-	    	<input type="text" name="username" placeholder="Usuario" class="form-control" id="form-usuario">
+	    	<input type="text" name="username" placeholder="Usuario" class="form-control teli" id="form-usuario">
 	    </div>
 	    <div class="col">
 				<label class="">Correo del empleado: *</label>
-	      <input type="text" name="email" placeholder="Correo" class="form-control" id="form-email">
+	      <input type="text" name="email" placeholder="Correo" class="form-control teli" id="form-email">
 			</div>
 		</div>
 
@@ -50,11 +54,11 @@
 		<div class="row">
 			<div class="col">
 					<label class="">Nombre del empleado: *</label>
-	        <input type="text" name="nombre" placeholder="Nombres" class="form-control" id="form-nombre">
+	        <input type="text" name="nombre" placeholder="Nombres" class="form-control teli" id="form-nombre">
 			</div>
 	    <div class="col">
 					<label class="">Apellido del empleado: *</label>
-	        <input type="text" name="apellido" placeholder="Apellidos" class="form-control" id="form-apellido">
+	        <input type="text" name="apellido" placeholder="Apellidos" class="form-control teli" id="form-apellido">
 			</div>
 		</div>
 
@@ -63,11 +67,11 @@
     <div class="row">
       <div class="col">
 					<label class="">Documento del empleado: *</label>
-	        <input type="text" name="documento" placeholder="Documento" class="form-control" id="form-documento">
+	        <input type="text" name="documento" placeholder="Documento" class="form-control teli" id="form-documento">
 			</div>
       <div class="col">
 					<label class="">Teléfono del empleado: </label>
-	        <input type="text" name="telefono" placeholder="Telefono" class="form-control" id="form-telefono">
+	        <input type="text" name="telefono" placeholder="Telefono" class="form-control teli" id="form-telefono">
 			</div>
     </div>
 
@@ -76,18 +80,18 @@
 		 <div class="row">
 			 <div class="col">
 					 <label class="">Contraseña para el usuario: *</label>
-		    	<input type="password" name="password1" placeholder="Contraseña" class="form-control" id="form-contraseña">
+		    	<input type="password" name="password1" placeholder="Contraseña" class="form-control teli" id="form-contraseña">
 		    </div>
 		    <div class="col">
 						<label class="">Confirmar contraseña: *</label>
-		    	<input type="password" name="password2" placeholder="Confirmar contraseña" class="form-control" id="form-password2">
+		    	<input type="password" name="password2" placeholder="Confirmar contraseña" class="form-control teli" id="form-password2">
 		    </div>
 		 </div>
 
 		 <div class="col-md-12 col-lg-12 col-sm-12"><br></div>
 
 		 <div class="col-md-12 col-lg-12 col-sm-12 text-center">
-			 <button class="save btn btn-green btn-lg" type="submit">Registrar empleado</button>
+			 <button class="save btn btn-green btn-lg" id="submit_button" type="submit">Registrar empleado</button>
 			 <br><br>
 		 </div>
 
@@ -99,4 +103,57 @@
 	<p>Lo siento, no tiene permisos para este contenido :(</p>
 {% endif %}
 
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function() {
+
+ var validacion_nombre = /^([A-Za-zñÑáéíóúÁÉÍÓÚ\s])*$/;
+ var validacion_numeros = /^([0-9])*$/;
+ var validacion_username = /^([a-zA-Z0-9_\.\-])*$/;
+ var validacion_email = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
+
+$('.teli').keyup(function() {
+  var userr = $("#form-usuario").val();
+  var telefono = $("#form-telefono").val();
+  var documento = $("#form-documento").val();
+  var email = $("#form-email").val();
+
+  if (telefono != "" && !validacion_numeros.test(telefono)){
+     $("#submit_button").attr( "disabled", "disabled" );
+     $("#form-telefono").focus();
+     $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Ingrese un número de teléfono válido sin dejar espacios.</li></ul></div>');
+     return false;
+  }
+  else if (documento != "" && !validacion_numeros.test(documento)){
+     $("#submit_button").attr( "disabled", "disabled" );
+     $("#form-documento").focus();
+     $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Ingrese un número de cédula válido sin dejar espacios.</li></ul></div>');
+     return false;
+  }
+  else if (userr != "" && !validacion_username.test(userr)){
+     $("#submit_button").attr( "disabled", "disabled" );
+     $("#form-usuario").focus();
+     $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Por favor <b>no</b> deje <b>espacios en blanco</b> en el nombre de usuario; utilice solo carácteres alfabéticos, números o .(punto) -(guión)</li></ul></div>');
+     return false;
+  }
+  else if (email != "" && !validacion_email.test(email)){
+    $("#submit_button").attr( "disabled", "disabled" );
+    $('#form-email').focus();
+    $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Ingrese un correo válido.</li></ul></div>');
+    return false;
+  }
+  else {
+    $("#submit_button").removeAttr("disabled");
+    $('#errortelefono').html('');
+    return true;
+  }
+
+});
+
+
+});
+
+</script>
 {% endblock %}
