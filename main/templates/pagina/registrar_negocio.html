@@ -24,6 +24,10 @@
 		<form class="form-signin" method="post" id="form-negocio-add">
 			{% csrf_token %}
 
+      <div id="errortelefono">
+
+      </div>
+
         {% if form.errors %}
             {% for field in form %}
                 {% for error in field.errors %}
@@ -57,12 +61,10 @@
 				<div class="col">
 					<label>{{ form.telefono.label }}</label>
 					{{ form.telefono }}
-          <div id="errortelefono"></div>
 				</div>
 				<div class="col">
 					<label>{{ form.email.label }}</label>
 					{{ form.email }}
-          <div class="" id="erroremail"></div>
 				</div>
 			</div>
 
@@ -71,7 +73,7 @@
 			<div class="row">
 				<div class="col">
 			    <label>Propietario del negocio: *</label>
-			    <select class="form-control" name='usuario_id' required="required">
+			    <select class="form-control teli" name='usuario_id' required="required">
 			      <option value="">Seleccionar</option>
 			      {% for row in propietario_negocio %}
 			        <option value="{{ row.id }}"> {{ row.first_name }} {{ row.last_name }} </option>
@@ -80,7 +82,7 @@
 				</div>
 				<div class="col">
 			    <label>Pabellón: *</label>
-			    <select class="form-control" name='pabellon_id' required="required">
+			    <select class="form-control teli" name='pabellon_id' required="required">
 			      <option value="">Seleccionar</option>
 			      {% for row in pabellon %}
 			        <option value="{{ row.id }}"> {{ row.nombre }} </option>
@@ -121,15 +123,15 @@ $('.teli').keyup(function() {
 
    if (telefono != "" && !validacion_numeros.test(telefono)){
      $("#submit_button").attr( "disabled", "disabled" );
-     $('#errortelefono').html('<small class="form-text text-muted">Ingrese un número de teléfono válido sin dejar espacios.</small>');
+     $('#telefonoId').focus();
+     $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Ingrese un número de teléfono válido sin dejar espacios.</li></ul></div>');
   } else if (email != "" && !validacion_email.test(email)){
     $("#submit_button").attr( "disabled", "disabled" );
     $('#emailId').focus();
-    $('#erroremail').html('<small class="form-text text-muted">Ingrese una dirección de correo válida.</small>');
+    $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Ingrese una dirección de correo válida.</li></ul></div>');
   } else {
     $("#submit_button").removeAttr("disabled");
     $('#errortelefono').html('');
-    $('#erroremail').html('');
   }
 
 });

@@ -21,7 +21,7 @@
     <br>
     <p>Los campos que aparecen con asteríscos <b>(*)</b> son <b>obligatorios</b>.</p>
     <br>
-		<form class="form-signin" method="post">
+		<form class="form-signin" method="post" id="form-tendero-add">
 			{% csrf_token %}
 
 
@@ -35,15 +35,19 @@
       </div>
       {% endif %}
 
+      <div id="errortelefono">
+
+      </div>
+
 
 			<div class="row">
         <div class="col">
 						<label>Usuario del propietario: *</label>
-		    		<input type="text" name="username" placeholder="Usuario" class="form-control" id="form-usuario">
+		    		<input type="text" name="username" placeholder="Usuario" class="form-control teli" id="form-usuario">
 					</div>
 					<div class="col">
 						<label>Correo del propietario: *</label>
-		        <input type="text" name="email" placeholder="Correo" class="form-control" id="form-email">
+		        <input type="text" name="email" placeholder="Correo" class="form-control teli" id="form-email">
 					</div>
 	      </div>
 
@@ -52,15 +56,15 @@
 				<div class="row">
 	        <div class="col">
 						<label>Nombre: *</label>
-		        <input type="text" name="nombre" placeholder="Nombres" class="form-control" id="form-nombre">
+		        <input type="text" name="nombre" placeholder="Nombres" class="form-control teli" id="form-nombre">
 					</div>
 					<div class="col">
 						<label>Apellido: *</label>
-		        <input type="text" name="apellido" placeholder="Apellidos" class="form-control" id="form-apellido">
+		        <input type="text" name="apellido" placeholder="Apellidos" class="form-control teli" id="form-apellido">
 					</div>
 					<div class="col">
 						<label>Documento: *</label>
-		        <input type="text" name="documento" placeholder="Documento" class="form-control" id="form-telefono">
+		        <input type="text" name="documento" placeholder="Documento" class="form-control teli" id="form-telefono">
 					</div>
 	      </div>
 
@@ -69,16 +73,16 @@
 				<div class="row">
 	        <div class="col">
 						<label>Contraseña del usuario: *</label>
-			    	<input type="password" name="password1" placeholder="Contraseña" class="form-control" id="form-contraseña">
+			    	<input type="password" name="password1" placeholder="Contraseña" class="form-control teli" id="form-contraseña">
 					</div>
 					<div class="col">
 						<label>Confirmar contraseña: *</label>
-			    	<input type="password" name="password2" placeholder="Confirmar contraseña" class="form-control" id="form-password2">
+			    	<input type="password" name="password2" placeholder="Confirmar contraseña" class="form-control teli" id="form-password2">
 					</div>
 				</div>
 
 				<br><br>
-		    <button type="submit" class="btn btn-lg btn-orange btn-login font-weight-bold mb-2">Registrar usuario</button>
+		    <button type="submit" id="submit_button" class="btn btn-lg btn-orange btn-login font-weight-bold mb-2">Registrar usuario</button>
 
 		  </form>
 		</div>
@@ -92,4 +96,49 @@
 		<p>Lo siento, no tiene permisos para este contenido :(</p>
 	{% endif %}
 
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function() {
+
+ var validacion_nombre = /^([A-Za-zñÑáéíóúÁÉÍÓÚ\s])*$/;
+ var validacion_numeros = /^([0-9])*$/;
+ var validacion_username = /^([a-zA-Z0-9_\.\-])*$/;
+ var validacion_email = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
+
+$('.teli').keyup(function() {
+  var userr = $("#form-usuario").val();
+  var telefono = $("#form-telefono").val();
+  var email = $("#form-email").val();
+
+  if (telefono != "" && !validacion_numeros.test(telefono)){
+     $("#submit_button").attr( "disabled", "disabled" );
+     $("#form-telefono").focus();
+     $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Ingrese un número de cédula válido sin dejar espacios.</li></ul></div>');
+     return false;
+  }
+  else if (userr != "" && !validacion_username.test(userr)){
+     $("#submit_button").attr( "disabled", "disabled" );
+     $("#form-usuario").focus();
+     $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Por favor <b>no</b> deje <b>espacios en blanco</b> en el nombre de usuario; utilice solo carácteres alfabéticos, números o .(punto) -(guión)</li></ul></div>');
+     return false;
+  }
+  else if (email != "" && !validacion_email.test(email)){
+    $("#submit_button").attr( "disabled", "disabled" );
+    $('#form-email').focus();
+    $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Ingrese un correo válido.</li></ul></div>');
+  }
+  else {
+    $("#submit_button").removeAttr("disabled");
+    $('#errortelefono').html('');
+    return true;
+  }
+
+});
+
+
+});
+
+</script>
 {% endblock %}

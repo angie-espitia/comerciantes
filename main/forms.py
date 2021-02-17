@@ -14,8 +14,8 @@ class NegocioForm(forms.ModelForm):
                     'telefono': 'Telefono del Negocio',
                     'email': 'Email del Negocio'
                   }
-        widgets = { 'nombre': forms.TextInput(attrs={'class':'form-control','placeholder':"Negocio" }),
-                    'nit': forms.TextInput(attrs={'class':'form-control','placeholder':"Nit"}),
+        widgets = { 'nombre': forms.TextInput(attrs={'class':'form-control teli','placeholder':"Negocio" }),
+                    'nit': forms.TextInput(attrs={'class':'form-control teli','placeholder':"Nit"}),
                     'telefono': forms.TextInput(attrs={'class':'form-control teli','placeholder':"Telefono",'id':'telefonoId'}),
                     'email': forms.EmailInput(attrs={'class':'form-control teli','placeholder':"Correo Electrónico",'id':'emailId'}),
                   }
@@ -50,7 +50,7 @@ class NegocioForm_dos(forms.ModelForm):
         self.fields['email'].required = False
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
-                'class': 'form-control'
+                'class': 'form-control teli'
             })
 
 class DetalleUsuarioNegocioForm(forms.ModelForm):

@@ -25,6 +25,10 @@
     <form class="form-signin" method="post">
 			{% csrf_token %}
 
+      <div id="errortelefono">
+
+      </div>
+
       {% if form.errors %}
           {% for field in form %}
               {% for error in field.errors %}
@@ -93,4 +97,37 @@
 	<p>Lo siento, no tiene permisos para este contenido :(</p>
 {% endif %}
 
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function() {
+
+ var validacion_nombre = /^([A-Za-zñÑáéíóúÁÉÍÓÚ\s])*$/;
+ var validacion_numeros = /^([0-9])*$/;
+ var validacion_email = /^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$/;
+
+$('.teli').keyup(function() {
+  var telefono = $("#telefonoId").val();
+  var email = $("#emailId").val();
+
+   if (telefono != "" && !validacion_numeros.test(telefono)){
+     $("#submit_button").attr( "disabled", "disabled" );
+     $('#telefonoId').focus();
+     $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Ingrese un número de teléfono válido sin dejar espacios.</li></ul></div>');
+  } else if (email != "" && !validacion_email.test(email)){
+    $("#submit_button").attr( "disabled", "disabled" );
+    $('#emailId').focus();
+    $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Ingrese una dirección de correo válida.</li></ul></div>');
+  } else {
+    $("#submit_button").removeAttr("disabled");
+    $('#errortelefono').html('');
+  }
+
+});
+
+
+});
+
+</script>
 {% endblock %}
