@@ -291,46 +291,48 @@ def escojer_negocio(request):
 def principal_app(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
-    # producto de poco stock
-    negocioo = []
-    for x in negocio_producto:
-        if x.producto_id.stock <= 9 and x.producto_id.estado=='1':
-            negocioo.append(x)
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
+        # producto de poco stock
+        negocioo = []
+        for x in negocio_producto:
+            if x.producto_id.stock <= 9 and x.producto_id.estado=='1':
+                negocioo.append(x)
 
-    array_producto = []
-    array_producto_name = []
-    for f in negocio_producto:
-        array_producto.append(f.producto_id.id)
-        array_producto_name.append(f.producto_id.nombre)
+        array_producto = []
+        array_producto_name = []
+        for f in negocio_producto:
+            array_producto.append(f.producto_id.id)
+            array_producto_name.append(f.producto_id.nombre)
 
-    venta = Venta.objects.all()
-    array_venta = []
-    for f in venta:
-        array_venta.append(f.id)
-    detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto)
+        venta = Venta.objects.all()
+        array_venta = []
+        for f in venta:
+            array_venta.append(f.id)
+        detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto)
 
-    dic_arr = {} # diccionario de productos totales
-    for i in array_producto_name:
-        dic_arr.update({ i: [] })
+        dic_arr = {} # diccionario de productos totales
+        for i in array_producto_name:
+            dic_arr.update({ i: [] })
 
-    for x in detalles__ventas: # for para guardar la cantidad de productos vendidos individuales
-        for i in dic_arr:
-            if x.producto_id.nombre == i:
-                dic_arr[i].append(x.cantidad)
+        for x in detalles__ventas: # for para guardar la cantidad de productos vendidos individuales
+            for i in dic_arr:
+                if x.producto_id.nombre == i:
+                    dic_arr[i].append(x.cantidad)
 
-    dic_result = {}
-    for key, value in dic_arr.items(): # iterar los item del diccionario
-        suma = 0 # variable donde se guardará la suma de los elementos
-        for v in value: # iterar los elementos
-            suma += v # sumar los elementos y guardarlos
-        dic_result[key] = suma # añadir al nuevo diccionario la misma llave con la suma de los elementos
+        dic_result = {}
+        for key, value in dic_arr.items(): # iterar los item del diccionario
+            suma = 0 # variable donde se guardará la suma de los elementos
+            for v in value: # iterar los elementos
+                suma += v # sumar los elementos y guardarlos
+            dic_result[key] = suma # añadir al nuevo diccionario la misma llave con la suma de los elementos
 
-    resultado = sorted(dic_result.items(), key=operator.itemgetter(1))
-    resultado.reverse()
-    print(resultado)
+        resultado = sorted(dic_result.items(), key=operator.itemgetter(1))
+        resultado.reverse()
 
-    return render( request, 'app/index_app.html', {'negocioo':negocioo, 'detalles__ventas': detalles__ventas, 'negocio_id': negocio, 'resultado': resultado } )
+        return render( request, 'app/index_app.html', {'negocioo':negocioo, 'detalles__ventas': detalles__ventas, 'negocio_id': negocio, 'resultado': resultado } )
+    else:
+        return render(request, 'error.html' )
 
 # registro de empleados
 @login_required(login_url="/")
@@ -338,124 +340,139 @@ def registrar_empleado(request, pk):
     error = False
     usuario = Usuario.objects.get(id=request.user.id)
     negocio_actual = Negocio.objects.get(id=pk)
-    us = Usuario.objects.all()
-    if request.method == 'POST':
-        validators = FormRegistroValidator(request.POST)
-        validators.required = ['nombre', 'apellido', 'email', 'username', 'password1']
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio_actual.id, usuario_id=usuario).exists():
+        us = Usuario.objects.all()
+        if request.method == 'POST':
+            validators = FormRegistroValidator(request.POST)
+            validators.required = ['nombre', 'apellido', 'email', 'username', 'password1']
 
-        if validators.is_valid():
-            try:
-                usuario = User()
-                usuario.first_name = request.POST['nombre']
-                usuario.last_name = request.POST['apellido']
-                usuario.email = request.POST['email']
-                usuario.username = request.POST['username']
-                usuario.password = make_password(request.POST['password1'])
-                usuario.is_active = True
-                grupo = Group.objects.get(name="empleado_negocio")
-                usuario.save()
-                usuario.groups.add(grupo)
-                usuario.save()
+            if validators.is_valid():
+                try:
+                    usuario = User()
+                    usuario.first_name = request.POST['nombre']
+                    usuario.last_name = request.POST['apellido']
+                    usuario.email = request.POST['email']
+                    usuario.username = request.POST['username']
+                    usuario.password = make_password(request.POST['password1'])
+                    usuario.is_active = True
+                    grupo = Group.objects.get(name="empleado_negocio")
+                    usuario.save()
+                    usuario.groups.add(grupo)
+                    usuario.save()
 
-                myusuario = Usuario()
-                myusuario.id = usuario
-                myusuario.documento = request.POST['documento']
-                myusuario.telefono = request.POST['telefono']
+                    myusuario = Usuario()
+                    myusuario.id = usuario
+                    myusuario.documento = request.POST['documento']
+                    myusuario.telefono = request.POST['telefono']
 
-                myusuario.save()
-                negocio_usuario = detalle_usuario_negocio()
-                negocio_usuario.usuario_id = myusuario
-                negocio_usuario.negocio_id = negocio_actual
-                negocio_usuario.save()
+                    myusuario.save()
+                    negocio_usuario = detalle_usuario_negocio()
+                    negocio_usuario.usuario_id = myusuario
+                    negocio_usuario.negocio_id = negocio_actual
+                    negocio_usuario.save()
 
-                return redirect('list_usuarios', pk=negocio_actual.pk)
+                    return redirect('list_usuarios', pk=negocio_actual.pk)
 
-            except Exception as e:
-                messages.error(request, 'El usuario no es valido, por favor eliga otro usuario.')
+                except Exception as e:
+                    messages.error(request, 'El usuario no es valido, por favor eliga otro usuario.')
 
-        else:
-            messages.error(request, validators.getMessage() )
-        # Agregar el usuario a la base de datos
-    return render( request, 'app/administracion/registrar_empleado.html', {'negocio_id': negocio_actual, 'us':us} )
+            else:
+                messages.error(request, validators.getMessage() )
+            # Agregar el usuario a la base de datos
+        return render( request, 'app/administracion/registrar_empleado.html', {'negocio_id': negocio_actual, 'us':us} )
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def perfil_usuario(request, pk):
     negocio_actual = Negocio.objects.get(id=pk)
     usuario = User.objects.get(id=request.user.id)
     miusuario = Usuario.objects.get(id=usuario.id)
-    error = False
-    if request.method == 'POST':
-        # import pdb; pdb.set_trace()
-        usuario.email = request.POST.get('email')
-        usuario.first_name = request.POST.get('first_name')
-        usuario.last_name = request.POST.get('last_name')
-        usuario.save()
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio_actual.id, usuario_id=miusuario).exists():
+        error = False
+        if request.method == 'POST':
+            # import pdb; pdb.set_trace()
+            usuario.email = request.POST.get('email')
+            usuario.first_name = request.POST.get('first_name')
+            usuario.last_name = request.POST.get('last_name')
+            usuario.save()
 
-        miusuario.documento = request.POST.get('documento')
-        miusuario.telefono = request.POST.get('telefono')
-        miusuario.direccion = request.POST.get('direccion')
-        miusuario.save()
+            miusuario.documento = request.POST.get('documento')
+            miusuario.telefono = request.POST.get('telefono')
+            miusuario.direccion = request.POST.get('direccion')
+            miusuario.save()
 
-        return HttpResponseRedirect(request.path_info) #redirige misma pag
+            return HttpResponseRedirect(request.path_info) #redirige misma pag
 
-    return render(request, 'app/administracion/perfil_usuario.html', {'usu': miusuario, 'negocio_id': negocio_actual } )
+        return render(request, 'app/administracion/perfil_usuario.html', {'usu': miusuario, 'negocio_id': negocio_actual } )
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def list_usuarios(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    print(negocio)
-    lista_usuarios = detalle_usuario_negocio.objects.filter(negocio_id=negocio)
-    for x in lista_usuarios:
-        print(x)
-    return render(request, 'app/administracion/lista_usuarios.html', {'usuarioss':lista_usuarios,'negocio_id': negocio})
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        lista_usuarios = detalle_usuario_negocio.objects.filter(negocio_id=negocio)
+        for x in lista_usuarios:
+            print(x)
+        return render(request, 'app/administracion/lista_usuarios.html', {'usuarioss':lista_usuarios,'negocio_id': negocio})
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def modificar_contra(request, pk):
     error = False
-    # negocio_actual = Negocio.objects.get(id=pk)
+    negocio_actual = Negocio.objects.get(id=pk)
     usuario_contra = User.objects.get(id=request.user.id)
-    if request.method == 'POST':
-        usuario_contra.password = make_password(request.POST['password1'])
-        usuario_contra.save()
-        # log(request, "CONTRASEÑA_MODIFICADA")
-        return HttpResponseRedirect(request.path_info) #redirige misma pag
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio_actual.id, usuario_id=usuario_contra.id).exists():
+        if request.method == 'POST':
+            usuario_contra.password = make_password(request.POST['password1'])
+            usuario_contra.save()
+            # log(request, "CONTRASEÑA_MODIFICADA")
+            return HttpResponseRedirect(request.path_info) #redirige misma pag
+    else:
+        return render(request, 'error.html' )
 
 # proveedor
 @login_required(login_url="/")
 def view_proveedor(request, pk):
     negocio_actual = Negocio.objects.get(id=pk)
     usuario = Usuario.objects.get(id=request.user.id)
-    negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=negocio_actual.id, producto_id__isnull=True)
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio_actual.id, usuario_id=usuario).exists():
+        negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=negocio_actual.id, producto_id__isnull=True)
 
-    return render(request, 'app/proveedor/view_proveedor.html', {'negocio_proveedor':negocio_proveedor, 'negocio_id': negocio_actual} )
+        return render(request, 'app/proveedor/view_proveedor.html', {'negocio_proveedor':negocio_proveedor, 'negocio_id': negocio_actual} )
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def agregar_proveedor(request, pk):
     usu = Usuario.objects.get(id=request.user.id)
     negocioo = Negocio.objects.get(id=pk)
-    print(negocioo)
-    print('-----------------')
-    # import pdb; pdb.set_trace()
-    if request.method == "POST":
-        if request.is_ajax():
-            proveedor = Proveedor()
-            proveedor.nombre = request.POST.get('nombre_proveedor')
-            proveedor.razon_social = request.POST.get('razon_social_proveedor')
-            proveedor.direccion = request.POST.get('direccion_proveedor')
-            proveedor.telefono = request.POST.get('telefono_proveedor')
-            proveedor.celular = request.POST.get('celular_proveedor')
-            proveedor.email = request.POST.get('email_proveedor')
-            proveedor.save()
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocioo.id, usuario_id=usu).exists():
+        # import pdb; pdb.set_trace()
+        if request.method == "POST":
+            if request.is_ajax():
+                proveedor = Proveedor()
+                proveedor.nombre = request.POST.get('nombre_proveedor')
+                proveedor.razon_social = request.POST.get('razon_social_proveedor')
+                proveedor.direccion = request.POST.get('direccion_proveedor')
+                proveedor.telefono = request.POST.get('telefono_proveedor')
+                proveedor.celular = request.POST.get('celular_proveedor')
+                proveedor.email = request.POST.get('email_proveedor')
+                proveedor.save()
 
-            proveedor2 = Proveedor.objects.latest('id')
-            negocio_proveedor = detalle_negocio_producto()
-            negocio_proveedor.negocio_id = negocioo
-            negocio_proveedor.proveedor_id = proveedor2
-            negocio_proveedor.save()
-            return HttpResponse('ok')
+                proveedor2 = Proveedor.objects.latest('id')
+                negocio_proveedor = detalle_negocio_producto()
+                negocio_proveedor.negocio_id = negocioo
+                negocio_proveedor.proveedor_id = proveedor2
+                negocio_proveedor.save()
+                return HttpResponse('ok')
 
-    return render(request, 'app/proveedor/agregar_proveedor.html', {'negocio_id': negocioo} )
+        return render(request, 'app/proveedor/agregar_proveedor.html', {'negocio_id': negocioo} )
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def editar_proveedor(request, pk):
@@ -503,43 +520,48 @@ def eliminar_proveedor(request, pk):
 def view_producto(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
 
-    return render(request, 'app/producto/view_producto.html', {'negocio_producto':negocio_producto, 'negocio_id': negocio} )
+        return render(request, 'app/producto/view_producto.html', {'negocio_producto':negocio_producto, 'negocio_id': negocio} )
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def agregar_producto(request, pk):
-
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
-    # import pdb; pdb.set_trace()
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
+        # import pdb; pdb.set_trace()
 
-    if request.method == "POST":
-        form = ProductoForm(request.POST, request.FILES)
-        if form.is_valid():
-            producto = form.save(commit=False)
-            producto.estado = '1'
-            producto.save()
+        if request.method == "POST":
+            form = ProductoForm(request.POST, request.FILES)
+            if form.is_valid():
+                producto = form.save(commit=False)
+                producto.estado = '1'
+                producto.save()
 
-            producto2 = Producto.objects.latest('id')
-            proveedor_recibido = request.POST.get('negocio_proveedor')
-            proveedor_p = Proveedor.objects.get(id=proveedor_recibido)
+                producto2 = Producto.objects.latest('id')
+                proveedor_recibido = request.POST.get('negocio_proveedor')
+                proveedor_p = Proveedor.objects.get(id=proveedor_recibido)
 
-            negocio_producto = detalle_negocio_producto()
-            negocio_producto.negocio_id = negocio
-            negocio_producto.producto_id = producto2
-            negocio_producto.proveedor_id = proveedor_p
-            negocio_producto.save()
+                negocio_producto = detalle_negocio_producto()
+                negocio_producto.negocio_id = negocio
+                negocio_producto.producto_id = producto2
+                negocio_producto.proveedor_id = proveedor_p
+                negocio_producto.save()
 
-            producto2.imagen = request.FILES.get('imagen')
-            producto2.save()
+                producto2.imagen = request.FILES.get('imagen')
+                producto2.save()
 
-            return redirect('view_producto', pk=negocio.pk)
+                return redirect('view_producto', pk=negocio.pk)
+        else:
+            form = ProductoForm()
+
+        return render(request, 'app/producto/agregar_producto.html', {'form' : form, 'negocio_proveedor': negocio_proveedor,'negocio_id': negocio} )
     else:
-        form = ProductoForm()
-
-    return render(request, 'app/producto/agregar_producto.html', {'form' : form, 'negocio_proveedor': negocio_proveedor,'negocio_id': negocio} )
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def detalle_producto(request, pk):
@@ -589,227 +611,245 @@ def eliminar_producto(request, pk):
 def view_de_compra(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    return render(request, 'app/compra/view_compra.html',{'negocio_id': negocio})
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        return render(request, 'app/compra/view_compra.html',{'negocio_id': negocio})
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def view_de_reportes_compra(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    return render(request, 'app/compra/view_reportes_compra.html',{'negocio_id': negocio})
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        return render(request, 'app/compra/view_reportes_compra.html',{'negocio_id': negocio})
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def list_compras(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
-    array_proveedor = []
-    for f in negocio_proveedor:
-        array_proveedor.append(f.proveedor_id.id)
-    compra = Compra.objects.all()
-    array_compra = []
-    for f in compra:
-        array_compra.append(f.id)
-    detalles__compras = detalle_compra.objects.filter(compra_id__in=array_compra, proveedor_id__in=array_proveedor)
-    dic = {}
-    var = -1
-    for i in detalles__compras:
-        if i.compra_id.id == var:
-            var = i.compra_id.id
-        else:
-            dic[i.compra_id.id] = {
-                'id_compra':i.compra_id.id,
-                'fecha':convertir_fecha(i.compra_id.fecha),
-                'proveedor':i.proveedor_id.razon_social,
-                'total':i.compra_id.total,
-            }
-            var = i.compra_id.id
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        negocio_proveedor = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
+        array_proveedor = []
+        for f in negocio_proveedor:
+            array_proveedor.append(f.proveedor_id.id)
+        compra = Compra.objects.all()
+        array_compra = []
+        for f in compra:
+            array_compra.append(f.id)
+        detalles__compras = detalle_compra.objects.filter(compra_id__in=array_compra, proveedor_id__in=array_proveedor)
+        dic = {}
+        var = -1
+        for i in detalles__compras:
+            if i.compra_id.id == var:
+                var = i.compra_id.id
+            else:
+                dic[i.compra_id.id] = {
+                    'id_compra':i.compra_id.id,
+                    'fecha':convertir_fecha(i.compra_id.fecha),
+                    'proveedor':i.proveedor_id.razon_social,
+                    'total':i.compra_id.total,
+                }
+                var = i.compra_id.id
 
-    # valores_ord = dict(sorted(dic.items(), reverse=True)) # reverse valores
-    print(dic)
-    return HttpResponse(toJSON(dic), content_type='application/json')
+        # valores_ord = dict(sorted(dic.items(), reverse=True)) # reverse valores
+        print(dic)
+        return HttpResponse(toJSON(dic), content_type='application/json')
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def list_compras_reportes(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
-    array_producto = []
-    for f in negocio_producto:
-        array_producto.append(f.producto_id.id)
-    compra = Compra.objects.all()
-    array_compra = []
-    for f in compra:
-        array_compra.append(f.id)
-    detalles__compras = detalle_compra.objects.filter(compra_id__in=array_compra, producto_id__in=array_producto)
-    dic = {}
-    va = 1
-    for i in detalles__compras:
-            dic[va] = {
-                'id_compra':i.compra_id.id,
-                'fecha':convertir_fecha(i.compra_id.fecha),
-                'total':i.compra_id.total,
-                'proveedor':i.proveedor_id.razon_social,
-                'producto_id':i.producto_id.id,
-                'producto_nombre':i.producto_id.nombre,
-                'producto_stock_nuevo':i.cantidad_stock_momento,
-                'producto_cantidad':i.cantidad,
-                'valor_unitario':i.valor_unitario,
-                'producto_total':i.total_producto,
-                'producto_stock_anterior':i.cantidad_stock_anterior,
-            }
-            va += 1
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
+        array_producto = []
+        for f in negocio_producto:
+            array_producto.append(f.producto_id.id)
+        compra = Compra.objects.all()
+        array_compra = []
+        for f in compra:
+            array_compra.append(f.id)
+        detalles__compras = detalle_compra.objects.filter(compra_id__in=array_compra, producto_id__in=array_producto)
+        dic = {}
+        va = 1
+        for i in detalles__compras:
+                dic[va] = {
+                    'id_compra':i.compra_id.id,
+                    'fecha':convertir_fecha(i.compra_id.fecha),
+                    'total':i.compra_id.total,
+                    'proveedor':i.proveedor_id.razon_social,
+                    'producto_id':i.producto_id.id,
+                    'producto_nombre':i.producto_id.nombre,
+                    'producto_stock_nuevo':i.cantidad_stock_momento,
+                    'producto_cantidad':i.cantidad,
+                    'valor_unitario':i.valor_unitario,
+                    'producto_total':i.total_producto,
+                    'producto_stock_anterior':i.cantidad_stock_anterior,
+                }
+                va += 1
 
-    print(dic)
-    return HttpResponse(toJSON(dic), content_type='application/json')
+        print(dic)
+        return HttpResponse(toJSON(dic), content_type='application/json')
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def view_de_reportes_gastos(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    return render(request, 'app/compra/view_reporte_gastos.html',{'negocio_id': negocio})
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        return render(request, 'app/compra/view_reporte_gastos.html',{'negocio_id': negocio})
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def list_compras_reportes_gastos(request, pk):
     now = datetime.datetime.now()
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
-    array_producto = []
-    for f in negocio_producto:
-        array_producto.append(f.producto_id.id)
-    compra = Compra.objects.all()
-    array_compra = []
-    for f in compra:
-        array_compra.append(f.id)
-    detalles__compras = detalle_compra.objects.filter(compra_id__in=array_compra, producto_id__in=array_producto) # compras por negocio y productos
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
+        array_producto = []
+        for f in negocio_producto:
+            array_producto.append(f.producto_id.id)
+        compra = Compra.objects.all()
+        array_compra = []
+        for f in compra:
+            array_compra.append(f.id)
+        detalles__compras = detalle_compra.objects.filter(compra_id__in=array_compra, producto_id__in=array_producto) # compras por negocio y productos
 
-    #funcion para guardar total compras por mes de anio actual
-    dic_mes = { '01':[],'02':[],'03':[],'04':[],'05':[],'06':[],'07':[],'08':[],'09':[],'10':[],'11':[],'12':[]} # diccionario de ventas mes anio actual totales
-    anio_actual = now.year # anio actual
-    for f in detalles__compras:
-        x = convertir_fecha(f.compra_id.fecha)
-        if str(x.split('-')[0]) == str(anio_actual):
-            for key in dic_mes:
-                if key == str(x.split('-')[1]):
-                    dic_mes[key].append(f.total_producto)
+        #funcion para guardar total compras por mes de anio actual
+        dic_mes = { '01':[],'02':[],'03':[],'04':[],'05':[],'06':[],'07':[],'08':[],'09':[],'10':[],'11':[],'12':[]} # diccionario de ventas mes anio actual totales
+        anio_actual = now.year # anio actual
+        for f in detalles__compras:
+            x = convertir_fecha(f.compra_id.fecha)
+            if str(x.split('-')[0]) == str(anio_actual):
+                for key in dic_mes:
+                    if key == str(x.split('-')[1]):
+                        dic_mes[key].append(f.total_producto)
 
-    dic_meses_anio_actual = {}
-    for key, value in dic_mes.items(): # iterar los item del diccionario
-        suma = 0 # variable donde se guardará la suma de los elementos
-        for v in value: # iterar los elementos
-            suma += v # sumar los elementos y guardarlos
-        dic_meses_anio_actual[key] = suma # añadir al nuevo diccionario la misma llave con la suma de los elementos
+        dic_meses_anio_actual = {}
+        for key, value in dic_mes.items(): # iterar los item del diccionario
+            suma = 0 # variable donde se guardará la suma de los elementos
+            for v in value: # iterar los elementos
+                suma += v # sumar los elementos y guardarlos
+            dic_meses_anio_actual[key] = suma # añadir al nuevo diccionario la misma llave con la suma de los elementos
 
-    # funcion para guardar totalcompras por dia de todos los meses del anio actal
-    dic_mes_dia = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} # dic inicial
-    dic_meses_dia_anio_actual = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} #dic final
-    for f in detalles__compras: # agrega diccionario dias a las llaves de meses
-        w = convertir_fecha(f.compra_id.fecha)
-        x = w.split(' ')[0]
-        if str(x.split('-')[0]) == str(anio_actual):
-            dic_mes_dia[x.split('-')[1]].update({ x.split('-')[2] : [] })
-            dic_meses_dia_anio_actual[x.split('-')[1]].update({ x.split('-')[2] : [] })
+        # funcion para guardar totalcompras por dia de todos los meses del anio actal
+        dic_mes_dia = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} # dic inicial
+        dic_meses_dia_anio_actual = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} #dic final
+        for f in detalles__compras: # agrega diccionario dias a las llaves de meses
+            w = convertir_fecha(f.compra_id.fecha)
+            x = w.split(' ')[0]
+            if str(x.split('-')[0]) == str(anio_actual):
+                dic_mes_dia[x.split('-')[1]].update({ x.split('-')[2] : [] })
+                dic_meses_dia_anio_actual[x.split('-')[1]].update({ x.split('-')[2] : [] })
 
-    for ff in detalles__compras: #agrega los totales de compras por dias del mes
-         w = convertir_fecha(ff.compra_id.fecha)
-         x = w.split(' ')[0]
-         if str(x.split('-')[0]) == str(anio_actual):
-             for key in dic_mes_dia:
-                 if key == str(x.split('-')[1]):
-                     for key2 in dic_mes_dia[key]:
-                         if key2 == str(x.split('-')[2]):
-                             dic_mes_dia[key][key2].append(ff.total_producto)
+        for ff in detalles__compras: #agrega los totales de compras por dias del mes
+             w = convertir_fecha(ff.compra_id.fecha)
+             x = w.split(' ')[0]
+             if str(x.split('-')[0]) == str(anio_actual):
+                 for key in dic_mes_dia:
+                     if key == str(x.split('-')[1]):
+                         for key2 in dic_mes_dia[key]:
+                             if key2 == str(x.split('-')[2]):
+                                 dic_mes_dia[key][key2].append(ff.total_producto)
 
-    for llave in dic_mes_dia: #suma los totales de compras por dia del mes
-        for key, value in dic_mes_dia[llave].items():
-            suma = 0
-            for v in value:
-                suma += v
-            dic_meses_dia_anio_actual[llave][key] = suma
-
-    # funcion para guardar total compras por proveedor proveedor dia de todos los meses del anio actal
-    dic_mes_dia_prov = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} # dic inicial
-    dic_meses_dia_anio_actual_prov = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} #dic final
-    for f in detalles__compras: # agrega diccionario dias a las llaves de meses
-        w = convertir_fecha(f.compra_id.fecha)
-        x = w.split(' ')[0]
-        if str(x.split('-')[0]) == str(anio_actual):
-            dic_mes_dia_prov[x.split('-')[1]].update({ x.split('-')[2] : {} })
-            dic_meses_dia_anio_actual_prov[x.split('-')[1]].update({ x.split('-')[2] : {} })
-
-    for ff in detalles__compras: # agrega diccionario proveedores a las llaves dias a las llaves de meses
-        w = convertir_fecha(ff.compra_id.fecha)
-        x = w.split(' ')[0]
-        if str(x.split('-')[0]) == str(anio_actual):
-            for dia in dic_mes_dia_prov[x.split('-')[1]]:
-                dic_mes_dia_prov[x.split('-')[1]][dia].update({ ff.proveedor_id.razon_social : [] })
-                dic_meses_dia_anio_actual_prov[x.split('-')[1]][dia].update({ ff.proveedor_id.razon_social : [] })
-
-    for fff in detalles__compras: #agrega los totales de compras por dias del mes
-        w = convertir_fecha(fff.compra_id.fecha)
-        x = w.split(' ')[0]
-        if str(x.split('-')[0]) == str(anio_actual):
-            for key in dic_mes_dia_prov:
-                if key == str(x.split('-')[1]):
-                    for dia in dic_mes_dia_prov[key]:
-                        if dia == str(x.split('-')[2]):
-                            for prov in dic_mes_dia_prov[key][dia]:
-                                if prov == str(fff.proveedor_id.razon_social):
-                                    dic_mes_dia_prov[key][dia][prov].append(fff.total_producto)
-
-    for mes in dic_mes_dia_prov: #suma los totales de compras por dia del mes
-        for dia in dic_mes_dia_prov[mes]:
-            for prov, value in dic_mes_dia_prov[mes][dia].items():
+        for llave in dic_mes_dia: #suma los totales de compras por dia del mes
+            for key, value in dic_mes_dia[llave].items():
                 suma = 0
                 for v in value:
                     suma += v
-                dic_meses_dia_anio_actual_prov[mes][dia][prov] = suma
+                dic_meses_dia_anio_actual[llave][key] = suma
 
-    # funcion total compras por mes y anio
-    dic_anio_mes = {}
-    dic_anio_meses_estesi = {}
-    for f in detalles__compras: # guarda llave anios
-        w = convertir_fecha(f.compra_id.fecha)
-        x = w.split(' ')[0]
-        dic_anio_mes.update({x.split('-')[0]:{}})
-        dic_anio_meses_estesi.update({x.split('-')[0]:{}})
+        # funcion para guardar total compras por proveedor proveedor dia de todos los meses del anio actal
+        dic_mes_dia_prov = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} # dic inicial
+        dic_meses_dia_anio_actual_prov = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} #dic final
+        for f in detalles__compras: # agrega diccionario dias a las llaves de meses
+            w = convertir_fecha(f.compra_id.fecha)
+            x = w.split(' ')[0]
+            if str(x.split('-')[0]) == str(anio_actual):
+                dic_mes_dia_prov[x.split('-')[1]].update({ x.split('-')[2] : {} })
+                dic_meses_dia_anio_actual_prov[x.split('-')[1]].update({ x.split('-')[2] : {} })
 
-    for ff in detalles__compras: # guarda mes anios
-        w = convertir_fecha(ff.compra_id.fecha)
-        x = w.split(' ')[0]
-        for key in dic_anio_mes:
-            if str(x.split('-')[0]) == key:
-                dic_anio_mes[key].update({ x.split('-')[1] : [] })
-                dic_anio_meses_estesi[key].update({ x.split('-')[1] : [] })
+        for ff in detalles__compras: # agrega diccionario proveedores a las llaves dias a las llaves de meses
+            w = convertir_fecha(ff.compra_id.fecha)
+            x = w.split(' ')[0]
+            if str(x.split('-')[0]) == str(anio_actual):
+                for dia in dic_mes_dia_prov[x.split('-')[1]]:
+                    dic_mes_dia_prov[x.split('-')[1]][dia].update({ ff.proveedor_id.razon_social : [] })
+                    dic_meses_dia_anio_actual_prov[x.split('-')[1]][dia].update({ ff.proveedor_id.razon_social : [] })
 
-    for fff in detalles__compras: #agrega los totales de compras por mes del anio
-         w = convertir_fecha(fff.compra_id.fecha)
-         x = w.split(' ')[0]
-         for key in dic_anio_mes:
-             if key == str(x.split('-')[0]): # anio
-                 for key2 in dic_anio_mes[key]:
-                     if key2 == str(x.split('-')[1]): # mes
-                         dic_anio_mes[key][key2].append(fff.total_producto)
+        for fff in detalles__compras: #agrega los totales de compras por dias del mes
+            w = convertir_fecha(fff.compra_id.fecha)
+            x = w.split(' ')[0]
+            if str(x.split('-')[0]) == str(anio_actual):
+                for key in dic_mes_dia_prov:
+                    if key == str(x.split('-')[1]):
+                        for dia in dic_mes_dia_prov[key]:
+                            if dia == str(x.split('-')[2]):
+                                for prov in dic_mes_dia_prov[key][dia]:
+                                    if prov == str(fff.proveedor_id.razon_social):
+                                        dic_mes_dia_prov[key][dia][prov].append(fff.total_producto)
 
-    for llave in dic_anio_mes: #suma los totales de compras mes de anios
-        for key, value in dic_anio_mes[llave].items():
-            suma = 0
-            for v in value:
-                suma += v
-            dic_anio_meses_estesi[llave][key] = suma
+        for mes in dic_mes_dia_prov: #suma los totales de compras por dia del mes
+            for dia in dic_mes_dia_prov[mes]:
+                for prov, value in dic_mes_dia_prov[mes][dia].items():
+                    suma = 0
+                    for v in value:
+                        suma += v
+                    dic_meses_dia_anio_actual_prov[mes][dia][prov] = suma
 
-    # dic_meses_anio_actual = diccionario con el total por meses del anio vigente
-    # dic_meses_dia_anio_actual_prov = diccionario con total por proveedor por dia de todos los meses del anio vigente
-    # dic_meses_dia_anio_actual = diccionario con el total por dia de todos los meses del anio vigente
-    # dic_anio_meses_estesi = diccionario con los totales de venta por meses de cada anio registrado
+        # funcion total compras por mes y anio
+        dic_anio_mes = {}
+        dic_anio_meses_estesi = {}
+        for f in detalles__compras: # guarda llave anios
+            w = convertir_fecha(f.compra_id.fecha)
+            x = w.split(' ')[0]
+            dic_anio_mes.update({x.split('-')[0]:{}})
+            dic_anio_meses_estesi.update({x.split('-')[0]:{}})
 
-    dic_final = {'mes_anio_actual':{},'dia_mes_anio_actual':{},'dia_mes_prov_anio_actual':{},'meses_anios':{}}
-    dic_final['mes_anio_actual'].update(dic_meses_anio_actual)
-    dic_final['dia_mes_anio_actual'].update(dic_meses_dia_anio_actual)
-    dic_final['dia_mes_prov_anio_actual'].update(dic_meses_dia_anio_actual_prov)
-    dic_final['meses_anios'].update(dic_anio_meses_estesi)
+        for ff in detalles__compras: # guarda mes anios
+            w = convertir_fecha(ff.compra_id.fecha)
+            x = w.split(' ')[0]
+            for key in dic_anio_mes:
+                if str(x.split('-')[0]) == key:
+                    dic_anio_mes[key].update({ x.split('-')[1] : [] })
+                    dic_anio_meses_estesi[key].update({ x.split('-')[1] : [] })
 
-    return HttpResponse(toJSON(dic_final), content_type='application/json')
+        for fff in detalles__compras: #agrega los totales de compras por mes del anio
+             w = convertir_fecha(fff.compra_id.fecha)
+             x = w.split(' ')[0]
+             for key in dic_anio_mes:
+                 if key == str(x.split('-')[0]): # anio
+                     for key2 in dic_anio_mes[key]:
+                         if key2 == str(x.split('-')[1]): # mes
+                             dic_anio_mes[key][key2].append(fff.total_producto)
+
+        for llave in dic_anio_mes: #suma los totales de compras mes de anios
+            for key, value in dic_anio_mes[llave].items():
+                suma = 0
+                for v in value:
+                    suma += v
+                dic_anio_meses_estesi[llave][key] = suma
+
+        # dic_meses_anio_actual = diccionario con el total por meses del anio vigente
+        # dic_meses_dia_anio_actual_prov = diccionario con total por proveedor por dia de todos los meses del anio vigente
+        # dic_meses_dia_anio_actual = diccionario con el total por dia de todos los meses del anio vigente
+        # dic_anio_meses_estesi = diccionario con los totales de venta por meses de cada anio registrado
+
+        dic_final = {'mes_anio_actual':{},'dia_mes_anio_actual':{},'dia_mes_prov_anio_actual':{},'meses_anios':{}}
+        dic_final['mes_anio_actual'].update(dic_meses_anio_actual)
+        dic_final['dia_mes_anio_actual'].update(dic_meses_dia_anio_actual)
+        dic_final['dia_mes_prov_anio_actual'].update(dic_meses_dia_anio_actual_prov)
+        dic_final['meses_anios'].update(dic_anio_meses_estesi)
+
+        return HttpResponse(toJSON(dic_final), content_type='application/json')
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def detalle_de_compra(request, pk):
@@ -901,41 +941,44 @@ def agregar_compra(request, pk):
         # import pdb; pdb.set_trace()
         usuario = Usuario.objects.get(id=request.user.id)
         negocio = Negocio.objects.get(id=pk)
-        detalle_producto_negocio = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
+        if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+            detalle_producto_negocio = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
 
-        for row in detalle_producto_negocio:
-            negocioo = row.negocio_id.id
+            for row in detalle_producto_negocio:
+                negocioo = row.negocio_id.id
 
-        if request.method == "POST":
-            form = CompraForm(request.POST)
-            detalle_compra_form_set = DetalleCompraFormSet(request.POST, form_kwargs={'user': negocioo})
-            if form.is_valid() and detalle_compra_form_set.is_valid():
-                compra = form.save(commit=False)
-                compra.save()
-                detalle_compra_form_set.instance = compra
-                detalle_compra_form_set.save()
+            if request.method == "POST":
+                form = CompraForm(request.POST)
+                detalle_compra_form_set = DetalleCompraFormSet(request.POST, form_kwargs={'user': negocioo})
+                if form.is_valid() and detalle_compra_form_set.is_valid():
+                    compra = form.save(commit=False)
+                    compra.save()
+                    detalle_compra_form_set.instance = compra
+                    detalle_compra_form_set.save()
 
-                compra_stock = detalle_compra.objects.filter(compra_id=compra)
-                for row in compra_stock:
-                    producto_stock = Producto.objects.get(id=row.producto_id.id)
-                    cantidad_compra = row.cantidad
-                    cantidad_stock = producto_stock.stock
+                    compra_stock = detalle_compra.objects.filter(compra_id=compra)
+                    for row in compra_stock:
+                        producto_stock = Producto.objects.get(id=row.producto_id.id)
+                        cantidad_compra = row.cantidad
+                        cantidad_stock = producto_stock.stock
 
-                    row.cantidad_stock_anterior = cantidad_stock
-                    row.save()
+                        row.cantidad_stock_anterior = cantidad_stock
+                        row.save()
 
-                    sum_stock = cantidad_compra + cantidad_stock
-                    producto_stock.stock = sum_stock
-                    row.cantidad_stock_momento = sum_stock
-                    row.save()
-                    producto_stock.save()
+                        sum_stock = cantidad_compra + cantidad_stock
+                        producto_stock.stock = sum_stock
+                        row.cantidad_stock_momento = sum_stock
+                        row.save()
+                        producto_stock.save()
 
-                return redirect('view_compra', pk=negocio.pk)
+                    return redirect('view_compra', pk=negocio.pk)
+            else:
+                form = CompraForm()
+                detalle_compra_formset=DetalleCompraFormSet(form_kwargs={'user': negocioo}) # pass parameter to the form
+
+            return render(request, 'app/compra/agregar_compra.html', {'form' : form, 'detalle_compra_formset': detalle_compra_formset, 'negocio_id': negocio, 'proveedores':detalle_producto_negocio } )
         else:
-            form = CompraForm()
-            detalle_compra_formset=DetalleCompraFormSet(form_kwargs={'user': negocioo}) # pass parameter to the form
-
-        return render(request, 'app/compra/agregar_compra.html', {'form' : form, 'detalle_compra_formset': detalle_compra_formset, 'negocio_id': negocio, 'proveedores':detalle_producto_negocio } )
+            return render(request, 'error.html' )
     except:
         return render(request, 'app/error.html', {'negocio_id': negocio} )
 
@@ -969,182 +1012,200 @@ def eliminar_compra(request, pk):
 def view_de_venta(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    return render(request, 'app/venta/view_venta.html',{'negocio_id': negocio})
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        return render(request, 'app/venta/view_venta.html',{'negocio_id': negocio})
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def view_de_reportes_venta(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    return render(request, 'app/venta/view_reportes_venta.html',{'negocio_id': negocio})
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        return render(request, 'app/venta/view_reportes_venta.html',{'negocio_id': negocio})
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def list_ventas(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
-    array_producto = []
-    for f in negocio_producto:
-        array_producto.append(f.producto_id.id)
-    venta = Venta.objects.all()
-    array_venta = []
-    for f in venta:
-        array_venta.append(f.id)
-    detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto)
-    dic = {}
-    var = -1
-    for i in detalles__ventas:
-        if i.venta_id.id == var:
-            var = i.venta_id.id
-        else:
-            dic[i.venta_id.id] = {
-                'id_venta':i.venta_id.id,
-                'fecha':convertir_fecha(i.venta_id.fecha),
-                'total':i.venta_id.total,
-            }
-            var = i.venta_id.id
-    print(dic)
-    return HttpResponse(toJSON(dic), content_type='application/json')
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
+        array_producto = []
+        for f in negocio_producto:
+            array_producto.append(f.producto_id.id)
+        venta = Venta.objects.all()
+        array_venta = []
+        for f in venta:
+            array_venta.append(f.id)
+        detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto)
+        dic = {}
+        var = -1
+        for i in detalles__ventas:
+            if i.venta_id.id == var:
+                var = i.venta_id.id
+            else:
+                dic[i.venta_id.id] = {
+                    'id_venta':i.venta_id.id,
+                    'fecha':convertir_fecha(i.venta_id.fecha),
+                    'total':i.venta_id.total,
+                }
+                var = i.venta_id.id
+        print(dic)
+        return HttpResponse(toJSON(dic), content_type='application/json')
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def list_ventas_reportes(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
-    array_producto = []
-    for f in negocio_producto:
-        array_producto.append(f.producto_id.id)
-    venta = Venta.objects.all()
-    array_venta = []
-    for f in venta:
-        array_venta.append(f.id)
-    detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto)
-    dic = {}
-    va = 1
-    for i in detalles__ventas:
-            dic[va] = {
-                'id_venta':i.venta_id.id,
-                'fecha':convertir_fecha(i.venta_id.fecha),
-                'total':i.venta_id.total,
-                'producto_id':i.producto_id.id,
-                'producto_nombre':i.producto_id.nombre,
-                'producto_stock_nuevo':i.cantidad_stock_momento,
-                'producto_cantidad':i.cantidad,
-                'producto_total':i.total_producto,
-                'producto_stock_anterior':i.cantidad_stock_anterior,
-            }
-            va += 1
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
+        array_producto = []
+        for f in negocio_producto:
+            array_producto.append(f.producto_id.id)
+        venta = Venta.objects.all()
+        array_venta = []
+        for f in venta:
+            array_venta.append(f.id)
+        detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto)
+        dic = {}
+        va = 1
+        for i in detalles__ventas:
+                dic[va] = {
+                    'id_venta':i.venta_id.id,
+                    'fecha':convertir_fecha(i.venta_id.fecha),
+                    'total':i.venta_id.total,
+                    'producto_id':i.producto_id.id,
+                    'producto_nombre':i.producto_id.nombre,
+                    'producto_stock_nuevo':i.cantidad_stock_momento,
+                    'producto_cantidad':i.cantidad,
+                    'producto_total':i.total_producto,
+                    'producto_stock_anterior':i.cantidad_stock_anterior,
+                }
+                va += 1
 
-    print(dic)
-    return HttpResponse(toJSON(dic), content_type='application/json')
+        print(dic)
+        return HttpResponse(toJSON(dic), content_type='application/json')
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def view_de_reportes_ganancias(request, pk):
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    return render(request, 'app/venta/view_reporte_ganancias.html',{'negocio_id': negocio})
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        return render(request, 'app/venta/view_reporte_ganancias.html',{'negocio_id': negocio})
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def list_ventas_reportes_ganancias(request, pk):
     now = datetime.datetime.now()
     usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
-    array_producto = []
-    for f in negocio_producto:
-        array_producto.append(f.producto_id.id)
-    venta = Venta.objects.all()
-    array_venta = []
-    for f in venta:
-        array_venta.append(f.id)
-    detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto) # ventas por negocio y productos
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
+        array_producto = []
+        for f in negocio_producto:
+            array_producto.append(f.producto_id.id)
+        venta = Venta.objects.all()
+        array_venta = []
+        for f in venta:
+            array_venta.append(f.id)
+        detalles__ventas = detalle_venta.objects.filter(venta_id__in=array_venta, producto_id__in=array_producto) # ventas por negocio y productos
 
-    #funcion para guardar total ventas por mes de anio actual
-    dic_mes = { '01':[],'02':[],'03':[],'04':[],'05':[],'06':[],'07':[],'08':[],'09':[],'10':[],'11':[],'12':[]} # diccionario de ventas mes anio actual totales
-    anio_actual = now.year # anio actual
-    for f in detalles__ventas:
-        x = convertir_fecha(f.venta_id.fecha)
-        if str(x.split('-')[0]) == str(anio_actual):
-            for key in dic_mes:
-                if key == str(x.split('-')[1]):
-                    dic_mes[key].append(f.total_producto)
+        #funcion para guardar total ventas por mes de anio actual
+        dic_mes = { '01':[],'02':[],'03':[],'04':[],'05':[],'06':[],'07':[],'08':[],'09':[],'10':[],'11':[],'12':[]} # diccionario de ventas mes anio actual totales
+        anio_actual = now.year # anio actual
+        for f in detalles__ventas:
+            x = convertir_fecha(f.venta_id.fecha)
+            if str(x.split('-')[0]) == str(anio_actual):
+                for key in dic_mes:
+                    if key == str(x.split('-')[1]):
+                        dic_mes[key].append(f.total_producto)
 
-    dic_meses_anio_actual = {}
-    for key, value in dic_mes.items(): # iterar los item del diccionario
-        suma = 0 # variable donde se guardará la suma de los elementos
-        for v in value: # iterar los elementos
-            suma += v # sumar los elementos y guardarlos
-        dic_meses_anio_actual[key] = suma # añadir al nuevo diccionario la misma llave con la suma de los elementos
+        dic_meses_anio_actual = {}
+        for key, value in dic_mes.items(): # iterar los item del diccionario
+            suma = 0 # variable donde se guardará la suma de los elementos
+            for v in value: # iterar los elementos
+                suma += v # sumar los elementos y guardarlos
+            dic_meses_anio_actual[key] = suma # añadir al nuevo diccionario la misma llave con la suma de los elementos
 
-    # funcion para guardar total ventas por dia de todos los meses del anio actal
-    dic_mes_dia = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} # dic inicial
-    dic_meses_dia_anio_actual = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} #dic final
-    for f in detalles__ventas: # agrega diccionario dias a las llaves de meses
-        w = convertir_fecha(f.venta_id.fecha)
-        x = w.split(' ')[0]
-        if str(x.split('-')[0]) == str(anio_actual):
-            dic_mes_dia[x.split('-')[1]].update({ x.split('-')[2] : [] })
-            dic_meses_dia_anio_actual[x.split('-')[1]].update({ x.split('-')[2] : [] })
+        # funcion para guardar total ventas por dia de todos los meses del anio actal
+        dic_mes_dia = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} # dic inicial
+        dic_meses_dia_anio_actual = {'01':{},'02':{},'03':{},'04':{},'05':{},'06':{},'07':{},'08':{},'09':{},'10':{},'11':{},'12':{}} #dic final
+        for f in detalles__ventas: # agrega diccionario dias a las llaves de meses
+            w = convertir_fecha(f.venta_id.fecha)
+            x = w.split(' ')[0]
+            if str(x.split('-')[0]) == str(anio_actual):
+                dic_mes_dia[x.split('-')[1]].update({ x.split('-')[2] : [] })
+                dic_meses_dia_anio_actual[x.split('-')[1]].update({ x.split('-')[2] : [] })
 
-    for ff in detalles__ventas: #agrega los totales de ventas por dias del mes
-         w = convertir_fecha(ff.venta_id.fecha)
-         x = w.split(' ')[0]
-         if str(x.split('-')[0]) == str(anio_actual):
-             for key in dic_mes_dia:
-                 if key == str(x.split('-')[1]):
-                     for key2 in dic_mes_dia[key]:
-                         if key2 == str(x.split('-')[2]):
-                             dic_mes_dia[key][key2].append(ff.total_producto)
+        for ff in detalles__ventas: #agrega los totales de ventas por dias del mes
+             w = convertir_fecha(ff.venta_id.fecha)
+             x = w.split(' ')[0]
+             if str(x.split('-')[0]) == str(anio_actual):
+                 for key in dic_mes_dia:
+                     if key == str(x.split('-')[1]):
+                         for key2 in dic_mes_dia[key]:
+                             if key2 == str(x.split('-')[2]):
+                                 dic_mes_dia[key][key2].append(ff.total_producto)
 
-    for llave in dic_mes_dia: #suma los totales de ventas por dia del mes
-        for key, value in dic_mes_dia[llave].items():
-            suma = 0
-            for v in value:
-                suma += v
-            dic_meses_dia_anio_actual[llave][key] = suma
+        for llave in dic_mes_dia: #suma los totales de ventas por dia del mes
+            for key, value in dic_mes_dia[llave].items():
+                suma = 0
+                for v in value:
+                    suma += v
+                dic_meses_dia_anio_actual[llave][key] = suma
 
-    # funcion total ventas por mes y anio
-    dic_anio_mes = {}
-    dic_anio_meses_estesi = {}
-    for f in detalles__ventas: # guarda llave anios
-        w = convertir_fecha(f.venta_id.fecha)
-        x = w.split(' ')[0]
-        dic_anio_mes.update({x.split('-')[0]:{}})
-        dic_anio_meses_estesi.update({x.split('-')[0]:{}})
+        # funcion total ventas por mes y anio
+        dic_anio_mes = {}
+        dic_anio_meses_estesi = {}
+        for f in detalles__ventas: # guarda llave anios
+            w = convertir_fecha(f.venta_id.fecha)
+            x = w.split(' ')[0]
+            dic_anio_mes.update({x.split('-')[0]:{}})
+            dic_anio_meses_estesi.update({x.split('-')[0]:{}})
 
-    for ff in detalles__ventas: # guarda mes anios
-        w = convertir_fecha(ff.venta_id.fecha)
-        x = w.split(' ')[0]
-        for key in dic_anio_mes:
-            if str(x.split('-')[0]) == key:
-                dic_anio_mes[key].update({ x.split('-')[1] : [] })
-                dic_anio_meses_estesi[key].update({ x.split('-')[1] : [] })
+        for ff in detalles__ventas: # guarda mes anios
+            w = convertir_fecha(ff.venta_id.fecha)
+            x = w.split(' ')[0]
+            for key in dic_anio_mes:
+                if str(x.split('-')[0]) == key:
+                    dic_anio_mes[key].update({ x.split('-')[1] : [] })
+                    dic_anio_meses_estesi[key].update({ x.split('-')[1] : [] })
 
-    for fff in detalles__ventas: #agrega los totales de ventas por mes del anio
-         w = convertir_fecha(fff.venta_id.fecha)
-         x = w.split(' ')[0]
-         for key in dic_anio_mes:
-             if key == str(x.split('-')[0]): # anio
-                 for key2 in dic_anio_mes[key]:
-                     if key2 == str(x.split('-')[1]): # mes
-                         dic_anio_mes[key][key2].append(fff.total_producto)
+        for fff in detalles__ventas: #agrega los totales de ventas por mes del anio
+             w = convertir_fecha(fff.venta_id.fecha)
+             x = w.split(' ')[0]
+             for key in dic_anio_mes:
+                 if key == str(x.split('-')[0]): # anio
+                     for key2 in dic_anio_mes[key]:
+                         if key2 == str(x.split('-')[1]): # mes
+                             dic_anio_mes[key][key2].append(fff.total_producto)
 
-    for llave in dic_anio_mes: #suma los totales de ventas mes de anios
-        for key, value in dic_anio_mes[llave].items():
-            suma = 0
-            for v in value:
-                suma += v
-            dic_anio_meses_estesi[llave][key] = suma
+        for llave in dic_anio_mes: #suma los totales de ventas mes de anios
+            for key, value in dic_anio_mes[llave].items():
+                suma = 0
+                for v in value:
+                    suma += v
+                dic_anio_meses_estesi[llave][key] = suma
 
-    # dic_meses_anio_actual = diccionario con el total por meses del anio vigente
-    # dic_meses_dia_anio_actual = diccionario con el total por dia de todos los meses del anio vigente
-    # dic_anio_meses_estesi = diccionario con los totales de venta por meses de cada anio registrado
+        # dic_meses_anio_actual = diccionario con el total por meses del anio vigente
+        # dic_meses_dia_anio_actual = diccionario con el total por dia de todos los meses del anio vigente
+        # dic_anio_meses_estesi = diccionario con los totales de venta por meses de cada anio registrado
 
-    dic_final = {'mes_anio_actual':{},'dia_mes_anio_actual':{},'meses_anios':{}}
-    dic_final['mes_anio_actual'].update(dic_meses_anio_actual)
-    dic_final['dia_mes_anio_actual'].update(dic_meses_dia_anio_actual)
-    dic_final['meses_anios'].update(dic_anio_meses_estesi)
+        dic_final = {'mes_anio_actual':{},'dia_mes_anio_actual':{},'meses_anios':{}}
+        dic_final['mes_anio_actual'].update(dic_meses_anio_actual)
+        dic_final['dia_mes_anio_actual'].update(dic_meses_dia_anio_actual)
+        dic_final['meses_anios'].update(dic_anio_meses_estesi)
 
-    return HttpResponse(toJSON(dic_final), content_type='application/json')
+        return HttpResponse(toJSON(dic_final), content_type='application/json')
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def detalle_de_venta(request, pk):
@@ -1234,54 +1295,61 @@ def agregar_venta(request, pk):
     try:
         usuario = Usuario.objects.get(id=request.user.id)
         negocio = Negocio.objects.get(id=pk)
-        detalle_producto_negocio = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
-        for row in detalle_producto_negocio:
-            negocioo = row.negocio_id.id
+        if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+            detalle_producto_negocio = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
+            for row in detalle_producto_negocio:
+                negocioo = row.negocio_id.id
 
-        # import pdb; pdb.set_trace()
-        if request.method == "POST":
-            form = VentaForm(request.POST)
-            detalle_venta_form_set = DetalleVentaFormSet(request.POST, form_kwargs={'user': negocioo})
-            if form.is_valid() and detalle_venta_form_set.is_valid():
-                venta = form.save(commit=False)
-                venta.save()
-                detalle_venta_form_set.instance = venta
-                detalle_venta_form_set.save()
+            # import pdb; pdb.set_trace()
+            if request.method == "POST":
+                form = VentaForm(request.POST)
+                detalle_venta_form_set = DetalleVentaFormSet(request.POST, form_kwargs={'user': negocioo})
+                if form.is_valid() and detalle_venta_form_set.is_valid():
+                    venta = form.save(commit=False)
+                    venta.save()
+                    detalle_venta_form_set.instance = venta
+                    detalle_venta_form_set.save()
 
-                venta_stock = detalle_venta.objects.filter(venta_id=venta)
-                for row in venta_stock:
-                    producto_stock = Producto.objects.get(id=row.producto_id.id)
-                    cantidad_venta = row.cantidad
-                    cantidad_stock = producto_stock.stock
+                    venta_stock = detalle_venta.objects.filter(venta_id=venta)
+                    for row in venta_stock:
+                        producto_stock = Producto.objects.get(id=row.producto_id.id)
+                        cantidad_venta = row.cantidad
+                        cantidad_stock = producto_stock.stock
 
-                    row.cantidad_stock_anterior = cantidad_stock
-                    row.save()
+                        row.cantidad_stock_anterior = cantidad_stock
+                        row.save()
 
-                    resta_stock = cantidad_stock - cantidad_venta
-                    producto_stock.stock = resta_stock
-                    row.cantidad_stock_momento = resta_stock
-                    row.save()
-                    producto_stock.save()
+                        resta_stock = cantidad_stock - cantidad_venta
+                        producto_stock.stock = resta_stock
+                        row.cantidad_stock_momento = resta_stock
+                        row.save()
+                        producto_stock.save()
 
-                return redirect('view_venta', pk=negocio.pk)
+                    return redirect('view_venta', pk=negocio.pk)
+            else:
+                form = VentaForm()
+                detalle_venta_formset=DetalleVentaFormSet(form_kwargs={'user': negocioo}) # pass parameter to the form
+
+            return render(request, 'app/venta/agregar_venta.html', {'form' : form, 'detalle_venta_formset': detalle_venta_formset, 'negocio_id': negocio } )
         else:
-            form = VentaForm()
-            detalle_venta_formset=DetalleVentaFormSet(form_kwargs={'user': negocioo}) # pass parameter to the form
-
-        return render(request, 'app/venta/agregar_venta.html', {'form' : form, 'detalle_venta_formset': detalle_venta_formset, 'negocio_id': negocio } )
+            return render(request, 'error.html' )
     except:
         return render(request, 'app/error.html', {'negocio_id': negocio} )
 
 @login_required(login_url="/")
 def datos_agregar_venta(request, pk):
+    usuario = Usuario.objects.get(id=request.user.id)
     negocio = Negocio.objects.get(id=pk)
-    detalle_producto_negocio = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
-    dic = {}
-    for x in detalle_producto_negocio:
-        dic[x.producto_id.id]=[x.producto_id.id,x.producto_id.nombre,x.producto_id.stock]
+    if detalle_usuario_negocio.objects.filter(negocio_id=negocio.id, usuario_id=usuario).exists():
+        detalle_producto_negocio = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=False)
+        dic = {}
+        for x in detalle_producto_negocio:
+            dic[x.producto_id.id]=[x.producto_id.id,x.producto_id.nombre,x.producto_id.stock]
 
-    print(dic)
-    return HttpResponse(toJSON(dic), content_type='application/json')
+        print(dic)
+        return HttpResponse(toJSON(dic), content_type='application/json')
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def eliminar_venta(request, pk):
