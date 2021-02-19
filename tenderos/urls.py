@@ -9,6 +9,7 @@ urlpatterns = [
 
     path('', login , name='login' ),
     path('usernegocios', escojer_negocio, name='escojer_negocio' ),
+    path('error', error_pag , name='error_pag' ),
     re_path('principal/(?P<pk>\d+)/', principal_app, name='principal_app' ),
 
     # path('login', login , name='login' ),

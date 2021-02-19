@@ -1,0 +1,50 @@
+{% load staticfiles %}
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- <link rel="icon" href="http://getbootstrap.com/docs/3.3/favicon.ico"> -->
+
+    <title> {% block title %} {% endblock %}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" id="bootstrap-css">
+
+    <!-- Font Awesome -->
+    <link href="{% static 'fontawesome/css/fontawesome.css' %}" rel="stylesheet">
+    <link href="{% static 'fontawesome/css/brands.css' %}" rel="stylesheet">
+    <link href="{% static 'fontawesome/css/solid.css' %}" rel="stylesheet">
+
+  </head>
+
+  <body style="background: #dedede;">
+
+    <div class="container">
+      <div class="row h-100 justify-content-center align-items-center">
+        <div class="col"></div>
+        <div class="col-7">
+          <div class="col-12 text-center" style="margin-bottom:35px;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 140px;margin: 45px;color: #dc3545;"></i>
+          </div>
+          <div class="col-12 text-center" style="margin-bottom:35px;">
+            <h1>¡Error!</h1>
+            <p>  Ha ocurrido un error; puede que no tenga permisos para ver esta página.</p>
+            <a class="btn btn-primary" href="javascript:history.back()"> Volver atrás </a>
+          </div>
+        </div>
+        <div class="col"></div>
+      </div>
+    </div>
+
+
+  <!-- Bootstrap core JavaScript -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="{% static 'js/jquery.js' %}"></script>
+  <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  </body>
+</html>

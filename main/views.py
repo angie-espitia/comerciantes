@@ -21,8 +21,8 @@ def convertir_fecha(o):
 def toJSON(self):
     return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
-# def index(request):
-#     return render(request, 'login.html')
+def error_pag(request):
+    return render(request, 'error.html')
 
 def login(request):
 
@@ -52,193 +52,225 @@ def logout(request):
 @login_required(login_url="/")
 def view_corporativo(request):
     # pabellon = Pabellon.objects.all()
-    print(request.user)
-    return render(request, 'pagina/view_corporativo.html' )
+    if request.user.groups.filter(name='administrativo').exists():
+        return render(request, 'pagina/view_corporativo.html' )
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def perfil_corporativo(request, pk):
     usuario = User.objects.get(id=pk)
-    miusuario = Usuario.objects.get(id=usuario.id)
-    error = False
-    if request.method == 'POST':
-        # import pdb; pdb.set_trace()
-        usuario.email = request.POST.get('email')
-        usuario.first_name = request.POST.get('first_name')
-        usuario.last_name = request.POST.get('last_name')
-        usuario.save()
+    if request.user.groups.filter(name='administrativo').exists():
+        miusuario = Usuario.objects.get(id=usuario.id)
+        error = False
+        if request.method == 'POST':
+            # import pdb; pdb.set_trace()
+            usuario.email = request.POST.get('email')
+            usuario.first_name = request.POST.get('first_name')
+            usuario.last_name = request.POST.get('last_name')
+            usuario.save()
 
-        miusuario.documento = request.POST.get('documento')
-        miusuario.telefono = request.POST.get('telefono')
-        miusuario.direccion = request.POST.get('direccion')
-        miusuario.save()
+            miusuario.documento = request.POST.get('documento')
+            miusuario.telefono = request.POST.get('telefono')
+            miusuario.direccion = request.POST.get('direccion')
+            miusuario.save()
 
-        return HttpResponseRedirect(request.path_info) #redirige misma pag
+            return HttpResponseRedirect(request.path_info) #redirige misma pag
 
-    return render(request, 'pagina/perfil.html', {'usu': miusuario } )
+        return render(request, 'pagina/perfil.html', {'usu': miusuario } )
+    else:
+        return render(request, 'error.html' )
 
 
 # pabellones
 @login_required(login_url="/")
 def view_pabellon(request):
-    pabellon = Pabellon.objects.all()
-    return render(request, 'pagina/view_pabellon.html', {'pabellon':pabellon} )
+    if request.user.groups.filter(name='administrativo').exists():
+        pabellon = Pabellon.objects.all()
+        return render(request, 'pagina/view_pabellon.html', {'pabellon':pabellon} )
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def registrar_pabellon(request):
-    if request.method == "POST":
-        form = PabellonForm(request.POST)
-        if form.is_valid():
-            pabellon = form.save(commit=False)
-            pabellon.save()
+    if request.user.groups.filter(name='administrativo').exists():
+        if request.method == "POST":
+            form = PabellonForm(request.POST)
+            if form.is_valid():
+                pabellon = form.save(commit=False)
+                pabellon.save()
 
-            return redirect('view_pabellon') #, pk=usuario.pk
+                return redirect('view_pabellon') #, pk=usuario.pk
+        else:
+            form = PabellonForm()
+
+        return render(request, 'pagina/registrar_pabellon.html', {'form' : form} )
     else:
-        form = PabellonForm()
-
-    return render(request, 'pagina/registrar_pabellon.html', {'form' : form} )
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def editar_pabellon(request, pk):
-    pabellon = get_object_or_404(Pabellon, pk=pk)
-    if request.method == "POST" and request.is_ajax():
-        pabellon.nombre = request.POST.get('nombre_p')
-        pabellon.descripcion = request.POST.get('descripcion_p')
-        pabellon.save()
-        return HttpResponse('ok')
+    if request.user.groups.filter(name='administrativo').exists():
+        pabellon = get_object_or_404(Pabellon, pk=pk)
+        if request.method == "POST" and request.is_ajax():
+            pabellon.nombre = request.POST.get('nombre_p')
+            pabellon.descripcion = request.POST.get('descripcion_p')
+            pabellon.save()
+            return HttpResponse('ok')
+        else:
+            dic = {
+                'idd':pabellon.id,
+                'nombre':pabellon.nombre,
+                'descripcion':pabellon.descripcion,
+            }
+            return HttpResponse(toJSON(dic), content_type='application/json')
     else:
-        dic = {
-            'idd':pabellon.id,
-            'nombre':pabellon.nombre,
-            'descripcion':pabellon.descripcion,
-        }
-        return HttpResponse(toJSON(dic), content_type='application/json')
+        return render(request, 'error.html' )
 
 # registro de propietario y empresa
 @login_required(login_url="/")
 def view_comerciantes(request):
-    usuarios = User.objects.filter(groups__name='propietario_negocio')
-    propietario_negocios = Usuario.objects.filter(id__in=usuarios)
-    print(propietario_negocios)
-    return render(request, 'pagina/view_propietarios.html', {'propietario_negocios':propietario_negocios} )
+    if request.user.groups.filter(name='administrativo').exists():
+        usuarios = User.objects.filter(groups__name='propietario_negocio')
+        propietario_negocios = Usuario.objects.filter(id__in=usuarios)
+        print(propietario_negocios)
+        return render(request, 'pagina/view_propietarios.html', {'propietario_negocios':propietario_negocios} )
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def registrar_comerciante(request):
-    error = False
-    if request.method == 'POST':
-        validators = FormRegistroValidator(request.POST)
-        validators.required = ['nombre', 'apellido', 'email', 'username', 'password1']
+    if request.user.groups.filter(name='administrativo').exists():
+        error = False
+        if request.method == 'POST':
+            validators = FormRegistroValidator(request.POST)
+            validators.required = ['nombre', 'apellido', 'email', 'username', 'password1']
 
-        if validators.is_valid():
-            try:
-                usuario = User()
-                usuario.first_name = request.POST['nombre']
-                usuario.last_name = request.POST['apellido']
-                usuario.email = request.POST['email']
-                usuario.username = request.POST['username']
-                usuario.password = make_password(request.POST['password1'])
-                usuario.is_active = True
-                grupo = Group.objects.get(name="propietario_negocio")
-                usuario.save()
-                usuario.groups.add(grupo)
-                usuario.save()
+            if validators.is_valid():
+                try:
+                    usuario = User()
+                    usuario.first_name = request.POST['nombre']
+                    usuario.last_name = request.POST['apellido']
+                    usuario.email = request.POST['email']
+                    usuario.username = request.POST['username']
+                    usuario.password = make_password(request.POST['password1'])
+                    usuario.is_active = True
+                    grupo = Group.objects.get(name="propietario_negocio")
+                    usuario.save()
+                    usuario.groups.add(grupo)
+                    usuario.save()
 
-                myusuario = Usuario()
-                myusuario.id = usuario
-                myusuario.documento = request.POST['documento']
-                myusuario.save()
+                    myusuario = Usuario()
+                    myusuario.id = usuario
+                    myusuario.documento = request.POST['documento']
+                    myusuario.save()
 
-                return redirect('view_comerciantes')
-            except Exception as e:
-                messages.error(request, 'El usuario no es valido, por favor eliga otro usuario.')
-        else:
-            messages.error(request, validators.getMessage() )
-        # Agregar el usuario a la base de datos
-    return render( request, 'pagina/registrar_tendero.html' )
+                    return redirect('view_comerciantes')
+                except Exception as e:
+                    messages.error(request, 'El usuario no es valido, por favor eliga otro usuario.')
+            else:
+                messages.error(request, validators.getMessage() )
+            # Agregar el usuario a la base de datos
+        return render( request, 'pagina/registrar_tendero.html' )
+    else:
+        return render(request, 'error.html' )
 
 # pabellones
 @login_required(login_url="/")
 def view_negocio(request):
-    propietario_negocio = User.objects.filter(groups__name='propietario_negocio')
-    usuario = Usuario.objects.filter(id__in=propietario_negocio)
-    usuario_negocio = detalle_usuario_negocio.objects.filter(usuario_id__in=usuario)
-    return render(request, 'pagina/view_negocios.html', {'usuario_negocio':usuario_negocio} )
+    if request.user.groups.filter(name='administrativo').exists():
+        propietario_negocio = User.objects.filter(groups__name='propietario_negocio')
+        usuario = Usuario.objects.filter(id__in=propietario_negocio)
+        usuario_negocio = detalle_usuario_negocio.objects.filter(usuario_id__in=usuario)
+        return render(request, 'pagina/view_negocios.html', {'usuario_negocio':usuario_negocio} )
+    else:
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def registrar_negocio(request):
-    pabellon = Pabellon.objects.all()
-    propietario_negocio = User.objects.filter(groups__name='propietario_negocio')
-    # import pdb; pdb.set_trace()
-    if request.method == 'POST':
-        form = NegocioForm(request.POST)
-        if form.is_valid():
-            negocio = form.save(commit=False)
+    if request.user.groups.filter(name='administrativo').exists():
+        pabellon = Pabellon.objects.all()
+        propietario_negocio = User.objects.filter(groups__name='propietario_negocio')
+        # import pdb; pdb.set_trace()
+        if request.method == 'POST':
+            form = NegocioForm(request.POST)
+            if form.is_valid():
+                negocio = form.save(commit=False)
 
-            usuario_recibido = request.POST.get('usuario_id')
-            pabellon_recibido = request.POST.get('pabellon_id')
-            usuario_p = Usuario.objects.get(id=usuario_recibido)
-            pabellon_p = Pabellon.objects.get(id=pabellon_recibido)
-            negocio.pabellon_id = pabellon_p
-            negocio.save()
+                usuario_recibido = request.POST.get('usuario_id')
+                pabellon_recibido = request.POST.get('pabellon_id')
+                usuario_p = Usuario.objects.get(id=usuario_recibido)
+                pabellon_p = Pabellon.objects.get(id=pabellon_recibido)
+                negocio.pabellon_id = pabellon_p
+                negocio.save()
 
-            negocio2 = Negocio.objects.latest('id')
-            negocio_usuario = detalle_usuario_negocio()
-            negocio_usuario.negocio_id = negocio2
-            negocio_usuario.usuario_id = usuario_p
-            negocio_usuario.save()
+                negocio2 = Negocio.objects.latest('id')
+                negocio_usuario = detalle_usuario_negocio()
+                negocio_usuario.negocio_id = negocio2
+                negocio_usuario.usuario_id = usuario_p
+                negocio_usuario.save()
 
-            return redirect('view_negocio')
+                return redirect('view_negocio')
 
+        else:
+            form = NegocioForm()
+
+        return render(request, 'pagina/registrar_negocio.html', {'form' : form, 'propietario_negocio' : propietario_negocio, 'pabellon' : pabellon} )
     else:
-        form = NegocioForm()
-
-    return render(request, 'pagina/registrar_negocio.html', {'form' : form, 'propietario_negocio' : propietario_negocio, 'pabellon' : pabellon} )
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def editar_negocio(request, pk):
-    negocio_recibido = get_object_or_404(Negocio, pk=pk)
-    pabellon = Pabellon.objects.all()
-    propietario_negocio = User.objects.filter(groups__name='propietario_negocio')
-    usuario_negocio = detalle_usuario_negocio.objects.filter(negocio_id=negocio_recibido).first()
-    print(usuario_negocio)
+    if request.user.groups.filter(name='administrativo').exists():
+        negocio_recibido = get_object_or_404(Negocio, pk=pk)
+        pabellon = Pabellon.objects.all()
+        propietario_negocio = User.objects.filter(groups__name='propietario_negocio')
+        usuario_negocio = detalle_usuario_negocio.objects.filter(negocio_id=negocio_recibido).first()
+        print(usuario_negocio)
 
-    if request.method == "POST":
-        form = NegocioForm_dos(request.POST, instance=negocio_recibido)
-        form2 = DetalleUsuarioNegocioForm(request.POST, instance=usuario_negocio)
-        if form.is_valid():
-            negocio = form.save(commit=False)
-            negocio.save()
-            negocio_usuario = form2.save(commit=False)
-            negocio_usuario.save()
+        if request.method == "POST":
+            form = NegocioForm_dos(request.POST, instance=negocio_recibido)
+            form2 = DetalleUsuarioNegocioForm(request.POST, instance=usuario_negocio)
+            if form.is_valid():
+                negocio = form.save(commit=False)
+                negocio.save()
+                negocio_usuario = form2.save(commit=False)
+                negocio_usuario.save()
 
-            return redirect('view_negocio') #redirige misma pag
+                return redirect('view_negocio') #redirige misma pag
+        else:
+            form = NegocioForm_dos(instance=negocio_recibido)
+            form2 = DetalleUsuarioNegocioForm(instance=usuario_negocio)
+        return render(request, 'pagina/detalle_negocio.html', {'form' : form, 'form2':form2, 'propietario_negocio' : propietario_negocio, 'pabellon' : pabellon} )
     else:
-        form = NegocioForm_dos(instance=negocio_recibido)
-        form2 = DetalleUsuarioNegocioForm(instance=usuario_negocio)
-    return render(request, 'pagina/detalle_negocio.html', {'form' : form, 'form2':form2, 'propietario_negocio' : propietario_negocio, 'pabellon' : pabellon} )
+        return render(request, 'error.html' )
 
 @login_required(login_url="/")
 def eliminar_negocio(request, pk):
-    negocio = get_object_or_404(Negocio, pk=pk)
-    negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
-    negocio_usuario = detalle_usuario_negocio.objects.filter(negocio_id=negocio.id)
-    count_n = 0
-    for x in negocio_usuario:
-        count_n += 1
+    if request.user.groups.filter(name='administrativo').exists():
+        negocio = get_object_or_404(Negocio, pk=pk)
+        negocio_producto = detalle_negocio_producto.objects.filter(negocio_id=negocio.id, producto_id__isnull=True)
+        negocio_usuario = detalle_usuario_negocio.objects.filter(negocio_id=negocio.id)
+        count_n = 0
+        for x in negocio_usuario:
+            count_n += 1
 
-    print(count_n)
-    if request.method == "POST" and request.is_ajax():
-        if not negocio_producto and count_n < 2:
-            negocio_usuario.delete()
-            negocio.delete()
-            return HttpResponse('1')
+        print(count_n)
+        if request.method == "POST" and request.is_ajax():
+            if not negocio_producto and count_n < 2:
+                negocio_usuario.delete()
+                negocio.delete()
+                return HttpResponse('1')
+            else:
+                return HttpResponse('2')
         else:
-            return HttpResponse('2')
+            dic = {
+                'id':negocio.id,
+                'nombre':negocio.nombre,
+            }
+            return HttpResponse(toJSON(dic), content_type='application/json')
     else:
-        dic = {
-            'id':negocio.id,
-            'nombre':negocio.nombre,
-        }
-        return HttpResponse(toJSON(dic), content_type='application/json')
+        return render(request, 'error.html' )
 
 # ------------------------------- views manejo negocio tenderos ---------------------------------------------------------
 
