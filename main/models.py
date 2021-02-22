@@ -192,3 +192,14 @@ class Log(models.Model):
 	# class Meta:
 	# 	db_table = 'Log'
 	# 	managed  = False
+
+class Record(models.Model):
+	# id = models.AutoField( primary_key=True)
+	nombre = models.CharField(max_length=200)
+
+	def _str_(self):
+		return '{}'.format(self.nombre)
+
+	# class Meta:
+	# 	db_table = 'Record'
+	# 	managed  = False

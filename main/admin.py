@@ -2,7 +2,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib import admin
 
 from django.contrib.auth.models import User, Group
-from .models import Usuario, unidad_medida
+from .models import Usuario, unidad_medida, Record
 
 # @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
@@ -78,8 +78,4 @@ class UnidadAdmin(admin.ModelAdmin):
 
 admin.site.register(unidad_medida, UnidadAdmin)
 
-# class EstadoAdmin(admin.ModelAdmin):
-#     list_display = ('estado','detalle')
-#     list_display_links = ('estado',)
-#
-# admin.site.register(Estado, EstadoAdmin)
+# admin.site.register(Record)
