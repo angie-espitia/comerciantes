@@ -8,7 +8,10 @@
   <li class="breadcrumb-item active">Nueva venta</li>
 </ul>
 
-<h1 class="mt-4 text-center titleIniBox"><i class="fas fa-pencil-alt"></i>Nueva venta</h1>
+<h1 class="mt-4 text-center titleIniBox"><i class="fas fa-pencil-alt"></i> Nueva venta</h1>
+
+<br>
+<p>A continuación podrá registrar una nueva venta llenando todos los datos requeridos, si desea agregar más de un producto, clickee el botón <b style="color:#28a745;"> + </b> ubicado abajo de la tabla de ingreso de productos.</p>
 <br>
 
 <div id="alert-form"></div>
@@ -16,7 +19,7 @@
 <div class="col-md-12 mx-auto">
     <form class="form" method="POST"  id="formulario_registro_venta" enctype="multipart/form-data" onsubmit="return validate()">
       {% csrf_token %}
-      <div class="col-md-3 col-sm-3 col-lg-3 text-center">
+      <div class="col-md-3 col-sm-3 col-lg-3">
         <h5><b> Fecha de la venta: </b></h5>
         {{ form.fecha }}
       </div>

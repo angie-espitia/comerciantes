@@ -11,6 +11,8 @@
 <h1 class="mt-4 text-center titleIniBox"><i class="fas fa-pencil-alt"></i> Nueva compra</h1>
 
 <br>
+<p>A continuación podrá registrar una nueva compra llenando todos los datos requeridos, si desea agregar más de un producto, clickee el botón <b style="color:#28a745;"> + </b> ubicado abajo de la tabla de ingreso de productos.</p>
+<br>
 
 <div id="alert-form"></div>
 
@@ -19,11 +21,11 @@
       {% csrf_token %}
 
       <div class="row">
-        <div class="col-md-3 col-sm-3 col-lg-3 text-center">
+        <div class="col-md-3 col-sm-3 col-lg-3">
           <h5><b> Fecha de la compra: </b></h5>
           {{ form.fecha }}
         </div>
-        <div class="col-md-3 col-sm-3 col-lg-3 text-center">
+        <div class="col-md-3 col-sm-3 col-lg-3">
           <h5><b> Proveedor: </b></h5>
 
           <select class="form-control" id="proveedor_lista" onclick='calcularMult()' required>
