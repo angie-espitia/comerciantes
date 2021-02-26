@@ -886,6 +886,8 @@ def editar_item_detalle_compra(request, pk):
             sum_stock = resta_cantidad_stock + cantidad_item
             producto_stock.stock = sum_stock
             producto_stock.save()
+            item_detalle_compra.cantidad_stock_momento = sum_stock
+            item_detalle_compra.save()
 
         total_item = int(item_detalle_compra.total_producto)
         if total_actual != total_item:
@@ -1241,6 +1243,8 @@ def editar_item_detalle_venta(request, pk):
             resta_stock = suma_cantidad_stock - cantidad_item
             producto_stock.stock = resta_stock
             producto_stock.save()
+            item_detalle_venta.cantidad_stock_momento = resta_stock
+            item_detalle_venta.save()
 
         total_item = int(item_detalle_venta.total_producto)
         if total_actual != total_item:
