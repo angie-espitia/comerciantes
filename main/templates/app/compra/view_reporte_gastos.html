@@ -44,10 +44,14 @@
   </table>
 </div>
 
-<br>
+<div class="row">
+  <div class="col-12">
+    <br>
+  </div>
+	<div class="col-md-12 col-sm-12 col-lg-12 text-center" id="total_total">
 
-<canvas id="myChart"></canvas>
-
+  </div>
+</div>
 
 {% endblock %}
 
@@ -197,6 +201,8 @@ function buscando_dia_mes(){
   var anio_actual = (new Date).getFullYear();
   var mes_escogidito = $("#mes_select").val();
   var ss = diasEnUnMes(mes_escogidito, anio_actual);
+  var total_mes_gastos = 0;
+  var con = 0;
 
   if(mes_escogidito=='Todos'){
     $('#option2').html('');
@@ -210,12 +216,14 @@ function buscando_dia_mes(){
     tables += '<tbody class="text-center">';
     for(let item in res['mes_anio_actual']){
       for(let dd in dic_meses){
-        if(item==dd){
+        if(item==dd && res['mes_anio_actual'][item]!='0'){
+          con = parseInt(res['mes_anio_actual'][item]);
           tables += '<tr>';
           tables += '<td>'+anio_actual+' / '+item+'</td>';
           tables += '<td> '+dic_meses[dd]+' </td>';
           tables += '<td>$ '+res['mes_anio_actual'][item]+'</td>';
           tables += '</tr>';
+          total_mes_gastos += con;
         }
       }
     }
@@ -223,6 +231,9 @@ function buscando_dia_mes(){
     tables += '</tbody> </table>';
     $('#tabliita').html(tables);
     datetablee();
+
+    var htmls='<h5>Total de compras por año:</h5><h4><b>$ '+total_mes_gastos+'</b></h4>'
+    $('#total_total').html(htmls);
 
   }else{
     var html2 = '<label for="sel1">Día:</label>';
@@ -244,6 +255,7 @@ function buscando_dia_mes(){
 
 function filtrado1(){
   // filtrar por mes y dia del año actual
+  $('#total_total').html('');
   var anio_actual = (new Date).getFullYear();
   var mes_escogidito = $("#mes_select").val();
   var dia_escogidito = $("#dia_select").val();
@@ -315,6 +327,7 @@ function filtrado1(){
 // para el segundo filtrado (año)
 function buscando_anio(){
   // pintar el dia segun el mes buscado
+  $('#total_total').html('');
   var anio_actual = $("#anio_select").val();
   var mes_escogidito = $("#mes_select2").val();
   if(anio_actual=='Todos'){
@@ -351,8 +364,11 @@ function buscando_anio(){
 
 function filtrado2(){
   // filtrar por mes del año escogido
+  $('#total_total').html('');
   var anio_actual = $("#anio_select").val();
   var mes_escogidito = $("#mes_select2").val();
+  var total_anio_gastos = 0;
+  var con = 0;
   var tables = '<table class="table table-striped table-bordered table-striped ejemploo" id="ejemplo"> <thead class="theadStyle">';
   tables += '<tr>';
   tables += '<th>Fecha</th>';
@@ -366,11 +382,13 @@ function filtrado2(){
       for(let mes in res['meses_anios'][item]){
         if(item==anio_actual && mes_escogidito=='Todos'){
           if(mes==dd){
+            con = parseInt(res['meses_anios'][item][mes]);
             tables += '<tr>';
             tables += '<td>'+item+' / '+mes+'</td>';
             tables += '<td> '+dic_meses[dd]+' de '+item+' </td>';
             tables += '<td>$ '+res['meses_anios'][item][mes]+'</td>';
             tables += '</tr>';
+            total_anio_gastos += con;
           }
         }else if(item==anio_actual && mes==mes_escogidito){
           if(mes==dd){
@@ -379,6 +397,7 @@ function filtrado2(){
             tables += '<td> '+dic_meses[dd]+' de '+item+' </td>';
             tables += '<td>$ '+res['meses_anios'][item][mes]+'</td>';
             tables += '</tr>';
+            total_anio_gastos = 0;
           }
         }
       }
@@ -388,6 +407,13 @@ function filtrado2(){
   tables += '</tbody> </table>';
   $('#tabliita').html(tables);
   datetablee();
+
+  if (total_anio_gastos!=0){
+    var htmls='<h5>Total de compras por año:</h5><h4><b>$ '+total_anio_gastos+'</b></h4>';
+  }else{
+    var htmls='';
+  }
+  $('#total_total').html(htmls);
 }
 
 function datetablee(){

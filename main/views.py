@@ -296,7 +296,7 @@ def principal_app(request, pk):
         # producto de poco stock
         negocioo = []
         for x in negocio_producto:
-            if x.producto_id.stock <= 9 and x.producto_id.estado=='1':
+            if x.producto_id.stock <= 14 and x.producto_id.estado=='1':
                 negocioo.append(x)
 
         array_producto = []

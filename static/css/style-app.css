@@ -81,6 +81,10 @@ body {
   background-color: #ebebeb;
   font-weight: bolder;
 }
+.listMenu-icon::after{
+  float: right;
+  content: '▼';
+}
 .listMenu:active, .listMenu:hover, .listMenu:focus {
     color: #399d3f;
     background-color: #dadada;

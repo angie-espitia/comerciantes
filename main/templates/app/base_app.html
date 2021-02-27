@@ -49,10 +49,10 @@
 
 
       <div class="list-group list-group-flush">
-        <a href="{% url 'principal_app' pk=negocio_id.id %}" class="list-group-item list-group-item-action listMenu"><i class="fas fa-home"></i> Inicio</a>
+        <a href="{% url 'principal_app' pk=negocio_id.id %}" class="list-group-item list-group-item-action listMenu"><i class="fas fa-home"></i> Inicio </a>
         <!-- Menu with submenu  productos-->
         <a href="#productos_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenu">
-            <div class="d-flex w-100 justify-content-start align-items-center">
+            <div class="listMenu-icon">
                 <span class="menu-collapsed"><i class="fas fa-carrot"></i> Productos</span>
             </div>
         </a>
@@ -68,7 +68,7 @@
         <!-- fin productos -->
         <!-- Menu with submenu  compras-->
         <a href="#compras_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenu">
-            <div class="d-flex w-100 justify-content-start align-items-center">
+            <div class="listMenu-icon">
                 <span class="menu-collapsed"><i class="fas fa-shopping-cart"></i> Compras</span>
             </div>
         </a>
@@ -90,7 +90,7 @@
         <!-- fin compras -->
         <!-- Menu with submenu  ventas-->
         <a href="#ventas_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenu">
-            <div class="d-flex w-100 justify-content-start align-items-center">
+            <div class="listMenu-icon">
                 <span class="menu-collapsed"><i class="fas fa-wallet"></i> Ventas</span>
             </div>
         </a>
@@ -112,7 +112,7 @@
         <!-- fin ventas -->
         <!-- Menu with submenu  proveedores-->
         <a href="#proveedores_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenu">
-            <div class="d-flex w-100 justify-content-start align-items-center">
+            <div class="listMenu-icon">
                 <span class="menu-collapsed"><i class="fas fa-users"></i> Proveedores</span>
             </div>
         </a>
@@ -129,7 +129,7 @@
         <!-- configuracion para administrador -->
         {% if request.user|has_group:"propietario_negocio" %}
             <a href="#administracion_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenu">
-                <div class="d-flex w-100 justify-content-start align-items-center">
+                <div class="listMenu-icon">
                     <span class="menu-collapsed"><i class="fas fa-tools"></i> Administración</span>
                 </div>
             </a>
@@ -147,7 +147,7 @@
         {% endif %}
         {% if request.user|has_group:"empleado_negocio" %}
           <a href="#configuracion_submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start listMenu">
-              <div class="d-flex w-100 justify-content-start align-items-center">
+              <div class="listMenu-icon">
                   <span class="menu-collapsed"><i class="fas fa-tools"></i> Configuración</span>
               </div>
           </a>
