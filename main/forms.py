@@ -121,7 +121,7 @@ class ProductoForm_dos(forms.ModelForm):
         super(ProductoForm_dos, self).__init__(*args, **kwargs)
         self.fields['descripcion'].required = False
         self.fields['imagen'].required = False
-        self.fields['stock'].widget.attrs['min'] = 1
+        self.fields['stock'].widget.attrs['min'] = 0
         self.fields['valor_costo'].widget.attrs['min'] = 1
         self.fields['valor_venta'].widget.attrs['min'] = 1
         for field in iter(self.fields):

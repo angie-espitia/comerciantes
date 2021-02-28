@@ -81,14 +81,14 @@
       <tbody class="text-center">
       {% for row in detalle_compra_producto %}
         <tr>
-          <td>{{ row.compra_id.fecha|date:"SHORT_DATE_FORMAT" }}</td>
+          <td>{{ row.compra_id.fecha|date:"Y-m-d" }}</td>
           <td>{{ row.proveedor_id.razon_social }}</td>
           <td>{{ row.cantidad }}</td>
           <td>$ {{ row.valor_unitario }}</td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="6" class="text-center bg-warning">No hay compras realizadas del producto</td>
+          <td colspan="4" class="text-center bg-warning">No hay compras realizadas del producto</td>
         </tr>
       {% endfor %}
       </tbody>
@@ -162,7 +162,11 @@ var table = $('#ejemplo').DataTable( {
    "columnDefs":[{
                   "targets": [0],
                   "render": function(data) {
-                            return moment(data).format('YYYY / MM / DD');
+                            if(data=='No hay compras realizadas del producto'){
+                              return 'No hay compras realizadas del producto';
+                            }else {
+                              return moment(data).format('YYYY / MM / DD');
+                            }
                           },
               }],
    dom: 'Bfrt<"col-md-6 inline"i> <"col-md-6 inline"p>',

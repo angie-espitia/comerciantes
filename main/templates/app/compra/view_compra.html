@@ -109,6 +109,7 @@ else{
     html +='<td><a class="btn btn-green btn-sm" href="/compras/lista/detalle/'+res[item].id_compra+'/"> Detalles </a> ';
     html +=' <a class="btn btn-red btn-sm"  data-toggle="modal" data-target="#eliminarmodal" onclick="datos2('+res[item].id_compra+')">Borrar </a></td>';
     html +='</tr>';
+    console.log(res[item].fecha);
   }
     html += '</tbody>';
     html += '</table>';
@@ -127,7 +128,11 @@ var table = $('#ejemplo').DataTable( {
    "columnDefs":[{
                   "targets": [0],
                   "render": function(data) {
-                            return moment(data).format('YYYY / MM / DD');
+                            if(data=='No hay compras registradas'){
+                              return 'No hay compras registradas';
+                            }else {
+                              return moment(data).format('YYYY / MM / DD');
+                            }
                           },
               }],
    dom: 'Bfrt<"col-md-6 inline"i> <"col-md-6 inline"p>',

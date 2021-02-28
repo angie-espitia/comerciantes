@@ -84,7 +84,7 @@ $(document).ready(function() {
         html += '<th>Acciones</th></tr>';
         html += '</thead>';
         html += '<tbody class="text-center">';
-        html += '<tr><td colspan="4" class="text-center bg-warning">No hay ventas registradas</td></tr>';
+        html += '<tr><td colspan="3" class="text-center bg-warning">No hay ventas registradas</td></tr>';
         html += '</tbody>';
         html += '</table>';
       }
@@ -123,7 +123,11 @@ $(document).ready(function() {
          "columnDefs":[{
                         "targets": [0],
                         "render": function(data) {
-                                  return moment(data).format('YYYY / MM / DD');
+                                  if(data=='No hay ventas registradas'){
+                                    return 'No hay ventas registradas';
+                                  }else {
+                                    return moment(data).format('YYYY / MM / DD');
+                                  }
                                 },
                     }],
          dom: 'Bfrt<"col-md-6 inline"i> <"col-md-6 inline"p>',

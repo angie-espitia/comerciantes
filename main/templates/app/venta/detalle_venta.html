@@ -53,7 +53,7 @@
           <td>{{ row.producto_id.nombre }}</td>
           <td>{{ row.cantidad }}</td>
           <td>{{ row.producto_id.unidad_medida_id.abreviatura_unidad }}</td>
-          <td>{{ row.total_producto }}</td>
+          <td>$ {{ row.total_producto }}</td>
           <td>
             <a id="{{row.id}}" class="btn btn-green btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a>
             <a id="{{row.id}}" class="btn btn-red btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a>
