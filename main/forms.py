@@ -104,10 +104,12 @@ class ProductoForm(forms.ModelForm):
         self.fields['descripcion'].required = False  # solo con los campos que especificaste en la clase Meta
         self.fields['stock'].widget.attrs['min'] = 1
         self.fields['valor_costo'].widget.attrs['min'] = 1
+        self.fields['valor_costo'].widget.attrs['id'] = 'costo_id'
         self.fields['valor_venta'].widget.attrs['min'] = 1
+        self.fields['valor_venta'].widget.attrs['id'] = 'venta_id'
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
-                'class': 'form-control'
+                'class': 'form-control teli'
             })
 
 class ProductoForm_dos(forms.ModelForm):

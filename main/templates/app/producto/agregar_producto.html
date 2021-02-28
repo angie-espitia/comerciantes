@@ -39,6 +39,10 @@
           {% endfor %}
       {% endif %}
 
+      <div id="errortelefono">
+
+      </div>
+
       <div class="col-md-12 col-lg-12 col-sm-12 row div-paddings-0px">
         <div class="col">
           <label>{{ form.nombre.label }}: *</label>
@@ -97,7 +101,7 @@
       <div class="col-md-12 col-lg-12 col-sm-12"><br></div>
 
       <div class="col-md-12 col-lg-12 col-sm-12 text-center">
-        <button class="save btn btn-green btn-lg" type="submit">Guardar</button>
+        <button class="save btn btn-green btn-lg" type="submit" id="submit_button">Guardar</button>
         <br><br>
       </div>
 
@@ -105,4 +109,39 @@
   </div>
 </div>
 
+ {% endblock %}
+
+ {% block javascript %}
+ <script>
+ $(document).ready(function() {
+
+ var validacion_numeros = /^([0-9])+$/;
+
+ $('.teli').keyup(function() {
+   var costo = $("#costo_id").val();
+   var venta = $("#venta_id").val();
+
+   if (costo != "" && !validacion_numeros.test(costo)){
+      $("#submit_button").attr( "disabled", "disabled" );
+      $("#costo_id").focus();
+      $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Por favor utilice <b>números enteros</b> en el valor del costo, no agrege ningún punto (.)</li></ul></div>');
+      return false;
+   }
+   else if (venta != "" && !validacion_numeros.test(venta)){
+     $("#submit_button").attr( "disabled", "disabled" );
+     $('#venta_id').focus();
+     $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Por favor utilice <b>números enteros</b> en el valor de la venta, no agrege ningún punto (.)</li></ul></div>');
+   }
+   else {
+     $("#submit_button").removeAttr("disabled");
+     $('#errortelefono').html('');
+     return true;
+   }
+
+ });
+
+
+ });
+
+ </script>
  {% endblock %}
