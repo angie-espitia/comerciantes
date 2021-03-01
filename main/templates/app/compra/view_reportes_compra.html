@@ -70,6 +70,7 @@ var res;
 var array_reporte_fecha = {};
 var array_vp = {};
 var nombreDeNegocio = $('#nameNegocio').text();
+const copCurrencyFormat = new Intl.NumberFormat('es-CO', {style: 'currency', currency: 'COP', minimumFractionDigits: 0});
 
 $(document).ready(function() {
   console.log('adasdasdasdasd');
@@ -263,6 +264,7 @@ function buscando_dia_mes(){
   var anio_actual = (new Date).getFullYear();
   var mes_escogidito = $("#mes_select").val();
   var ss = diasEnUnMes(mes_escogidito, anio_actual);
+
   // var arr_reporte = {
   //                   'Enero' : [],
   //                   'Febrero': [],
@@ -301,13 +303,13 @@ function buscando_dia_mes(){
             tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
             tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
             tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
-            tables += '<td> $ '+array_vp[item].valor_unitario[j]+'</td>';
+            tables += '<td> $ '+parseInt(array_vp[item].valor_unitario[j]).toLocaleString('es-CO')+'</td>';
             tables += '<td> $ '+array_vp[item].producto_total[j]+'</td>';
             tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
             tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
             tables += '</tr>';
 
-            // if(array_vp[item].mes == 'Enero'){
+            // if(array_vp[item].mes == 'Enero'){ es-CO
             //   arr_reporte.Enero.push(array_vp[item].producto_total[j]);
             // }
             // else if(array_vp[item].mes == 'Febrero'){

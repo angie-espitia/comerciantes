@@ -125,10 +125,12 @@ class ProductoForm_dos(forms.ModelForm):
         self.fields['imagen'].required = False
         self.fields['stock'].widget.attrs['min'] = 0
         self.fields['valor_costo'].widget.attrs['min'] = 1
+        self.fields['valor_costo'].widget.attrs['id'] = 'costo_id'
         self.fields['valor_venta'].widget.attrs['min'] = 1
+        self.fields['valor_venta'].widget.attrs['id'] = 'venta_id'
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
-                'class': 'form-control'
+                'class': 'form-control teli'
             })
 
 class DetalleNegocioProductoForm(forms.ModelForm):
@@ -172,7 +174,7 @@ class CompraForm(forms.ModelForm):
         # self.fields['total'].widget.attrs['disabled'] = True
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update({
-                'class': 'form-control'
+                'class': 'form-control teli'
             })
 
 class DetalleCompraForm(forms.ModelForm):

@@ -81,6 +81,10 @@
                 <form class="form" method="POST" id="formulario_editar_venta">
                   {% csrf_token %}
 
+                  <div id="errortelefono">
+
+                  </div>
+
                   <div class="form-group">
                     <input id="id_d" hidden="false">
                     <label>Producto:</label>
@@ -100,13 +104,13 @@
 
                     <div class="col">
                       <label>Total:</label>
-                      <input type="number" class="form-control" id="total_d" min="1">
+                      <input type="number" class="form-control" id="total_d" onkeyup='calcularMult()' min="1">
                       <!-- disabled="true" -->
                     </div>
                   </div>
 
                   <br>
-                  <button class="save btn btn-green btn-lg" type="submit" onclick="Actualizar()">Guardar</button>
+                  <button class="save btn btn-green btn-lg" type="submit" onclick="Actualizar()" id="submit_button">Guardar</button>
                   <br><br>
                 </form>
               </div>
@@ -114,7 +118,7 @@
 
             <!-- Modal footer -->
             <div class="modal-footer">
-              <button type="button" class="btn btn-red" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-red" data-dismiss="modal">Cerrar</button>
             </div>
 
       </div>
@@ -179,13 +183,24 @@
 }
 
 function calcularMult(){
-	var mul = 0;
+	// var mul = 0;
+  var validacion_numeros = /^([0-9])*$/;
 
 	cantidad = $("#cantidad_d").val();
-	// valor = $("#valor_unitario_d").val();
-	mul = cantidad * valor;
+	valor = $("#total_d").val();
+	// mul = cantidad * valor;
+  //
+	// $("#total_d").val(mul);
 
-	$("#total_d").val(mul);
+  if (!validacion_numeros.test(valor)){
+    $("#submit_button").attr( "disabled", "disabled" );
+     $("#valor_unitario_d").focus();
+     $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Por favor utilice <b>números enteros</b> en el valor del costo, no agrege ningún punto (.)</li></ul></div>');
+  }
+  else {
+    $("#submit_button").removeAttr("disabled");
+    $('#errortelefono').html('');
+  }
 
 }
 

@@ -17,8 +17,12 @@
 <div id="alert-form"></div>
 
 <div class="col-md-12 mx-auto">
-    <form class="form" method="POST"  id="formulario_registro_compra" enctype="multipart/form-data">
+    <form class="form" method="POST"  id="formulario_registro_compra" enctype="multipart/form-data" onsubmit="return validate()">
       {% csrf_token %}
+
+      <div id="errortelefono">
+
+      </div>
 
       <div class="row">
         <div class="col-md-3 col-sm-3 col-lg-3">
@@ -100,7 +104,7 @@
       <div class="col-md-12 col-lg-12 col-sm-12"><br></div>
 
       <div class="col-md-12 col-lg-12 col-sm-12 text-center">
-        <button class="save btn btn-green btn-lg" type="submit" onclick="validate()">Guardar</button>
+        <button class="save btn btn-green btn-lg" type="submit" id="submit_button">Guardar</button>
         <br><br>
       </div>
 
@@ -122,6 +126,7 @@
         $('#id_detalle_compra_set-TOTAL_FORMS').val(form_num + 1);
         $("#additems").val(form_num + 1);
      });
+
   });
 
   function calcularMult(){
@@ -143,6 +148,7 @@
         $("input[id^='id_detalle_compra_set-"+ i + "-total_producto']").each(function() {
           sum += Number($(this).val());
          });
+
     };
     $("#id_total").val(sum);
 
@@ -156,26 +162,39 @@
   function validate(){
     var idx = $("#additems").val();
     var ppp = $("#proveedor_lista").val();
+    var validacion_numeros = /^([0-9])*$/;
     if(ppp=='---'){
       $("#alerta-c").html('<div class="alert alert-danger" role="alert">El campo <b>proveedor</b> no debe estar vacio.</div>');
       return false;
     }
     else{
       $("#alerta-c").html('');
-      for (var i = 0; i <= idx; i++) {
+      for (var i = 0; i <= idx-1; i++) {
         var can = $("#id_detalle_compra_set-" + i + "-cantidad").val();
         var valu = $("#id_detalle_compra_set-" + i + "-valor_unitario").val();
+        var producto = $("#id_detalle_compra_set-" + i + "-total_producto").val();
         if (can < 1 || valu < 1){
           $("#alerta-c").html('<div class="alert alert-danger" role="alert">La <b>cantidad</b> y el <b>valor unitario</b> no pueden ser menor a 1 o negativos.</div>');
           return false;
         }
-        else{
-          $("#alerta-c").html('');
-          return true;
+        else if (!validacion_numeros.test(valu)){
+           $("#id_detalle_compra_set-" + i + "-valor_unitario").focus();
+           $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Por favor utilice <b>números enteros</b> en el valor del costo, no agrege ningún punto (.)</li></ul></div>');
+           return false;
+        }
+        else if (!validacion_numeros.test(producto)){
+          $("#id_detalle_compra_set-" + i + "-total_producto").focus();
+          $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Por favor utilice <b>números enteros</b> en el valor de la venta, no agrege ningún punto (.)</li></ul></div>');
+          return false;
+        }
+        else {
+          $('#errortelefono').html('');
         }
       }
     }
   }
+
+
 
 </script>
  {% endblock %}

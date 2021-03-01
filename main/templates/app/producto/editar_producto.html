@@ -109,21 +109,16 @@
           <div class="container">
             <form class="form" method="POST"  id="formulario_registro_producto" enctype="multipart/form-data">
               {% csrf_token %}
+
+              <div id="errortelefono">
+
+              </div>
+
               {{ form.as_p }}
               {{ form2.as_p }}
 
-              <!-- <div class="form-group">
-                <select class="form-control" name='usuario_proveedor' required="required">
-                  <option value="">Seleccionar</option>
-                  <!-- <option value="">Seleccionar</option> -->
-                  <!-- {% for row in form2 %} -->
-                    <!-- <option value="{{ row.proveedor_id.id }}"> {{ row.proveedor_id.razon_social }} </option> -->
-                  <!-- {% endfor %} -->
-                <!-- </select> -->
-              <!-- </div> -->
-
-                <button class="save btn btn-green btn-lg" type="submit">Guardar</button>
-                <br><br>
+              <button class="save btn btn-green btn-lg" type="submit" id="submit_button">Guardar</button>
+              <br><br>
             </form>
           </div>
         </div>
@@ -260,7 +255,33 @@ var table = $('#ejemplo').DataTable( {
          ]
        }
    });
-} );
+
+   var validacion_numeros = /^([0-9])+$/;
+
+   $('.teli').keyup(function() {
+     var costo = $("#costo_id").val();
+     var venta = $("#venta_id").val();
+
+     if (costo != "" && !validacion_numeros.test(costo)){
+        $("#submit_button").attr( "disabled", "disabled" );
+        $("#costo_id").focus();
+        $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Por favor utilice <b>números enteros</b> en el valor del costo, no agrege ningún punto (.)</li></ul></div>');
+        return false;
+     }
+     else if (venta != "" && !validacion_numeros.test(venta)){
+       $("#submit_button").attr( "disabled", "disabled" );
+       $('#venta_id').focus();
+       $('#errortelefono').html('<div class="alert alert-danger" role="alert"><ul class="messages"><li>Por favor utilice <b>números enteros</b> en el valor de la venta, no agrege ningún punto (.)</li></ul></div>');
+     }
+     else {
+       $("#submit_button").removeAttr("disabled");
+       $('#errortelefono').html('');
+       return true;
+     }
+
+   });
+
+ });
 
 </script>
  {% endblock %}
