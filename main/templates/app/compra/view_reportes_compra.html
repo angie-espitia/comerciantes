@@ -64,13 +64,13 @@
 <script src="{% static 'js/locate-es.js' %}"></script>
 <script src="{% static 'js/datetime-moment.js' %}"></script>
 <script src="{% static 'js/render-datetime-moment.js' %}"></script>
+<script src="{% static 'js/moneda-formato.js' %}"></script>
 
 <script async="async">
 var res;
 var array_reporte_fecha = {};
 var array_vp = {};
 var nombreDeNegocio = $('#nameNegocio').text();
-const copCurrencyFormat = new Intl.NumberFormat('es-CO', {style: 'currency', currency: 'COP', minimumFractionDigits: 0});
 
 $(document).ready(function() {
   console.log('adasdasdasdasd');
@@ -303,8 +303,8 @@ function buscando_dia_mes(){
             tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
             tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
             tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
-            tables += '<td> $ '+parseInt(array_vp[item].valor_unitario[j]).toLocaleString('es-CO')+'</td>';
-            tables += '<td> $ '+array_vp[item].producto_total[j]+'</td>';
+            tables += '<td> '+monedaChange(array_vp[item].valor_unitario[j])+'</td>';
+            tables += '<td> '+monedaChange(array_vp[item].producto_total[j])+'</td>';
             tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
             tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
             tables += '</tr>';
@@ -442,8 +442,8 @@ function filtrado1(){
           tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
-          tables += '<td>'+array_vp[item].valor_unitario[j]+'</td>';
-          tables += '<td>'+array_vp[item].producto_total[j]+'</td>';
+          tables += '<td> '+monedaChange(array_vp[item].valor_unitario[j])+'</td>';
+          tables += '<td> '+monedaChange(array_vp[item].producto_total[j])+'</td>';
           tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
           tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
           tables += '</tr>';
@@ -456,8 +456,8 @@ function filtrado1(){
           tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
-          tables += '<td>'+array_vp[item].valor_unitario[j]+'</td>';
-          tables += '<td>'+array_vp[item].producto_total[j]+'</td>';
+          tables += '<td> '+monedaChange(array_vp[item].valor_unitario[j])+'</td>';
+          tables += '<td> '+monedaChange(array_vp[item].producto_total[j])+'</td>';
           tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
           tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
           tables += '</tr>';
@@ -530,8 +530,8 @@ function buscando_anio(){
           tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
-          tables += '<td>'+array_vp[item].valor_unitario[j]+'</td>';
-          tables += '<td>'+array_vp[item].producto_total[j]+'</td>';
+          tables += '<td> '+monedaChange(array_vp[item].valor_unitario[j])+'</td>';
+          tables += '<td> '+monedaChange(array_vp[item].producto_total[j])+'</td>';
           tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
           tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
           tables += '</tr>';
@@ -572,8 +572,8 @@ function filtrado2(){
           tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
-          tables += '<td>'+array_vp[item].valor_unitario[j]+'</td>';
-          tables += '<td>'+array_vp[item].producto_total[j]+'</td>';
+          tables += '<td> '+monedaChange(array_vp[item].valor_unitario[j])+'</td>';
+          tables += '<td> '+monedaChange(array_vp[item].producto_total[j])+'</td>';
           tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
           tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
           tables += '</tr>';
@@ -585,8 +585,8 @@ function filtrado2(){
           tables += '<td>'+array_vp[item].proveedor[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_nombre[j]+'</td>';
           tables += '<td>'+array_vp[item].producto_cantidad[j]+'</td>';
-          tables += '<td>'+array_vp[item].valor_unitario[j]+'</td>';
-          tables += '<td>'+array_vp[item].producto_total[j]+'</td>';
+          tables += '<td> '+monedaChange(array_vp[item].valor_unitario[j])+'</td>';
+          tables += '<td> '+monedaChange(array_vp[item].producto_total[j])+'</td>';
           tables += '<td>'+array_vp[item].stock_anterior[j]+'</td>';
           tables += '<td>'+array_vp[item].stock_nuevo[j]+'</td>';
           tables += '</tr>';
@@ -653,8 +653,8 @@ function buscando_fechas(){
             tables += '<td>'+array_vp[item2].proveedor[j]+'</td>';
             tables += '<td>'+array_vp[item2].producto_nombre[j]+'</td>';
             tables += '<td>'+array_vp[item2].producto_cantidad[j]+'</td>';
-            tables += '<td>'+array_vp[item2].valor_unitario[j]+'</td>';
-            tables += '<td>'+array_vp[item2].producto_total[j]+'</td>';
+            tables += '<td> '+monedaChange(array_vp[item2].valor_unitario[j])+'</td>';
+            tables += '<td> '+monedaChange(array_vp[item2].producto_total[j])+'</td>';
             tables += '<td>'+array_vp[item2].stock_anterior[j]+'</td>';
             tables += '<td>'+array_vp[item2].stock_nuevo[j]+'</td>';
             tables += '</tr>';

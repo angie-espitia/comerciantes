@@ -1,5 +1,6 @@
 {% extends 'app/base_app.html' %}
 {% load staticfiles %}
+{% load humanize %}
 {% block title %} Detalle del producto {% endblock %}
 
 {%  block content %}
@@ -43,8 +44,8 @@
         {% endif %}
         <td id="nameProducto" class="align-middle">{{ row.producto_id.nombre }}</td>
         <td class="align-middle">{{ row.producto_id.stock }}</td>
-        <td class="align-middle">$ {{ row.producto_id.valor_costo }}</td>
-        <td class="align-middle">$ {{ row.producto_id.valor_venta }}</td>
+        <td class="align-middle">${{ row.producto_id.valor_costo|intcomma }}</td>
+        <td class="align-middle">${{ row.producto_id.valor_venta|intcomma }}</td>
         <td class="align-middle">{{ row.proveedor_id.razon_social }}</td>
         {% if row.producto_id.estado == '1'  %}
         <td class="align-middle"><span class="badge badge-success badge-font-90">Activo</span></td>
@@ -84,7 +85,7 @@
           <td>{{ row.compra_id.fecha|date:"Y-m-d" }}</td>
           <td>{{ row.proveedor_id.razon_social }}</td>
           <td>{{ row.cantidad }}</td>
-          <td>$ {{ row.valor_unitario }}</td>
+          <td>${{ row.valor_unitario|intcomma }}</td>
         </tr>
         {% empty %}
         <tr>

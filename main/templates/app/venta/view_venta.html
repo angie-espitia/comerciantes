@@ -55,6 +55,7 @@
 <script src="{% static 'js/locate-es.js' %}"></script>
 <script src="{% static 'js/datetime-moment.js' %}"></script>
 <script src="{% static 'js/render-datetime-moment.js' %}"></script>
+<script src="{% static 'js/moneda-formato.js' %}"></script>
 <script>
 
 $(document).ready(function() {
@@ -100,7 +101,7 @@ $(document).ready(function() {
           // console.log(res[item]);
           html +='<tr>';
           html +='<td>'+res[item].fecha+'</td>';
-          html +='<td>$ '+res[item].total+'</td>';
+          html +='<td>'+monedaChange(res[item].total)+'</td>';
           html +='<td><a class="btn btn-success btn-sm" href="/ventas/lista/detalle/'+res[item].id_venta+'/"> Detalles </a> ';
           html +=' <a class="btn btn-danger btn-sm"  data-toggle="modal" data-target="#eliminarmodal" onclick="datos2('+res[item].id_venta+')">Borrar </a></td>';
           html +='</tr>';

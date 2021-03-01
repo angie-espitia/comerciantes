@@ -64,6 +64,7 @@
 <script src="{% static 'js/locate-es.js' %}"></script>
 <script src="{% static 'js/datetime-moment.js' %}"></script>
 <script src="{% static 'js/render-datetime-moment.js' %}"></script>
+<script src="{% static 'js/moneda-formato.js' %}"></script>
 
 <script>
 var res;
@@ -221,7 +222,7 @@ function buscando_dia_mes(){
           tables += '<tr>';
           tables += '<td>'+anio_actual+' / '+item+'</td>';
           tables += '<td> '+dic_meses[dd]+' </td>';
-          tables += '<td>$ '+res['mes_anio_actual'][item]+'</td>';
+          tables += '<td>'+monedaChange(res['mes_anio_actual'][item])+'</td>';
           tables += '</tr>';
           total_mes_gastos += con;
         }
@@ -232,7 +233,7 @@ function buscando_dia_mes(){
     $('#tabliita').html(tables);
     datetablee();
 
-    var htmls='<h5>Total de compras por año:</h5><h4><b>$ '+total_mes_gastos+'</b></h4>'
+    var htmls='<h5>Total de compras por año:</h5><h4><b>'+monedaChange(total_mes_gastos)+'</b></h4>'
     $('#total_total').html(htmls);
 
   }else{
@@ -279,7 +280,7 @@ function filtrado1(){
               tables += '<td>'+anio_actual+' / '+item+' / '+dia+'</td>';
               tables += '<td> '+dic_meses[dd]+' </td>';
               tables += '<td> '+dia+' </td>';
-              tables += '<td>$ '+res['dia_mes_anio_actual'][item][dia]+'</td>';
+              tables += '<td>'+monedaChange(res['dia_mes_anio_actual'][item][dia])+'</td>';
               tables += '</tr>';
             }
           }
@@ -308,7 +309,7 @@ function filtrado1(){
                   tables += '<td> '+dic_meses[dd]+' </td>';
                   tables += '<td> '+dia+' </td>';
                   tables += '<td> '+prov+' </td>';
-                  tables += '<td>$ '+res['dia_mes_prov_anio_actual'][mes][dia][prov]+'</td>';
+                  tables += '<td>'+monedaChange(res['dia_mes_prov_anio_actual'][mes][dia][prov])+'</td>';
                   tables += '</tr>';
                 }
               }
@@ -346,7 +347,7 @@ function buscando_anio(){
             tables += '<tr>';
             tables += '<td>'+item+' / '+mes+'</td>';
             tables += '<td> '+dic_meses[dd]+' de '+item+' </td>';
-            tables += '<td>$ '+res['meses_anios'][item][mes]+'</td>';
+            tables += '<td>'+monedaChange(res['meses_anios'][item][mes])+'</td>';
             tables += '</tr>';
           }
         }
@@ -386,7 +387,7 @@ function filtrado2(){
             tables += '<tr>';
             tables += '<td>'+item+' / '+mes+'</td>';
             tables += '<td> '+dic_meses[dd]+' de '+item+' </td>';
-            tables += '<td>$ '+res['meses_anios'][item][mes]+'</td>';
+            tables += '<td>'+monedaChange(res['meses_anios'][item][mes])+'</td>';
             tables += '</tr>';
             total_anio_gastos += con;
           }
@@ -395,7 +396,7 @@ function filtrado2(){
             tables += '<tr>';
             tables += '<td>'+item+' / '+mes+'</td>';
             tables += '<td> '+dic_meses[dd]+' de '+item+' </td>';
-            tables += '<td>$ '+res['meses_anios'][item][mes]+'</td>';
+            tables += '<td>'+monedaChange(res['meses_anios'][item][mes])+'</td>';
             tables += '</tr>';
             total_anio_gastos = 0;
           }
@@ -409,7 +410,7 @@ function filtrado2(){
   datetablee();
 
   if (total_anio_gastos!=0){
-    var htmls='<h5>Total de compras por año:</h5><h4><b>$ '+total_anio_gastos+'</b></h4>';
+    var htmls='<h5>Total de compras por año:</h5><h4><b>'+monedaChange(total_anio_gastos)+'</b></h4>';
   }else{
     var htmls='';
   }

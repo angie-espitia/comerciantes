@@ -1,6 +1,6 @@
 {% extends 'app/base_app.html' %}
 {% load staticfiles %}
-<!-- {% load humanize %} -->
+{% load humanize %}
 {% block title %} Lista de productos {% endblock %}
 
 {%  block content %}
@@ -40,8 +40,8 @@
         <td class="align-middle">{{ row.producto_id.nombre }}</td>
         <td class="align-middle">{{ row.producto_id.stock }}</td>
         <td class="align-middle">{{ row.producto_id.unidad_medida_id.abreviatura_unidad }}</td>
-        <td class="align-middle">$ {{ row.producto_id.valor_costo }}</td>
-        <td class="align-middle">$ {{ row.producto_id.valor_venta }}</td>
+        <td class="align-middle">${{ row.producto_id.valor_costo|intcomma }}</td>
+        <td class="align-middle">${{ row.producto_id.valor_venta|intcomma }}</td>
         {% if row.producto_id.estado == '1'  %}
         <td class="align-middle"><span class="badge badge-success badge-font-90">Activo</span></td>
         {% elif row.producto_id.estado == '2' %}

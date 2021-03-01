@@ -54,6 +54,7 @@
 <script src="{% static 'js/locate-es.js' %}"></script>
 <script src="{% static 'js/datetime-moment.js' %}"></script>
 <script src="{% static 'js/render-datetime-moment.js' %}"></script>
+<script src="{% static 'js/moneda-formato.js' %}"></script>
 
 <script>
 
@@ -105,7 +106,7 @@ else{
     html +='<tr>';
     html +='<td>'+res[item].fecha+'</td>';
     html +='<td>'+res[item].proveedor+'</td>';
-    html +='<td><b> $ '+res[item].total+'</b></td>';
+    html +='<td><b>'+monedaChange(res[item].total)+'</b></td>';
     html +='<td><a class="btn btn-green btn-sm" href="/compras/lista/detalle/'+res[item].id_compra+'/"> Detalles </a> ';
     html +=' <a class="btn btn-red btn-sm"  data-toggle="modal" data-target="#eliminarmodal" onclick="datos2('+res[item].id_compra+')">Borrar </a></td>';
     html +='</tr>';
@@ -249,7 +250,7 @@ function datos2(id) {
       var res = response;
 
       $('#id_p2').text(res.idd);
-      $('#mensaje2').html('¿ Está seguro que desea eliminar la compra de valor <b>' + res.total + '</b> con fecha del <b>'+ val_fecha(res.fecha) +'</b> ?');
+      $('#mensaje2').html('¿ Está seguro que desea eliminar la compra de valor <b>' + monedaChange(res.total) + '</b> con fecha del <b>'+ val_fecha(res.fecha) +'</b> ?');
 
     })
 }

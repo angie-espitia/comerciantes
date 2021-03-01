@@ -1,5 +1,6 @@
 {% extends 'app/base_app.html' %}
 {% load staticfiles %}
+{% load humanize %}
 {% block title %} Detalle de la compra {% endblock %}
 
 {%  block content %}
@@ -25,7 +26,7 @@
   <div class="col">  </div>
 	<div class="col-md-4 col-sm-4 col-lg-4 text-center">
 		<h5>Total de la compra:</h5>
-    <h4><b>$ {{ row.total }}</b></h4>
+    <h4><b>${{ row.total|intcomma }}</b></h4>
 	</div>
 </div>
 {% endfor %}
@@ -56,8 +57,8 @@
           <td>{{ row.proveedor_id.razon_social }}</td>
           <td>{{ row.cantidad }}</td>
           <td>{{ row.producto_id.unidad_medida_id.abreviatura_unidad }}</td>
-          <td>$ {{ row.valor_unitario }}</td>
-          <td>$ {{ row.total_producto }}</td>
+          <td>${{ row.valor_unitario|intcomma }}</td>
+          <td>${{ row.total_producto|intcomma }}</td>
           <td>
             <a id="{{row.id}}" class="btn btn-green btn-sm" data-toggle="modal" data-target="#editarmodal" onclick="datos(this.id)"> Editar </a>
             <a id="{{row.id}}" class="btn btn-red btn-sm" data-toggle="modal" data-target="#eliminarmodal" onclick="datos2(this.id)">Borrar</a>
